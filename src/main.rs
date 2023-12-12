@@ -1,7 +1,8 @@
 mod game;
 
-pub use game::cool;
+use game::{*};
 
 fn main() {
-  cool()
+  cool();
+  logic::logic_test();
 }
