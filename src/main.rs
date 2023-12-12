@@ -1,3 +1,7 @@
+mod game;
+
+pub use game::cool;
+
 fn main() {
-    println!("Hello, world!");
+  cool()
 }
