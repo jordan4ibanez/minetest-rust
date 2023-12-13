@@ -4,5 +4,5 @@ use game::{*};
 
 fn main() {
   cool();
-  logic::logic_test();
+  logic_test();
 }
