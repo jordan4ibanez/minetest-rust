@@ -1,6 +1,12 @@
+use spin_sleep::LoopHelper;
+
 pub struct Game {
   should_close: bool,
-  goal_delta: f64,
+  goal_fps: f64,
+  goal_tps: f64,
+  loop_helper: LoopHelper,
+  delta: f64,
+  current_fps: f64
 }
 
 impl Game {
@@ -10,7 +16,14 @@ impl Game {
     Game {
       should_close: false,
       // 60 FPS goal for the moment.
-      goal_delta: 1.0 / 60.0,
+      goal_fps: 60.0,
+      // 20 Tick Per Second goal.
+      goal_tps: 20.0,
+      loop_helper: LoopHelper::builder()
+        .report_interval_s(1.0)
+        .build_with_target_rate(20.0),
+      delta: 0.0,
+      current_fps: 0.0
     }
   }
 
@@ -27,8 +40,17 @@ impl Game {
   }
 
   pub fn main(&mut self) {
+    self.delta = self.loop_helper.loop_start_s();
+
+    //? Here is where the logic loop goes.
+
+    if let Some(fps) = self.loop_helper.report_rate() {
+      self.current_fps = fps;
+      println!("TPS: {}", self.current_fps)
+    }
 
 
+    self.loop_helper.loop_sleep();
   }
 }
 
