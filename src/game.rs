@@ -33,8 +33,8 @@ impl Game {
   pub fn main(&mut self) {
     // This is an extremely overkill way to get delta time.
 
-    sleep(Duration::new(0,1_000_000));
-    
+    sleep(Duration::new(1,0));
+
     self.delta = self.old_time.elapsed().as_secs_f64();
 
     println!("running | delta: {}", self.delta);
