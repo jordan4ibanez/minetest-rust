@@ -1,7 +1,7 @@
-mod game;
+pub mod game;
 
 use game::*;
 
 fn main() {
-  Game::new().enter_main_loop()
+  Game::new(true).enter_main_loop()
 }
