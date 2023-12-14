@@ -1,4 +1,8 @@
-# minetest-rust
-### server first, client second.
+# Minetest Rust
+Minetest is a free open-source voxel game engine with easy modding and game creation.
 
-Rebuilding minetest from the ground up to not be scary to make basic PRs.
+Copyright (C) 2010-2022 Perttu Ahola celeron55@gmail.com and contributors (see source file comments and the version control log)
+
+-----
+
+A rebuild of minetest from the ground up by jordan4ibanez.
