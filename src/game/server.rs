@@ -4,7 +4,7 @@ pub struct Server {
 }
 
 impl Server {
-  pub fn new() {
+  pub fn new() -> Self {
     Server {
       cool: true
     }
