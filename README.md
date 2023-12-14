@@ -6,3 +6,6 @@ Copyright (C) 2010-2022 Perttu Ahola celeron55@gmail.com and contributors (see s
 -----
 
 A rebuild of minetest from the ground up by jordan4ibanez.
+
+If you would like to help me with this hurculean undertaking in real time:
+https://discord.gg/Z2wCscTB4F
