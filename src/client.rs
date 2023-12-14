@@ -1,4 +1,4 @@
-struct Client {
+pub struct Client {
   name: String,
 }
 
