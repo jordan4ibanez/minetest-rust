@@ -24,10 +24,16 @@ impl LuaEngine {
   /// Completely unfiltered and unsandboxed file compiler/runner.
   ///
   pub fn run_file(&self, file_location: String) {
-    let raw_code_string = read_to_string(file_location).unwrap();
+    let raw_code_string = read_to_string(&file_location).unwrap();
+
     if self.output_code_string {
       println!("{}", raw_code_string);
     }
-    let _ = self.lua.load(raw_code_string).exec();
+    match self.lua.load(raw_code_string).exec() {
+      Ok(_) => (),
+      Err(err) => {
+        panic!("Fatal error in {}: {}", file_location, err)
+      }
+    }
   }
 }
