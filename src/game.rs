@@ -1,10 +1,10 @@
 mod client;
-mod server;
 mod lua_engine;
+mod server;
 
 use spin_sleep::LoopHelper;
 
-use self::{client::Client, server::Server, lua_engine::LuaEngine};
+use self::{client::Client, lua_engine::LuaEngine, server::Server};
 
 pub struct Game {
   should_close: bool,
@@ -15,7 +15,7 @@ pub struct Game {
   loop_helper: LoopHelper,
   delta: f64,
   current_fps: f64,
-  lua_engine: LuaEngine
+  lua_engine: LuaEngine,
 }
 
 impl Game {
@@ -58,12 +58,11 @@ impl Game {
       delta: 0.0,
       current_fps: 0.0,
 
-      lua_engine: LuaEngine::new()
+      lua_engine: LuaEngine::new(),
     }
   }
 
   pub fn enter_main_loop(&mut self) {
-
     self.lua_engine.run_file("./api/api.lua".to_string());
 
     while !self.should_close {
