@@ -1,3 +1,7 @@
+local minetest = require("api.minetest")
+
+print(minetest)
+
 local x: boolean = true
 
 function test(input: number): nil
