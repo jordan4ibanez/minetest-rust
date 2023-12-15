@@ -9,3 +9,5 @@ A rebuild of minetest from the ground up by jordan4ibanez.
 
 If you would like to help me with this herculean undertaking in real time:
 https://discord.gg/Z2wCscTB4F
+
+-----

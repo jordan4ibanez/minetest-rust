@@ -1,5 +1,6 @@
 mod client;
 mod server;
+mod scripting;
 
 use spin_sleep::LoopHelper;
 
