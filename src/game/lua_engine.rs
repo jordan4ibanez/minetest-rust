@@ -1,5 +1,5 @@
 
-use std::{path::Path, fs::read_to_string};
+use std::fs::read_to_string;
 
 use mlua::Lua;
 
@@ -26,6 +26,7 @@ impl LuaEngine {
   /// 
   pub fn run_file(&self, file_location: String) {
     let raw_code_string = read_to_string(file_location).unwrap();
+    println!("{}", raw_code_string);
     let _ = self.lua.load(raw_code_string).exec();
   }
   
