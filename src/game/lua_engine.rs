@@ -1,5 +1,5 @@
 
-use std::path::Path;
+use std::{path::Path, fs::read_to_string};
 
 use mlua::Lua;
 
@@ -21,5 +21,12 @@ impl LuaEngine {
     }
   }
 
+  ///
+  /// Completely unfiltered and unsandboxed file compiler/runner.
+  /// 
+  pub fn run_file(&self, file_location: String) {
+    let raw_code_string = read_to_string(file_location).unwrap();
+    let _ = self.lua.load(raw_code_string).exec();
+  }
   
 }
