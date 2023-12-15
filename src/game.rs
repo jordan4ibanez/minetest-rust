@@ -52,7 +52,7 @@ impl Game {
       server,
 
       loop_helper,
-      
+
       delta: 0.0,
       current_fps: 0.0,
     };
