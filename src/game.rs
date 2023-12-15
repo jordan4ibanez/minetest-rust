@@ -1,6 +1,6 @@
 mod client;
 mod server;
-mod scripting;
+mod lua_engine;
 
 use spin_sleep::LoopHelper;
 
@@ -43,7 +43,7 @@ impl Game {
       .report_interval_s(1.0)
       .build_with_target_rate(loop_helper_goal);
 
-    let mut game = Game {
+    Game {
       should_close: false,
 
       goal_fps,
@@ -56,9 +56,7 @@ impl Game {
 
       delta: 0.0,
       current_fps: 0.0,
-    };
-
-    game.loop_helper = return game;
+    }
   }
 
   pub fn enter_main_loop(&mut self) {
