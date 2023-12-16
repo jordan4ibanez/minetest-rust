@@ -21,12 +21,17 @@ export type ItemDefinition = {
   drawtype: number
 }
 
--- Singleton instances of raw data.
-_G.blocks = _G.blocks or {}
-_G.items = _G.items or {}
+-- A fancy closure.
+export type OnStep = (delta: number) -> nil
 
-local blocks: {[string] : BlockDefinition} = _G.blocks
-local items: {[string] : ItemDefinition}  = _G.items
+-- Singleton instances of raw data.
+_G.blocks  = _G.blocks  or {}
+_G.items   = _G.items   or {}
+_G.on_step = _G.on_step or {}
+
+local blocks:  {[string] : BlockDefinition} = _G.blocks
+local items:   {[string] : ItemDefinition}  = _G.items
+local on_step: Array<OnStep>                = _G.on_step
 
 -- Now we can ship the rest of the codebase back to the mod as a module.
 
@@ -51,6 +56,10 @@ function minetest.register_item(definition: ItemDefinition)
   if (items[definition.name] ~= nil) then
     error("error: " .. definition.name .. " is already a registered ")
   end
+end
+
+function minetest.register_globalstep(step_function: OnStep)
+  table.insert(on_step, step_function)
 end
 
 return minetest
