@@ -7,15 +7,12 @@ export type Block = {
 }
 
 -- Singleton instances of raw data.
-local blocks = _G.blocks;
-local items  = _G.items;
+_G.blocks = _G.blocks or {}
+_G.items = _G.items or {}
 
--- Utilize a closure iterator to automate this process.
-for _,container in ipairs({blocks, items}) do
-  if (container == nil) then
-    container = {}
-  end
-end
+local blocks: {[string] : Block} = _G.blocks
+local items  = _G.items
+
 
 -- Now we can ship the rest of the codebase back to the mod as a module.
 local minetest = {}
@@ -26,8 +23,10 @@ minetest.draw_type = {
   block_box = 2
 }
 
-function minetest.register_block(definition: Block) 
-
+function minetest.register_block(definition: Block)
+  print("minetest: Registering " .. definition.name)
+  blocks[definition.name] = definition
+  print("in global: " .. tostring(_G.blocks[definition.name]))
 end
 
 function minetest.cool(): nil
