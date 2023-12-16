@@ -58,8 +58,8 @@ function minetest.register_item(definition: ItemDefinition)
   end
 end
 
-function minetest.register_globalstep(step_function: OnStep)
-  table.insert(on_step, step_function)
+function minetest.register_on_step(step_closure: OnStep)
+  table.insert(on_step, step_closure)
 end
 
 return minetest
