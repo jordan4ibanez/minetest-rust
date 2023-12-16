@@ -1,5 +1,14 @@
 {
-  "robloxLsp.diagnostics.globals": [
-    "minetest"
-  ]
+  "luau-lsp.require.mode": "relativeToWorkspaceRoot",
+  "luau-lsp.sourcemap.autogenerate": false,
+  "luau-lsp.types.roblox": false,
+  "luau-lsp.completion.addParentheses": true,
+  "luau-lsp.completion.autocompleteEnd": true,
+  "luau-lsp.completion.addTabstopAfterParentheses": true,
+  "luau-lsp.completion.enabled": true,
+  "luau-lsp.completion.imports.enabled": true,
+  "luau-lsp.completion.fillCallArguments": true,
+  "luau-lsp.diagnostics.strictDatamodelTypes": true,
+  "luau-lsp.index.enabled": true,
+  "luau-lsp.hover.strictDatamodelTypes": true
 }
