@@ -24,9 +24,11 @@ minetest.draw_type = {
 }
 
 function minetest.register_block(definition: Block)
-  print("minetest: Registering " .. definition.name)
+  if (blocks[definition.name] ~= nil) then
+    error(definition.name .. " is already a registered block.")
+  end
   blocks[definition.name] = definition
-  print("in global: " .. tostring(_G.blocks[definition.name]))
+  print("minetest: registered block [" .. definition.name .. "]")
 end
 
 function minetest.cool(): nil
