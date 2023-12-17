@@ -9,7 +9,7 @@ print("minetest is running: " .. _VERSION)
 -- This is done naively with a ton of room for improvement.
 -- This will need an engine side lock.
 
-local clock:() -> number = os.clock;
+local clock: () -> number = os.clock;
 
 -- Let's start where it all began.
 local current_time: number = 0;
