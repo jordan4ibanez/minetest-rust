@@ -18,7 +18,7 @@ if (_G.internal_created_do_not_modify) then
   error("minetest: DO NOT import __internal into your mods!")
 else
   local check: number | nil = _G.internal_creation_time_stamp_do_not_modify
-  if (check ~= nil or (check ~= nil and check ~= current_time)) then
+  if (check ~= nil and check ~= current_time) then
     error("minetest: DO NOT import __internal into your mods!")
   end
 end
