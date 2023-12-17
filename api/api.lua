@@ -1,6 +1,11 @@
 --!strict
 
 ----------
+-- Cached functions.
+local insert = table.insert
+
+
+----------
 -- Helper types.
 
 export type Array<T> = {T}
@@ -69,7 +74,7 @@ function minetest.register_item(definition: ItemDefinition)
 end
 
 function minetest.register_on_step(step_closure: OnStep)
-  table.insert(on_step, step_closure)
+  insert(on_step, step_closure)
 end
 
 return minetest
