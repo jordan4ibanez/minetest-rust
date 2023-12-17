@@ -62,7 +62,7 @@ impl LuaEngine {
   }
 
   ///
-  /// Run raw code in the LuauJIT VM environment.
+  /// Run the global on_step function in the LuauJIT VM environment.
   ///
   pub fn on_step(&self, delta: f64) {
     self.run_code(format!("_G.engine_on_step_function({})", delta))
