@@ -45,7 +45,7 @@ local function do_on_step(delta: number)
   end
 end
 
-_G.on_step = function(delta: number)
+_G.engine_on_step_function = function(delta: number)
   local time_stamp: number = clock()  
 
   if (old_time_stamp == time_stamp) then
