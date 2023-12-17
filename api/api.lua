@@ -1,9 +1,13 @@
 --!strict
 
+----------
 -- Helper types.
+
 export type Array<T> = {T}
 
+----------
 -- Standard minetest types.
+
 export type BlockDefinition = {
   name: string,
   description: string,
@@ -31,9 +35,13 @@ local blocks:  {[string] : BlockDefinition} = _G.blocks
 local items:   {[string] : ItemDefinition}  = _G.items
 local on_step: Array<OnStep>                = _G.on_step
 
+----------
 -- Now we can ship the rest of the codebase back to the mod as a module.
 
-local minetest = {}
+-- We want to avoid piling up memory, so we're just going to overwrite.
+-- This spends CPU to save memory.
+_G.minetest = _G.minetest or {}
+local minetest = _G.minetest
 
 minetest.draw_type = {
   air       = 0,
