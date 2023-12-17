@@ -4,5 +4,5 @@ local vector = require("api/vector")
 local vec_test: vector.Vec2 = vector.vec2(1, 2)
 
 minetest.register_on_step(function(delta: number)
-  print("hello from LuauJIT: ", delta)
+  print("hello from LuauJIT: " .. tostring(delta))
 end)
