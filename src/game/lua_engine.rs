@@ -1,6 +1,6 @@
 use std::fs::read_to_string;
 
-use mlua::{Lua, Table, Function};
+use mlua::Lua;
 
 ///
 /// LuaEngine encapsulates the Luau virtual machine.
@@ -9,11 +9,10 @@ use mlua::{Lua, Table, Function};
 ///
 pub struct LuaEngine {
   lua: Lua,
-  output_code_string: bool
+  output_code_string: bool,
 }
 
 impl LuaEngine {
-
   pub fn new() -> Self {
     let new_engine = LuaEngine {
       lua: Lua::new(),
@@ -22,23 +21,23 @@ impl LuaEngine {
 
     new_engine.generate_internal();
 
-    return new_engine
+    return new_engine;
   }
 
   ///
   /// Generates the on_step(delta: number) function so it becomes a secret and hidden engine component.
-  /// 
+  ///
   pub fn generate_internal(&self) {
     self.run_file("./api/__internal.luau".to_string())
   }
 
   ///
   /// Completely unfiltered and unsandboxed code compiler/runner.
-  /// 
+  ///
   pub fn run_code(&self, raw_code: String) {
     match self.lua.load(raw_code).exec() {
-        Ok(_) => (),
-        Err(err) => panic!("minetest: A fatal error has occurred! {}", err),
+      Ok(_) => (),
+      Err(err) => panic!("minetest: A fatal error has occurred! {}", err),
     }
   }
 
@@ -63,8 +62,8 @@ impl LuaEngine {
   }
 
   ///
-  /// The Luau environment is pretty neat.
-  /// 
+  /// Run raw code in the LuauJIT VM environment.
+  ///
   pub fn on_step(&self, delta: f64) {
     self.run_code(format!("_G.engine_on_step_function({})", delta))
   }
