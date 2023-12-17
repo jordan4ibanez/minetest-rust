@@ -66,6 +66,6 @@ impl LuaEngine {
   /// The Luau environment is pretty neat.
   /// 
   pub fn on_step(&self, delta: f64) {
-
+    self.run_code(format!("_G.engine_on_step_function({})", delta))
   }
 }
