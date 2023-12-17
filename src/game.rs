@@ -78,6 +78,7 @@ impl Game {
     self.delta = self.loop_helper.loop_start_s();
 
     //? Here is where the logic loop goes.
+    self.lua_engine.on_step(self.delta);
 
     if let Some(fps) = self.loop_helper.report_rate() {
       self.current_fps = fps;
