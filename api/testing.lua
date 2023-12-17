@@ -7,9 +7,3 @@ minetest.register_on_step(function(delta: number)
   print("hello from LuauJIT: " .. tostring(delta))
 end)
 
-require("api/testing/mangle_test")
-
-
-minetest.register_on_step(function()
-  print("test2")
-end)
