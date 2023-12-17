@@ -7,3 +7,7 @@ minetest.register_on_step(function(delta: number)
   print("hello from LuauJIT: " .. tostring(delta))
 end)
 
+
+minetest.register_on_step(function()
+  print("test2")
+end)
