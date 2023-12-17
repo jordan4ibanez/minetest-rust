@@ -1,7 +1,5 @@
 --!strict
 
-print("minetest is running: " .. _VERSION)
-
 -- Helper types.
 export type Array<T> = {T}
 
