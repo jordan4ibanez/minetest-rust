@@ -28,7 +28,7 @@ impl LuaEngine {
   /// Generates the on_step(delta: number) function so it becomes a secret and hidden engine component.
   ///
   pub fn generate_internal(&self) {
-    self.run_file("./api/__internal.luau".to_string())
+    self.run_file("./api/__internal.lua".to_string())
   }
 
   ///
