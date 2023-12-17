@@ -56,5 +56,3 @@ _G.engine_on_step_function = function(delta: number)
 
   old_time_stamp = time_stamp
 end
-
--- "minetest: DO NOT run _G.on_step in your mods!"
