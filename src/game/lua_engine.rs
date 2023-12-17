@@ -13,10 +13,32 @@ pub struct LuaEngine {
 }
 
 impl LuaEngine {
+
   pub fn new() -> Self {
-    LuaEngine {
+    let new_engine = LuaEngine {
       lua: Lua::new(),
       output_code_string: false,
+    };
+
+    new_engine.generate_internal();
+
+    return new_engine
+  }
+
+  ///
+  /// Generates the on_step(delta: number) function so it becomes a secret and hidden engine component.
+  /// 
+  pub fn generate_internal(&self) {
+    self.run_file("./api/__internal.luau".to_string())
+  }
+
+  ///
+  /// Completely unfiltered and unsandboxed code compiler/runner.
+  /// 
+  pub fn run_code(&self, raw_code: String) {
+    match self.lua.load(raw_code).exec() {
+        Ok(_) => (),
+        Err(err) => panic!("minetest: A fatal error has occurred! {}", err),
     }
   }
 
@@ -32,6 +54,9 @@ impl LuaEngine {
     match self.lua.load(raw_code_string).exec() {
       Ok(_) => (),
       Err(err) => {
+        // This needs some modification so we can post just these two elements:
+        // 1.) Lua file
+        // 2.) Line/Offset
         panic!("Fatal error in {}: {}", file_location, err)
       }
     }
