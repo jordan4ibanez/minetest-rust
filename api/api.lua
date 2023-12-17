@@ -40,8 +40,12 @@ local on_step: Array<OnStep>                = _G.on_step
 
 -- We want to avoid piling up memory, so we're just going to overwrite.
 -- This spends CPU to save memory.
-_G.minetest = _G.minetest or {}
-local minetest = _G.minetest
+-- This is also done like this so that linting works properly.
+local minetest = {}
+
+-- Mangle together the internal references.
+minetest = _G.minetest or {}
+_G.minetest = minetest
 
 minetest.draw_type = {
   air       = 0,
