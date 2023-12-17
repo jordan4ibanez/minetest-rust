@@ -50,6 +50,7 @@ impl LuaEngine {
     if self.output_code_string {
       println!("{}", raw_code_string);
     }
+
     match self.lua.load(raw_code_string).exec() {
       Ok(_) => (),
       Err(err) => {
