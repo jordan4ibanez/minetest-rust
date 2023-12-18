@@ -111,7 +111,7 @@ fn game_has_mods(games_dir: &String, game_name: &String) -> bool {
 }
 
 ///
-/// Ensure that each of the game's mods has a main.lua file.
+/// Ensure that each of the game's mods has a main.lua and a mod.conf file.
 ///
 /// Result<(), (mod name, mod.conf/main.lua)>
 ///
