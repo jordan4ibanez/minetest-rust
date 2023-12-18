@@ -1,11 +1,8 @@
 ///
 /// This module is a thin wrapper around the built in rust components.
-/// Made to be ultra-readable
+/// Made to be as readable as possible.
 ///
-/// It is done like this so we can have razor sharp components to bolt
-/// into different elements of the engine.
-///
-/// It's also VERY specific to game-related components.
+/// This is specifically written for the LuaEngine.
 ///
 /// This flows down in complexity until you get the the public procedure.
 ///
