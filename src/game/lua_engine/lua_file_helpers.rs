@@ -54,9 +54,9 @@ fn game_exists(games_dir: &String, game_name: &String) -> bool {
 }
 
 ///
-/// Check if a games mod folder exists.
+/// Check if a games mods folder exists.
 ///
-fn game_mod_folder_exists(games_dir: &String, game_name: &String) -> bool {
+fn game_mods_folder_exists(games_dir: &String, game_name: &String) -> bool {
   let mut base_path = give_game_path(&games_dir, game_name);
   base_path.push_str("/mods/");
 
@@ -65,24 +65,25 @@ fn game_mod_folder_exists(games_dir: &String, game_name: &String) -> bool {
 
 
 ///
-/// Get the mod folders inside of a game's mods dir.
+/// Get the mods folders inside of a game's dir.
 /// 
-fn get_game_mod_folders(games_dir: &String, game_name: &String) -> ReadDir {
+fn get_game_mods_folders(games_dir: &String, game_name: &String) -> ReadDir {
   read_dir(give_game_mod_path(games_dir, game_name)).unwrap()
 }
 
 fn game_has_mods(games_dir: &String, game_name: &String) -> bool {
-  let folders = get_game_mod_folders(games_dir, game_name);
+  let folders: ReadDir = get_game_mods_folders(games_dir, game_name);
 
   let mut folder_counter = 0;
   folders.for_each(|folder_result| {
+    // We could chain these unwraps to tell the user they don't have access.
+    // Use a match if this is decided upon.
     if folder_result.unwrap().file_type().unwrap().is_dir() {
       folder_counter += 1;
     }
   });
-  println!("found {} folders in {}.", folder_counter, game_name);
 
-  return true
+  folder_counter > 0
 }
 
 
@@ -98,9 +99,11 @@ pub fn check_game(games_dir: &String, game_name: &String) {
     panic!("minetest: game {} does not exist!", game_name)
   }
 
-  if !game_mod_folder_exists(games_dir, game_name) {
+  if !game_mods_folder_exists(games_dir, game_name) {
     panic!("minetest: game {} does not have mods folder!", game_name)
   }
 
-  game_has_mods(games_dir, game_name);
+  if !game_has_mods(games_dir, game_name) {
+    panic!("minetest: game {} does not have any mods!", game_name)
+  }
 }
