@@ -68,7 +68,10 @@ impl LuaEngine {
         // This needs some modification so we can post just these two elements:
         // 1.) Lua file
         // 2.) Line/Offset
-        panic!("Fatal error in {}: {}", file_location, err)
+        panic!(
+          "minetest: encountered fatal mod error in {}: {}",
+          file_location, err
+        )
       }
     }
   }
