@@ -111,7 +111,7 @@ fn game_has_mods(games_dir: &String, game_name: &String) -> bool {
 ///
 /// Result<(), (mod name, mod.conf/main.lua)>
 ///
-fn game_mods_have_main_and_conf_lua(
+fn game_mods_have_main_and_conf(
   games_dir: &String,
   game_name: &String,
 ) -> Result<(), (String, String)> {
@@ -187,7 +187,7 @@ pub fn check_game(games_dir: &String, game_name: &String) {
     panic!("minetest: game [{}] does not have any mods!", game_name);
   }
 
-  match game_mods_have_main_and_conf_lua(games_dir, game_name) {
+  match game_mods_have_main_and_conf(games_dir, game_name) {
     Ok(_) => (),
     Err(error_tuple) => panic!(
       "minetest: mod [{}] in game [{}] has no [{}]!",
