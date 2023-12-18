@@ -8,7 +8,7 @@ use std::{fs, path::Path};
 
 
 
-pub fn dir_exists(path: String) -> bool {
-  Path::new(&path).exists()
+pub fn dir_exists(path: &String) -> bool {
+  Path::new(path).exists()
 }
 
