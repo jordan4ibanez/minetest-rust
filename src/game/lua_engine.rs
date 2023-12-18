@@ -4,7 +4,7 @@ use std::fs::read_to_string;
 
 use mlua::Lua;
 
-use self::lua_file_helpers::check_game;
+use self::lua_file_helpers::{check_game, file_exists, get_game_path};
 
 ///
 /// LuaEngine encapsulates the Luau virtual machine.
@@ -78,8 +78,19 @@ impl LuaEngine {
 
   ///
   /// Parses the game.conf file.
+  /// A double check on the conf file's existence.
   ///
-  fn parse_game_conf(&self, games_dir: &String, game_name: &String) {}
+  fn parse_game_conf(&mut self, games_dir: &String, game_name: &String) {
+    let mut base_path = get_game_path(games_dir, game_name);
+    base_path.push_str("/game.conf");
+    if !file_exists(&base_path) {
+      panic!(
+        "minetest: double check on game [{}] game.conf failed!",
+        game_name
+      );
+    }
+    
+  }
 
   ///
   /// Load up each mod in a game.
@@ -90,13 +101,15 @@ impl LuaEngine {
   ///
   /// Load up a game directly.
   ///
-  pub fn load_game(&self, game_name: String) {
+  pub fn load_game(&mut self, game_name: String) {
     // Todo: Maybe this can be a compile time const?
     // We can choose between run-in-place or system installed
     let games_dir = String::from("./games");
 
-    check_game(&games_dir, &game_name)
+    check_game(&games_dir, &game_name);
 
     //todo: mod conf parser to set game state variables.
+    // Use this to set server variables.
+    self.parse_game_conf(&games_dir, &game_name);
   }
 }
