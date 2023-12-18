@@ -3,6 +3,7 @@ mod file_helpers;
 use std::fs::read_to_string;
 
 use mlua::Lua;
+use string_builder::Builder;
 
 use self::file_helpers::dir_exists;
 
@@ -77,7 +78,16 @@ impl LuaEngine {
   /// Load up a game directly.
   /// 
   pub fn load_game(&self, game_name: String) {
-    let blah = dir_exists(String::from("./mods/") + &game_name);
-    println!("Does it exist? {}", blah);
+
+    // This can be modified in the future for run-in-place vs system
+    let mut base_path = String::from("./games/");
+    base_path.push_str(&game_name);
+
+    match dir_exists(&base_path) {
+      true => {
+        
+      },
+      false => panic!("minetest: game {} does not exist!", base_path),
+    };
   }
 }
