@@ -12,7 +12,6 @@
 use std::{
   fs::{read_dir, ReadDir},
   path::Path,
-  thread::current,
 };
 
 ///
