@@ -1,5 +1,3 @@
-use std::{path::Path, fs::{DirEntry, read_dir, ReadDir}};
-
 ///
 /// This module is a thin wrapper around the built in rust components.
 /// Made to be ultra-readable
@@ -11,6 +9,9 @@ use std::{path::Path, fs::{DirEntry, read_dir, ReadDir}};
 ///
 /// This flows down in complexity until you get the the public procedure.
 ///
+
+use std::{path::Path, fs::{read_dir, ReadDir}};
+
 
 ///
 /// A micro helper function.
@@ -32,15 +33,15 @@ fn check_games_folder(games_dir: &String) -> bool {
 /// A micro helper function.
 /// Generates a base path for a game.
 ///
-fn give_game_path(games_dir: &String, game_name: &String) -> String {
+fn get_game_path(games_dir: &String, game_name: &String) -> String {
   let mut base_path = games_dir.clone();
   base_path.push_str("/");
   base_path.push_str(&game_name);
   base_path
 }
 
-fn give_game_mod_path(games_dir: &String, game_name: &String) -> String {
-  let mut base_path = give_game_path(games_dir, game_name);
+fn get_game_mod_path(games_dir: &String, game_name: &String) -> String {
+  let mut base_path = get_game_path(games_dir, game_name);
   base_path.push_str("/mods/");
 
   base_path
@@ -50,15 +51,26 @@ fn give_game_mod_path(games_dir: &String, game_name: &String) -> String {
 /// Check if a game exists.
 ///
 fn game_exists(games_dir: &String, game_name: &String) -> bool {
-  dir_exists(&give_game_path(&games_dir, game_name))
+  dir_exists(&get_game_path(&games_dir, game_name))
 }
 
 ///
 /// Check if a games mods folder exists.
 ///
 fn game_mods_folder_exists(games_dir: &String, game_name: &String) -> bool {
-  let mut base_path = give_game_path(&games_dir, game_name);
+  let mut base_path = get_game_path(&games_dir, game_name);
   base_path.push_str("/mods/");
+
+  dir_exists(&base_path)
+}
+
+
+///
+/// Ensure that the game has a mod.conf file.
+/// 
+fn game_has_conf_file(games_dir: &String, game_name: &String) -> bool {
+  let mut base_path = get_game_path(games_dir, game_name);
+  base_path.push_str("/mod.conf");
 
   dir_exists(&base_path)
 }
@@ -68,9 +80,12 @@ fn game_mods_folder_exists(games_dir: &String, game_name: &String) -> bool {
 /// Get the mods folders inside of a game's dir.
 /// 
 fn get_game_mods_folders(games_dir: &String, game_name: &String) -> ReadDir {
-  read_dir(give_game_mod_path(games_dir, game_name)).unwrap()
+  read_dir(get_game_mod_path(games_dir, game_name)).unwrap()
 }
 
+///
+/// Ensure that the game's mods dir has at least one folder.
+/// 
 fn game_has_mods(games_dir: &String, game_name: &String) -> bool {
   let folders: ReadDir = get_game_mods_folders(games_dir, game_name);
 
@@ -92,18 +107,22 @@ fn game_has_mods(games_dir: &String, game_name: &String) -> bool {
 ///
 pub fn check_game(games_dir: &String, game_name: &String) {
   if !check_games_folder(games_dir) {
-    panic!("minetest: games folder [{}] does not exist.", games_dir)
+    panic!("minetest: games folder [{}] does not exist.", games_dir);
   }
 
   if !game_exists(games_dir, game_name) {
-    panic!("minetest: game {} does not exist!", game_name)
+    panic!("minetest: game {} does not exist!", game_name);
   }
 
   if !game_mods_folder_exists(games_dir, game_name) {
-    panic!("minetest: game {} does not have mods folder!", game_name)
+    panic!("minetest: game {} does not have a mods folder!", game_name);
+  }
+
+  if !game_has_conf_file(games_dir, game_name) {
+    panic!("minetest: game {} does not have a mod.conf file!", game_name);
   }
 
   if !game_has_mods(games_dir, game_name) {
-    panic!("minetest: game {} does not have any mods!", game_name)
+    panic!("minetest: game {} does not have any mods!", game_name);
   }
 }
