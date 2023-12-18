@@ -77,6 +77,8 @@ impl LuaEngine {
   /// Load up a game directly.
   ///
   pub fn load_game(&self, game_name: String) {
+
+    // Todo: Maybe this can be a compile time const?
     // We can choose between run-in-place or system installed
     let games_dir = String::from("./games");
 
