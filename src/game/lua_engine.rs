@@ -77,12 +77,15 @@ impl LuaEngine {
   }
 
   ///
+  /// Parses the game.conf file.
+  ///
+  fn parse_game_conf(&self, games_dir: &String, game_name: &String) {}
+
+  ///
   /// Load up each mod in a game.
-  /// todo: ask rubenwardy about hierarchy dependencies.
-  /// 
-  fn load_game_mods(&self, game_name: String) {
-    
-  }
+  /// todo: use dependency hierarchy [topological sorting (reverse postorder)topological sorting (reverse postorder)] <- luatic
+  ///
+  fn load_game_mods(&self, game_name: String) {}
 
   ///
   /// Load up a game directly.
@@ -95,7 +98,5 @@ impl LuaEngine {
     check_game(&games_dir, &game_name)
 
     //todo: mod conf parser to set game state variables.
-
-
   }
 }
