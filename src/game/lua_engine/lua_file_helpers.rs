@@ -113,9 +113,9 @@ fn game_has_mods(games_dir: &String, game_name: &String) -> bool {
 ///
 /// Ensure that each of the game's mods has a main.lua file.
 /// 
-/// Result<(), Mod that failed check>
+/// Result<(), (mod name, mod.conf/main.lua)>
 /// 
-fn game_mods_have_main_lua(games_dir: &String, game_name: &String) -> Result<(), String> {
+fn game_mods_have_main_and_conf_lua(games_dir: &String, game_name: &String) -> Result<(), (String, String)> {
 
   // Iterate each file in game's /mods/ folder.
   for folder_result in get_game_mods_folders(games_dir, game_name) {
@@ -128,16 +128,36 @@ fn game_mods_have_main_lua(games_dir: &String, game_name: &String) -> Result<(),
       continue;
     }
 
-    let mut current_mod_dir = String::from(current_mod_result.path().to_str().unwrap());
-    current_mod_dir.push_str("/main.lua");
+    let current_mod_dir = String::from(current_mod_result.path().to_str().unwrap());
 
-    if !file_exists(&current_mod_dir) {
+    //* First we check main.lua
+
+    let mut main_lua_file = current_mod_dir.clone();
+    main_lua_file.push_str("/main.lua");
+
+    if !file_exists(&main_lua_file) {
       //todo: We should have a conf parser to get the mod name.
       // We'll just use the folder name for now.
       let current_mod_name = String::from(current_mod_result.file_name().to_str().unwrap());
 
-      return Err(current_mod_name);
+      return Err((current_mod_name, "main.lua".to_string()));
     }
+
+    //* Then we check mod.conf
+
+    let mut mod_conf_file = current_mod_dir.clone();
+    mod_conf_file.push_str("/mod.conf");
+
+    if !file_exists(&mod_conf_file) {
+      //todo: We should have a conf parser to get the mod name.
+      // We'll just use the folder name for now.
+      let current_mod_name = String::from(current_mod_result.file_name().to_str().unwrap());
+
+      return Err((current_mod_name, "mod.conf".to_string()));
+    }
+
+    
+
   }
 
   Ok(())
@@ -168,8 +188,8 @@ pub fn check_game(games_dir: &String, game_name: &String) {
     panic!("minetest: game [{}] does not have any mods!", game_name);
   }
 
-  match game_mods_have_main_lua(games_dir, game_name) {
+  match game_mods_have_main_and_conf_lua(games_dir, game_name) {
     Ok(_) => (),
-    Err(mod_name) => panic!("minetest: mod [{}] in game [{}] has no main.lua!", mod_name, game_name),
+    Err(error_tuple) => panic!("minetest: mod [{}] in game [{}] has no [{}]!", error_tuple.0, game_name, error_tuple.1),
 }
 }
