@@ -9,9 +9,11 @@
 ///
 /// This flows down in complexity until you get the the public procedure.
 ///
-
-use std::{path::Path, fs::{read_dir, ReadDir}, thread::current};
-
+use std::{
+  fs::{read_dir, ReadDir},
+  path::Path,
+  thread::current,
+};
 
 ///
 /// A micro helper function.
@@ -25,7 +27,7 @@ fn dir_exists(path: &String) -> bool {
 /// This is the same as dir_exists.
 /// It is only separate so we know explicitly if we're looking for
 /// a file, or a dir.
-/// 
+///
 fn file_exists(path: &String) -> bool {
   Path::new(path).exists()
 }
@@ -73,10 +75,9 @@ fn game_mods_folder_exists(games_dir: &String, game_name: &String) -> bool {
   dir_exists(&base_path)
 }
 
-
 ///
 /// Ensure that the game has a game.conf file.
-/// 
+///
 fn game_has_conf_file(games_dir: &String, game_name: &String) -> bool {
   let mut base_path = get_game_path(games_dir, game_name);
   base_path.push_str("/game.conf");
@@ -84,17 +85,16 @@ fn game_has_conf_file(games_dir: &String, game_name: &String) -> bool {
   dir_exists(&base_path)
 }
 
-
 ///
 /// Get the mods folders inside of a game's dir.
-/// 
+///
 fn get_game_mods_folders(games_dir: &String, game_name: &String) -> ReadDir {
   read_dir(get_game_mod_path(games_dir, game_name)).unwrap()
 }
 
 ///
 /// Ensure that the game's mods dir has at least one folder.
-/// 
+///
 fn game_has_mods(games_dir: &String, game_name: &String) -> bool {
   let folders: ReadDir = get_game_mods_folders(games_dir, game_name);
 
@@ -112,14 +112,15 @@ fn game_has_mods(games_dir: &String, game_name: &String) -> bool {
 
 ///
 /// Ensure that each of the game's mods has a main.lua file.
-/// 
+///
 /// Result<(), (mod name, mod.conf/main.lua)>
-/// 
-fn game_mods_have_main_and_conf_lua(games_dir: &String, game_name: &String) -> Result<(), (String, String)> {
-
+///
+fn game_mods_have_main_and_conf_lua(
+  games_dir: &String,
+  game_name: &String,
+) -> Result<(), (String, String)> {
   // Iterate each file in game's /mods/ folder.
   for folder_result in get_game_mods_folders(games_dir, game_name) {
-
     let current_mod_result = folder_result.unwrap();
 
     // In case dumping random files into the /mods/ folder ever
@@ -155,14 +156,10 @@ fn game_mods_have_main_and_conf_lua(games_dir: &String, game_name: &String) -> R
 
       return Err((current_mod_name, "mod.conf".to_string()));
     }
-
-    
-
   }
 
   Ok(())
 }
-
 
 ///
 /// Runs all checks in one clean procedure.
@@ -177,11 +174,17 @@ pub fn check_game(games_dir: &String, game_name: &String) {
   }
 
   if !game_mods_folder_exists(games_dir, game_name) {
-    panic!("minetest: game [{}] does not have a mods folder!", game_name);
+    panic!(
+      "minetest: game [{}] does not have a mods folder!",
+      game_name
+    );
   }
 
   if !game_has_conf_file(games_dir, game_name) {
-    panic!("minetest: game [{}] does not have a mod.conf file!", game_name);
+    panic!(
+      "minetest: game [{}] does not have a mod.conf file!",
+      game_name
+    );
   }
 
   if !game_has_mods(games_dir, game_name) {
@@ -190,6 +193,9 @@ pub fn check_game(games_dir: &String, game_name: &String) {
 
   match game_mods_have_main_and_conf_lua(games_dir, game_name) {
     Ok(_) => (),
-    Err(error_tuple) => panic!("minetest: mod [{}] in game [{}] has no [{}]!", error_tuple.0, game_name, error_tuple.1),
-}
+    Err(error_tuple) => panic!(
+      "minetest: mod [{}] in game [{}] has no [{}]!",
+      error_tuple.0, game_name, error_tuple.1
+    ),
+  }
 }
