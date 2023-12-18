@@ -24,7 +24,7 @@ fn dir_exists(path: &String) -> bool {
 /// It is only separate so we know explicitly if we're looking for
 /// a file, or a dir.
 ///
-fn file_exists(path: &String) -> bool {
+pub fn file_exists(path: &String) -> bool {
   Path::new(path).exists()
 }
 
@@ -40,7 +40,7 @@ fn check_games_folder(games_dir: &String) -> bool {
 /// A micro helper function.
 /// Generates a base path for a game.
 ///
-fn get_game_path(games_dir: &String, game_name: &String) -> String {
+pub fn get_game_path(games_dir: &String, game_name: &String) -> String {
   let mut base_path = games_dir.clone();
   base_path.push_str("/");
   base_path.push_str(&game_name);
