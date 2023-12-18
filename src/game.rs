@@ -63,7 +63,9 @@ impl Game {
   }
 
   pub fn enter_main_loop(&mut self) {
-    self.lua_engine.run_file("./api/testing.lua".to_string());
+    
+    //* testing
+    self.lua_engine.load_game(String::from("minetest"));
 
     while !self.should_close {
       self.main()
