@@ -77,6 +77,14 @@ impl LuaEngine {
   }
 
   ///
+  /// Load up each mod in a game.
+  /// todo: ask rubenwardy about hierarchy dependencies.
+  /// 
+  fn load_game_mods(&self, game_name: String) {
+    
+  }
+
+  ///
   /// Load up a game directly.
   ///
   pub fn load_game(&self, game_name: String) {
@@ -85,5 +93,9 @@ impl LuaEngine {
     let games_dir = String::from("./games");
 
     check_game(&games_dir, &game_name)
+
+    //todo: mod conf parser to set game state variables.
+
+
   }
 }
