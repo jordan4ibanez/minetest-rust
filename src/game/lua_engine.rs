@@ -1,6 +1,10 @@
+mod file_helpers;
+
 use std::fs::read_to_string;
 
 use mlua::Lua;
+
+use self::file_helpers::dir_exists;
 
 ///
 /// LuaEngine encapsulates the Luau virtual machine.
@@ -22,6 +26,13 @@ impl LuaEngine {
     new_engine.generate_internal();
 
     return new_engine;
+  }
+
+  ///
+  /// Run the global on_step function in the LuauJIT VM environment.
+  ///
+  pub fn on_step(&self, delta: f64) {
+    self.run_code(format!("_G.engine_on_step_function({})", delta))
   }
 
   ///
@@ -63,9 +74,10 @@ impl LuaEngine {
   }
 
   ///
-  /// Run the global on_step function in the LuauJIT VM environment.
-  ///
-  pub fn on_step(&self, delta: f64) {
-    self.run_code(format!("_G.engine_on_step_function({})", delta))
+  /// Load up a game directly.
+  /// 
+  pub fn load_game(&self, game_name: String) {
+    let blah = dir_exists(String::from("./mods/") + &game_name);
+    println!("Does it exist? {}", blah);
   }
 }
