@@ -5,6 +5,12 @@ Copyright (C) 2010-2022 Perttu Ahola celeron55@gmail.com and contributors (see s
 
 -----
 
+(keeping this here for help)
+https://blessed.rs/crates
+
+
+-----
+
 A rebuild of minetest from the ground up by jordan4ibanez.
 
 If you would like to help me with this herculean undertaking in real time:
