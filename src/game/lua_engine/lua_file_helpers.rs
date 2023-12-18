@@ -95,13 +95,13 @@ fn game_has_mods(games_dir: &String, game_name: &String) -> bool {
   let folders: ReadDir = get_game_mods_folders(games_dir, game_name);
 
   let mut folder_counter = 0;
-  folders.for_each(|folder_result| {
+  for folder_result in folders {
     // We could chain these unwraps to tell the user they don't have access.
     // Use a match if this is decided upon.
     if folder_result.unwrap().file_type().unwrap().is_dir() {
       folder_counter += 1;
     }
-  });
+  }
 
   folder_counter > 0
 }
