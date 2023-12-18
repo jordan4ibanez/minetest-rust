@@ -1,10 +1,10 @@
-mod file_helpers;
+mod lua_file_helpers;
 
 use std::fs::read_to_string;
 
 use mlua::Lua;
 
-use self::file_helpers::dir_exists;
+use self::lua_file_helpers::dir_exists;
 
 ///
 /// LuaEngine encapsulates the Luau virtual machine.
