@@ -4,7 +4,7 @@ use std::fs::read_to_string;
 
 use mlua::Lua;
 
-use self::lua_file_helpers::{dir_exists, game_exists};
+use self::lua_file_helpers::check_game;
 
 ///
 /// LuaEngine encapsulates the Luau virtual machine.
@@ -77,10 +77,9 @@ impl LuaEngine {
   /// Load up a game directly.
   ///
   pub fn load_game(&self, game_name: String) {
-    if !game_exists(&game_name) {
-      panic!("minetest: game {} does not exist!", game_name)
-    }
+    // We can choose between run-in-place or system installed
+    let games_dir = String::from("./games");
 
-    
+    check_game(&games_dir, &game_name)
   }
 }
