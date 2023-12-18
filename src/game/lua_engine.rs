@@ -3,7 +3,6 @@ mod file_helpers;
 use std::fs::read_to_string;
 
 use mlua::Lua;
-use string_builder::Builder;
 
 use self::file_helpers::dir_exists;
 
