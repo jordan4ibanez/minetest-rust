@@ -63,7 +63,6 @@ impl Game {
   }
 
   pub fn enter_main_loop(&mut self) {
-    
     //* testing
     self.lua_engine.load_game(String::from("minetest"));
 
