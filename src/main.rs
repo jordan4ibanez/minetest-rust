@@ -8,7 +8,7 @@ use command_line::CommandLineInterface;
 use game::*;
 
 fn main() {
-  // Game is one big ol' ARC smart pointer.
+  // Game is held in an ARC smart pointer.
   //* - (A)tomically
   //* - (R)eference
   //* - (C)ounted
