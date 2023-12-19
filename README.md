@@ -14,7 +14,14 @@ https://blessed.rs/crates
 ## mold
 An ultra-fast linker which you can optionally use!
 
-Please install mold then uncomment the flags [here](https://github.com/jordan4ibanez/minetest-rust/blob/master/.cargo/config.toml) if you want to use it.
+Please install mold then uncomment the following to `.cargo/config.toml`` if you want to use it.
+```toml
+[target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/mold"]
+```
+
+I do not use windows or mac, if you would like to test it with those, feel free to add instructions.
 
 github repo: https://github.com/rui314/mold
 
