@@ -23,11 +23,11 @@ pub struct CommandLineInterface {
   #[arg(short, long,  default_value_t = false)]
   pub server: bool,
 
-  /// Start minetest with a specific game.
+  /// Start server with a specific game.
   #[arg(short, long, default_value_t = String::from("minetest"))]
   pub game: String,
 
-  /// Start the server on a specific port.
+  /// Start server on a specific port.
   #[arg(short, long, default_value_t = 30_001)]
   pub port: i32,
 }
