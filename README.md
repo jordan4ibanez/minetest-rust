@@ -7,6 +7,13 @@ Copyright (C) 2010-2023 Perttu Ahola celeron55@gmail.com and contributors (see s
 
 -----
 
+This is a rebuild of minetest from the ground up by jordan4ibanez.
+
+If you would like to help me with this herculean undertaking in real time:
+https://discord.gg/Z2wCscTB4F
+
+-----
+
 (keeping this here for help)
 https://blessed.rs/crates
 
@@ -26,12 +33,5 @@ I do not use windows or mac, if you would like to test it with those, feel free 
 github repo: https://github.com/rui314/mold
 
 mold available repo packages: https://repology.org/project/mold/versions
-
------
-
-A rebuild of minetest from the ground up by jordan4ibanez.
-
-If you would like to help me with this herculean undertaking in real time:
-https://discord.gg/Z2wCscTB4F
 
 -----
