@@ -99,29 +99,14 @@ impl<'game> Game<'game> {
   }
 
   ///
-  /// This is the actual entry point for the game.
-  /// 
-  pub fn enter_main_loop(&mut self) {
-    //* testing
-
-    let game_name = String::from("minetest");
-
-    self.lua_engine.as_mut().unwrap().load_game(game_name);
-
-    while !self.should_close {
-      self.main()
-    }
-  }
-
-  ///
   /// This does the actual work of updating the framerate goal.
   /// It also automatically decides which one to use if this is
   /// A client, server, or singleplayer.
-  /// 
+  ///
   fn update_target_framerate_goal(&mut self) {
     let new_goal = match self.is_client {
-        true => self.goal_fps,
-        false => self.goal_tps,
+      true => self.goal_fps,
+      false => self.goal_tps,
     };
 
     // Now create a new struct with the desired goal.
@@ -154,12 +139,10 @@ impl<'game> Game<'game> {
     self.update_target_framerate_goal()
   }
 
-
-  // pub fn busy_work(&mut self) {
-  //   for i in 0..1_000 {}
-  // }
-
-  pub fn main(&mut self) {
+  ///
+  /// The main loop of the game engine.
+  /// 
+  fn main(&mut self) {
     self.delta = self.loop_helper.loop_start_s();
 
     //? Here is where the logic loop goes.
@@ -170,6 +153,21 @@ impl<'game> Game<'game> {
     }
 
     self.loop_helper.loop_sleep();
+  }
+
+  ///
+  /// This is the actual entry point for the game.
+  ///
+  pub fn enter_main_loop(&mut self) {
+    //* testing
+
+    let game_name = String::from("minetest");
+
+    self.lua_engine.as_mut().unwrap().load_game(game_name);
+
+    while !self.should_close {
+      self.main()
+    }
   }
 }
 
