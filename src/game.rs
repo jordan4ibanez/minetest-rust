@@ -2,7 +2,7 @@ mod client;
 mod lua_engine;
 mod server;
 
-use std::{cell::RefCell, sync::Arc, ops::Deref};
+use std::{cell::RefCell, ops::Deref, sync::Arc};
 
 use spin_sleep::LoopHelper;
 
@@ -19,7 +19,7 @@ pub struct Game<'a> {
   current_fps: f64,
   lua_engine: Option<LuaEngine<'a>>,
 
-  smart_pointer: Option<Arc<RefCell<Game<'a>>>>
+  smart_pointer: Option<Arc<RefCell<Game<'a>>>>,
 }
 
 impl<'a> Game<'a> {
@@ -64,21 +64,30 @@ impl<'a> Game<'a> {
 
       lua_engine: None,
 
-      smart_pointer: None
+      smart_pointer: None,
     };
 
     // We now transfer ownership of the entire Game into an ARC
     // with interior mutability with RefCell.
 
     // Interior mutability. Like a final java object.
-     let new_smart_pointer= Arc::new(RefCell::new(new_game));
+    let new_smart_pointer = Arc::new(RefCell::new(new_game));
 
     // We can simply dispatch the smart pointer to this struct by cloning it now.
     new_smart_pointer.deref().borrow_mut().smart_pointer = Some(new_smart_pointer.clone());
 
-    new_smart_pointer.deref().borrow_mut().lua_engine = Some(LuaEngine::new(new_smart_pointer.clone()));
+    new_smart_pointer.deref().borrow_mut().lua_engine =
+      Some(LuaEngine::new(new_smart_pointer.clone()));
 
     new_smart_pointer
+  }
+
+  ///
+  /// Allow self to distribute a clone of it's ARC smart pointer.
+  /// It's written like this so it's more obvious what's going on.
+  /// 
+  pub fn clone_smart_pointer(&self) -> Arc<RefCell<Game<'a>>> {
+    self.smart_pointer.clone().unwrap()
   }
 
   pub fn enter_main_loop(&mut self) {
