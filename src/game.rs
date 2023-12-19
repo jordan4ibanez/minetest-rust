@@ -2,11 +2,13 @@ mod client;
 mod lua_engine;
 mod server;
 
+use std::{cell::RefCell, sync::Arc, ops::Deref};
+
 use spin_sleep::LoopHelper;
 
 use self::{client::Client, lua_engine::LuaEngine, server::Server};
 
-pub struct Game {
+pub struct Game<'a> {
   should_close: bool,
   goal_fps: f64,
   goal_tps: f64,
@@ -15,11 +17,13 @@ pub struct Game {
   loop_helper: LoopHelper,
   delta: f64,
   current_fps: f64,
-  lua_engine: LuaEngine,
+  lua_engine: Option<LuaEngine<'a>>,
+
+  smart_pointer: Option<Arc<RefCell<Game<'a>>>>
 }
 
-impl Game {
-  pub fn new(is_client: bool) -> Self {
+impl<'a> Game<'a> {
+  pub fn new(is_client: bool) -> Arc<RefCell<Game<'a>>> {
     println!("Minetest initialized!");
 
     // We could parse the player's name instead from a file, or a first time ask. This is mutable after all.
@@ -44,7 +48,7 @@ impl Game {
       .report_interval_s(1.0)
       .build_with_target_rate(loop_helper_goal);
 
-    Game {
+    let new_game = Game {
       should_close: false,
 
       goal_fps,
@@ -58,28 +62,45 @@ impl Game {
       delta: 0.0,
       current_fps: 0.0,
 
-      lua_engine: LuaEngine::new(),
-    }
+      lua_engine: None,
+
+      smart_pointer: None
+    };
+
+    // We now transfer ownership of the entire Game into an ARC
+    // with interior mutability with RefCell.
+
+    // Interior mutability. Like a final java object.
+     let new_smart_pointer= Arc::new(RefCell::new(new_game));
+
+    // We can simply dispatch the smart pointer to this struct by cloning it now.
+    new_smart_pointer.deref().borrow_mut().smart_pointer = Some(new_smart_pointer.clone());
+
+    new_smart_pointer.deref().borrow_mut().lua_engine = Some(LuaEngine::new(new_smart_pointer.clone()));
+
+    new_smart_pointer
   }
 
   pub fn enter_main_loop(&mut self) {
     //* testing
-    self.lua_engine.load_game(String::from("minetest"));
+
+    let game_name = String::from("minetest");
+
+    self.lua_engine.as_mut().unwrap().load_game(game_name);
 
     while !self.should_close {
       self.main()
     }
   }
 
-  pub fn busy_work(&mut self) {
-    for i in 0..1_000 {}
-  }
+  // pub fn busy_work(&mut self) {
+  //   for i in 0..1_000 {}
+  // }
 
   pub fn main(&mut self) {
     self.delta = self.loop_helper.loop_start_s();
 
     //? Here is where the logic loop goes.
-    self.lua_engine.on_step(self.delta);
 
     if let Some(fps) = self.loop_helper.report_rate() {
       self.current_fps = fps;
@@ -90,7 +111,7 @@ impl Game {
   }
 }
 
-impl Drop for Game {
+impl<'a> Drop for Game<'a> {
   fn drop(&mut self) {
     println!("Minetest dropped!");
   }
