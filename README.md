@@ -13,6 +13,10 @@ https://blessed.rs/crates
 
 -----
 
+Look into mold as a linker in the future: https://github.com/rui314/mold
+
+-----
+
 A rebuild of minetest from the ground up by jordan4ibanez.
 
 If you would like to help me with this herculean undertaking in real time:
