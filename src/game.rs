@@ -146,6 +146,8 @@ impl<'game> Game<'game> {
     self.delta = self.loop_helper.loop_start_s();
 
     //? Here is where the logic loop goes.
+    // Might make this a client/server separated VM.
+    // self.lua_engine.as_ref().unwrap().on_step(self.delta);
 
     if let Some(fps) = self.loop_helper.report_rate() {
       self.current_fps = fps;
