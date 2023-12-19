@@ -98,6 +98,9 @@ impl<'game> Game<'game> {
     self.smart_pointer.clone().unwrap()
   }
 
+  ///
+  /// This is the actual entry point for the game.
+  /// 
   pub fn enter_main_loop(&mut self) {
     //* testing
 
@@ -110,14 +113,47 @@ impl<'game> Game<'game> {
     }
   }
 
-  pub fn set_goal_fps(&mut self, new_fps: f64) {
-    self.goal_fps = new_fps;
+  ///
+  /// This does the actual work of updating the framerate goal.
+  /// It also automatically decides which one to use if this is
+  /// A client, server, or singleplayer.
+  /// 
+  fn update_target_framerate_goal(&mut self) {
+    let new_goal = match self.is_client {
+        true => self.goal_fps,
+        false => self.goal_tps,
+    };
 
-    // If this is a server this has no side effects.
-    if self.is_client {
-      
-    }
+    // Now create a new struct with the desired goal.
+    self.loop_helper = LoopHelper::builder()
+      .report_interval_s(1.0)
+      .build_with_target_rate(new_goal);
   }
+
+  ///
+  /// Update the games' target FPS.
+  ///! Only has side effects if this is a client/singleplayer.
+  ///  
+  pub fn set_frame_rate_target(&mut self, new_fps: f64) {
+    // This will silently kick the actual worker function on.
+    // Written out like this so that server & client invokations do not
+    // get mixed up.
+    self.goal_fps = new_fps;
+    self.update_target_framerate_goal()
+  }
+
+  ///
+  /// Update the games' target TPS.
+  ///! Only has side effects if this is a server.
+  ///  
+  pub fn set_tick_rate_target(&mut self, new_tps: f64) {
+    // This will silently kick the actual worker function on.
+    // Written out like this so that server & client invokations do not
+    // get mixed up.
+    self.goal_tps = new_tps;
+    self.update_target_framerate_goal()
+  }
+
 
   // pub fn busy_work(&mut self) {
   //   for i in 0..1_000 {}
