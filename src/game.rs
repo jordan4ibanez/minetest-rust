@@ -6,6 +6,8 @@ use std::{cell::RefCell, ops::Deref, sync::Arc};
 
 use spin_sleep::LoopHelper;
 
+use crate::command_line::CommandLineInterface;
+
 use self::{client::Client, lua_engine::LuaEngine, server::Server};
 
 pub struct Game<'game> {
@@ -19,19 +21,12 @@ pub struct Game<'game> {
   loop_helper: LoopHelper,
   delta: f64,
   current_fps: f64,
-  lua_engine: Option<LuaEngine<'game>>,
   smart_pointer: Option<Arc<RefCell<Game<'game>>>>,
 }
 
 impl<'game> Game<'game> {
-  pub fn new(is_client: bool) -> Arc<RefCell<Game<'game>>> {
+  pub fn new(cli: CommandLineInterface) -> Arc<RefCell<Game<'game>>> {
     println!("Minetest initialized!");
-
-    // We could parse the player's name instead from a file, or a first time ask. This is mutable after all.
-    let client = match is_client {
-      true => Some(Client::new(String::from("singleplayer"))),
-      false => None,
-    };
 
     // 60 FPS goal for the moment.
     let goal_frames_per_second = 60.0;
@@ -39,10 +34,16 @@ impl<'game> Game<'game> {
     // 20 Tick Per Second goal.
     let goal_ticks_per_second = 20.0;
 
+    // We could parse the player's name instead from a file, or a first time ask. This is mutable after all.
+    let client = match cli.server {
+      false => Some(Client::new(String::from("singleplayer"))),
+      true => None,
+    };
+
     // Can auto deploy server and treat this struct like a simplified dispatcher.
-    let (server, loop_helper_goal) = match is_client {
-      false => (Some(Server::new()), goal_ticks_per_second),
-      true => (None, goal_frames_per_second),
+    let (server, loop_helper_goal) = match cli.server {
+      true => (Some(Server::new()), goal_ticks_per_second),
+      false => (None, goal_frames_per_second),
     };
 
     let loop_helper = LoopHelper::builder()
@@ -60,17 +61,15 @@ impl<'game> Game<'game> {
 
       // Simply reverse these then we can plop in a server when
       // the player enters singleplayer.
-      is_client,
+      is_client: !cli.server,
 
       // If this is a server we don't do any client things.
-      is_server: !is_client,
+      is_server: cli.server,
 
       loop_helper,
 
       delta: 0.0,
       current_fps: 0.0,
-
-      lua_engine: None,
 
       smart_pointer: None,
     };
@@ -83,9 +82,6 @@ impl<'game> Game<'game> {
 
     // We can simply dispatch the smart pointer to this struct by cloning it now.
     new_smart_pointer.deref().borrow_mut().smart_pointer = Some(new_smart_pointer.clone());
-
-    new_smart_pointer.deref().borrow_mut().lua_engine =
-      Some(LuaEngine::new(new_smart_pointer.clone()));
 
     new_smart_pointer
   }
@@ -165,11 +161,6 @@ impl<'game> Game<'game> {
   /// This is the actual entry point for the game.
   ///
   pub fn enter_main_loop(&mut self) {
-    //* testing
-
-    let game_name = String::from("minetest");
-
-    self.lua_engine.as_mut().unwrap().load_game(game_name);
 
     while !self.should_close {
       self.main()
