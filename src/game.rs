@@ -141,7 +141,7 @@ impl<'game> Game<'game> {
 
   ///
   /// The main loop of the game engine.
-  /// 
+  ///
   fn main(&mut self) {
     self.delta = self.loop_helper.loop_start_s();
 
