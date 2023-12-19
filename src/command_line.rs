@@ -1,13 +1,16 @@
 use clap::Parser;
 
 ///
-/// This is the CLI object.
+/// This is the CLI struct.
+/// 
 ///* (C)ommand
 ///* (L)ine
 ///* (I)nterface
+/// 
 /// This is a completely modular struct which
 /// will automatically parse and generate options
 /// for the end user to utilize.
+/// 
 
 #[derive(Parser, Debug)]
 #[command(about = 
