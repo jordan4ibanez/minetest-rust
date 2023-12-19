@@ -10,8 +10,8 @@ use self::{client::Client, lua_engine::LuaEngine, server::Server};
 
 pub struct Game<'game> {
   should_close: bool,
-  goal_fps: f64,
-  goal_tps: f64,
+  goal_frames_per_second: f64,
+  goal_ticks_per_second: f64,
   server: Option<Server>,
   client: Option<Client>,
   is_server: bool,
@@ -34,15 +34,15 @@ impl<'game> Game<'game> {
     };
 
     // 60 FPS goal for the moment.
-    let goal_fps = 60.0;
+    let goal_frames_per_second = 60.0;
 
     // 20 Tick Per Second goal.
-    let goal_tps = 20.0;
+    let goal_ticks_per_second = 20.0;
 
     // Can auto deploy server and treat this struct like a simplified dispatcher.
     let (server, loop_helper_goal) = match is_client {
-      false => (Some(Server::new()), goal_tps),
-      true => (None, goal_fps),
+      false => (Some(Server::new()), goal_ticks_per_second),
+      true => (None, goal_frames_per_second),
     };
 
     let loop_helper = LoopHelper::builder()
@@ -52,8 +52,8 @@ impl<'game> Game<'game> {
     let new_game = Game {
       should_close: false,
 
-      goal_fps,
-      goal_tps,
+      goal_frames_per_second,
+      goal_ticks_per_second,
 
       client,
       server,
@@ -105,8 +105,8 @@ impl<'game> Game<'game> {
   ///
   fn update_target_framerate_goal(&mut self) {
     let new_goal = match self.is_client {
-      true => self.goal_fps,
-      false => self.goal_tps,
+      true => self.goal_frames_per_second,
+      false => self.goal_ticks_per_second,
     };
 
     // Now create a new struct with the desired goal.
@@ -119,11 +119,11 @@ impl<'game> Game<'game> {
   /// Update the games' target FPS.
   ///! Only has side effects if this is a client/singleplayer.
   ///  
-  pub fn set_frame_rate_target(&mut self, new_fps: f64) {
+  pub fn set_frame_rate_target(&mut self, new_frames_per_second_goal: f64) {
     // This will silently kick the actual worker function on.
     // Written out like this so that server & client invokations do not
     // get mixed up.
-    self.goal_fps = new_fps;
+    self.goal_frames_per_second = new_frames_per_second_goal;
     self.update_target_framerate_goal()
   }
 
@@ -131,11 +131,11 @@ impl<'game> Game<'game> {
   /// Update the games' target TPS.
   ///! Only has side effects if this is a server.
   ///  
-  pub fn set_tick_rate_target(&mut self, new_tps: f64) {
+  pub fn set_tick_rate_target(&mut self, new_ticks_per_second_goal: f64) {
     // This will silently kick the actual worker function on.
     // Written out like this so that server & client invokations do not
     // get mixed up.
-    self.goal_tps = new_tps;
+    self.goal_ticks_per_second = new_ticks_per_second_goal;
     self.update_target_framerate_goal()
   }
 
