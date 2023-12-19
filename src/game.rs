@@ -151,7 +151,11 @@ impl<'game> Game<'game> {
 
     if let Some(fps) = self.loop_helper.report_rate() {
       self.current_fps = fps;
-      println!("TPS: {}", self.current_fps)
+      let time_measurement = match self.is_client {
+        true => "FPS",
+        false => "TPS",
+      };
+      println!("Debug {}: {}", time_measurement, self.current_fps)
     }
 
     self.loop_helper.loop_sleep();
