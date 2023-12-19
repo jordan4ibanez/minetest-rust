@@ -14,7 +14,7 @@ https://blessed.rs/crates
 ## mold
 An ultra-fast linker which you can optionally use!
 
-Please install mold then uncomment the following to `.cargo/config.toml`` if you want to use it.
+Please install mold then uncomment the following to `.cargo/config.toml` if you want to use it.
 ```toml
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
