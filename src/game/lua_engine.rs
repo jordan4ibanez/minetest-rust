@@ -1,5 +1,7 @@
 mod lua_file_helpers;
 
+use core::panic;
+
 use configparser::ini::Ini;
 use mlua::Lua;
 
@@ -85,10 +87,19 @@ impl LuaEngine {
 
     let mut config = Ini::new();
 
-    let test = read_file_to_string(&base_path);
-    
-    println!("{}", test);
-    
+    let game_raw_config_string = read_file_to_string(&base_path);
+
+    match config.read(game_raw_config_string) {
+        Ok(_) => println!("minetest: parsed [{}] game config.", game_name),
+        Err(e) => panic!("minetest: error parsing [{}] game config! {} ", game_name, e),
+    }
+
+    let real_game_name = match config.get("info", "name") {
+        Some(val) => val,
+        None => panic!("minetest [{}] is missing [name] in game.conf!", game_name),
+    };
+
+    println!("we got: {}", real_game_name);
   }
 
   ///
