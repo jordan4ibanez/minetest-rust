@@ -12,5 +12,5 @@ fn main() {
   // That's why this is written like this.
   // The entry point is literally borrowing the game struct
   // for the lifetime of the game.
-  Game::new(true).deref().borrow_mut().enter_main_loop()
+  Game::new(false).deref().borrow_mut().enter_main_loop()
 }
