@@ -10,7 +10,7 @@ fn main() {
   //* - (R)eference
   //* - (C)ounted
   // That's why this is written like this.
-  // The entry point is literally borrowing it for the
-  // lifetime of the game.
+  // The entry point is literally borrowing the game struct
+  // for the lifetime of the game.
   Game::new(true).deref().borrow_mut().enter_main_loop()
 }
