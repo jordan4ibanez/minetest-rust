@@ -1,5 +1,7 @@
 pub mod game;
 
+use std::ops::Deref;
+
 use game::*;
 
 fn main() {
@@ -10,5 +12,5 @@ fn main() {
   // That's why this is written like this.
   // The entry point is literally borrowing it for the
   // lifetime of the game.
-  (*Game::new(true)).borrow_mut().enter_main_loop()
+  Game::new(true).deref().borrow_mut().enter_main_loop()
 }
