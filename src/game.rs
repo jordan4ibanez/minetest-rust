@@ -14,11 +14,12 @@ pub struct Game<'game> {
   goal_tps: f64,
   server: Option<Server>,
   client: Option<Client>,
+  is_server: bool,
+  is_client: bool,
   loop_helper: LoopHelper,
   delta: f64,
   current_fps: f64,
   lua_engine: Option<LuaEngine<'game>>,
-
   smart_pointer: Option<Arc<RefCell<Game<'game>>>>,
 }
 
@@ -56,6 +57,13 @@ impl<'game> Game<'game> {
 
       client,
       server,
+
+      // Simply reverse these then we can plop in a server when
+      // the player enters singleplayer.
+      is_client,
+
+      // If this is a server we don't do any client things.
+      is_server: !is_client,
 
       loop_helper,
 
@@ -99,6 +107,15 @@ impl<'game> Game<'game> {
 
     while !self.should_close {
       self.main()
+    }
+  }
+
+  pub fn set_goal_fps(&mut self, new_fps: f64) {
+    self.goal_fps = new_fps;
+
+    // If this is a server this has no side effects.
+    if self.is_client {
+      
     }
   }
 
