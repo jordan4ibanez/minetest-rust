@@ -16,7 +16,7 @@ use clap::Parser;
 #[command(about = 
 "Welcome to the minetest help section.
 Please see below for the list of available arguments.")]
-#[command(author = "floof", version, long_about = None)]
+#[command(author, version, long_about = None)]
 pub struct CommandLineInterface {
 
   /// Run minetest as a server.
