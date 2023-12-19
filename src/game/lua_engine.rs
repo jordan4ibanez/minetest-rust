@@ -1,28 +1,36 @@
 mod lua_file_helpers;
 
 use core::panic;
+use std::{cell::RefCell, sync::Arc};
 
 use configparser::ini::Ini;
 use mlua::Lua;
 
 use self::lua_file_helpers::{check_game, get_game_path, read_file_to_string};
 
+use super::Game;
+
 ///
 /// LuaEngine encapsulates the Luau virtual machine.
 /// It is done this way so we can utilize Luau as
 /// elegantly as possible.
 ///
-pub struct LuaEngine {
+pub struct LuaEngine<'a> {
   lua: Lua,
   output_code_string: bool,
+  game: Option<Arc<RefCell<Game<'a>>>>,
 }
 
-impl LuaEngine {
-  pub fn new() -> Self {
-    let new_engine = LuaEngine {
+impl<'a> LuaEngine<'a> {
+  pub fn new(reference: Arc<RefCell<Game<'a>>>) -> Self {
+    let mut new_engine = LuaEngine {
       lua: Lua::new(),
       output_code_string: false,
+      game: None,
     };
+
+    new_engine.game = Some(reference);
+    // game: Some(reference),
 
     new_engine.generate_internal();
 
@@ -90,13 +98,16 @@ impl LuaEngine {
     let game_raw_config_string = read_file_to_string(&base_path);
 
     match config.read(game_raw_config_string) {
-        Ok(_) => println!("minetest: parsed [{}] game config.", game_name),
-        Err(e) => panic!("minetest: error parsing [{}] game config! {} ", game_name, e),
+      Ok(_) => println!("minetest: parsed [{}] game config.", game_name),
+      Err(e) => panic!(
+        "minetest: error parsing [{}] game config! {} ",
+        game_name, e
+      ),
     }
 
     let real_game_name = match config.get("info", "name") {
-        Some(val) => val,
-        None => panic!("minetest [{}] is missing [name] in game.conf!", game_name),
+      Some(val) => val,
+      None => panic!("minetest [{}] is missing [name] in game.conf!", game_name),
     };
 
     println!("we got: {}", real_game_name);
@@ -106,9 +117,7 @@ impl LuaEngine {
   /// Load up each mod in a game.
   /// todo: use dependency hierarchy [topological sorting (reverse postorder)topological sorting (reverse postorder)] <- luatic
   ///
-  fn load_game_mods(&self, game_name: String) {
-
-  }
+  fn load_game_mods(&self, game_name: String) {}
 
   ///
   /// Load up a game directly.
