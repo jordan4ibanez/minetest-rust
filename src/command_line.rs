@@ -15,7 +15,7 @@ use clap::Parser;
 #[derive(Parser, Debug)]
 #[command(about = 
 "Welcome to the minetest help section.
-Please see below for the list of available arguments.")]
+Please see below for the list of available options.")]
 #[command(author, version, long_about = None)]
 pub struct CommandLineInterface {
 
