@@ -1,10 +1,9 @@
 mod lua_file_helpers;
 
-use std::fs::read_to_string;
-
+use configparser::ini::Ini;
 use mlua::Lua;
 
-use self::lua_file_helpers::{check_game, file_exists, get_game_path};
+use self::lua_file_helpers::{check_game, get_game_path, read_file_to_string};
 
 ///
 /// LuaEngine encapsulates the Luau virtual machine.
@@ -56,7 +55,7 @@ impl LuaEngine {
   /// Completely unfiltered and unsandboxed file compiler/runner.
   ///
   pub fn run_file(&self, file_location: String) {
-    let raw_code_string = read_to_string(&file_location).unwrap();
+    let raw_code_string = read_file_to_string(&file_location);
 
     if self.output_code_string {
       println!("{}", raw_code_string);
@@ -83,12 +82,12 @@ impl LuaEngine {
   fn parse_game_conf(&mut self, games_dir: &String, game_name: &String) {
     let mut base_path = get_game_path(games_dir, game_name);
     base_path.push_str("/game.conf");
-    if !file_exists(&base_path) {
-      panic!(
-        "minetest: double check on game [{}] game.conf failed!",
-        game_name
-      );
-    }
+
+    let mut config = Ini::new();
+
+    let test = read_file_to_string(&base_path);
+    
+    println!("{}", test);
     
   }
 
@@ -96,7 +95,9 @@ impl LuaEngine {
   /// Load up each mod in a game.
   /// todo: use dependency hierarchy [topological sorting (reverse postorder)topological sorting (reverse postorder)] <- luatic
   ///
-  fn load_game_mods(&self, game_name: String) {}
+  fn load_game_mods(&self, game_name: String) {
+
+  }
 
   ///
   /// Load up a game directly.
