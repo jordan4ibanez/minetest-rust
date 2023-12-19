@@ -8,7 +8,7 @@ use spin_sleep::LoopHelper;
 
 use self::{client::Client, lua_engine::LuaEngine, server::Server};
 
-pub struct Game<'lua_engine> {
+pub struct Game<'game> {
   should_close: bool,
   goal_fps: f64,
   goal_tps: f64,
@@ -17,13 +17,13 @@ pub struct Game<'lua_engine> {
   loop_helper: LoopHelper,
   delta: f64,
   current_fps: f64,
-  lua_engine: Option<LuaEngine<'lua_engine>>,
+  lua_engine: Option<LuaEngine<'game>>,
 
-  smart_pointer: Option<Arc<RefCell<Game<'lua_engine>>>>,
+  smart_pointer: Option<Arc<RefCell<Game<'game>>>>,
 }
 
-impl<'lua_engine> Game<'lua_engine> {
-  pub fn new(is_client: bool) -> Arc<RefCell<Game<'lua_engine>>> {
+impl<'game> Game<'game> {
+  pub fn new(is_client: bool) -> Arc<RefCell<Game<'game>>> {
     println!("Minetest initialized!");
 
     // We could parse the player's name instead from a file, or a first time ask. This is mutable after all.
@@ -86,7 +86,7 @@ impl<'lua_engine> Game<'lua_engine> {
   /// Allow self to distribute a clone of it's ARC smart pointer.
   /// It's written like this so it's more obvious what's going on.
   ///
-  pub fn clone_smart_pointer(&self) -> Arc<RefCell<Game<'lua_engine>>> {
+  pub fn clone_smart_pointer(&self) -> Arc<RefCell<Game<'game>>> {
     self.smart_pointer.clone().unwrap()
   }
 
@@ -120,7 +120,7 @@ impl<'lua_engine> Game<'lua_engine> {
   }
 }
 
-impl<'lua_engine> Drop for Game<'lua_engine> {
+impl<'game> Drop for Game<'game> {
   fn drop(&mut self) {
     println!("Minetest dropped!");
   }

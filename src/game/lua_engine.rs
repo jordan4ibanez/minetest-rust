@@ -15,14 +15,14 @@ use super::Game;
 /// It is done this way so we can utilize Luau as
 /// elegantly as possible.
 ///
-pub struct LuaEngine<'lua_engine> {
+pub struct LuaEngine<'game> {
   lua: Lua,
   output_code_string: bool,
-  game: Option<Arc<RefCell<Game<'lua_engine>>>>,
+  game: Option<Arc<RefCell<Game<'game>>>>,
 }
 
-impl<'lua_engine> LuaEngine<'lua_engine> {
-  pub fn new(reference: Arc<RefCell<Game<'lua_engine>>>) -> Self {
+impl<'game> LuaEngine<'game> {
+  pub fn new(reference: Arc<RefCell<Game<'game>>>) -> Self {
     let mut new_engine = LuaEngine {
       lua: Lua::new(),
       output_code_string: false,
