@@ -11,9 +11,14 @@ Copyright (C) 2010-2023 Perttu Ahola celeron55@gmail.com and contributors (see s
 https://blessed.rs/crates
 
 
------
+## mold
+An ultra-fast linker which you can optionally use!
 
-Look into mold as a linker in the future: https://github.com/rui314/mold
+Please install mold then uncomment the flags [here](https://github.com/jordan4ibanez/minetest-rust/blob/master/.cargo/config.toml) if you want to use it.
+
+github repo: https://github.com/rui314/mold
+
+mold available repo packages: https://repology.org/project/mold/versions
 
 -----
 
