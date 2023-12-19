@@ -7,7 +7,7 @@
 /// This flows down in complexity until you get the the public procedure.
 ///
 use std::{
-  fs::{read_dir, ReadDir, self},
+  fs::{self, read_dir, ReadDir},
   path::Path,
 };
 
@@ -23,7 +23,7 @@ fn dir_exists(path: &String) -> bool {
 /// A mini helper function.
 /// This will first check if the file exists.
 /// Next it will automatically parse it into a string.
-/// 
+///
 pub fn read_file_to_string(path: &String) -> String {
   if !file_exists(path) {
     panic!("minetest: tried to read [{}] which doesn't exist!", path)
