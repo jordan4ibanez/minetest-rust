@@ -8,6 +8,9 @@
 default:
 	RUST_BACKTRACE=1 cargo run
 
+server:
+	RUST_BACKTRACE=1 cargo run -- -s
+
 
 ########### BUILD ###########
 
