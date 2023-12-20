@@ -153,9 +153,19 @@ impl<'game> Game<'game> {
   fn main(&mut self) {
     self.delta = self.loop_helper.loop_start_s();
 
+
     //? Here is where the logic loop goes.
-    // Might make this a client/server separated VM.
+
+    //* Begin server/client on_tick()
+
     // self.lua_engine.as_ref().unwrap().on_step(self.delta);
+    if self.server.is_some() {
+      // self.server.as_ref().unwrap().on_tick(self.delta)
+      self.server.as_mut().unwrap().on_tick(self.delta);
+    }
+
+
+    //* End server/client on_tick()
 
     //todo: make this a configuration for debugging.
     //todo: this can also be linked into the client struct to report
