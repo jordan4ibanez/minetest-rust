@@ -56,6 +56,9 @@ impl<'game> Game<'game> {
       .report_interval_s(1.0)
       .build_with_target_rate(loop_helper_goal);
 
+    //todo: make this happen!
+    println!("we need a minetest.conf parser for vsync!");
+
     let new_game = Game {
       should_close: false,
 
