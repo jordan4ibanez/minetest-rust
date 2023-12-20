@@ -6,6 +6,9 @@ authors = ["jordan4ibanez", "for the moment"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lints.rust]
+unsafe_code = "forbid"
+
 [dependencies]
 clap = { version = "4.4.11", features = ["derive"] }
 configparser = "3.0.3"
