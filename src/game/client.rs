@@ -15,4 +15,8 @@ impl Client {
     // Just fire off new heap memory.
     self.name.clone()
   }
+
+  pub fn on_tick(&mut self, delta: f64) {
+    println!("client on tick! {}", delta);
+  }
 }
