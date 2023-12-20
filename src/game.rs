@@ -159,7 +159,6 @@ impl<'game> Game<'game> {
   fn main(&mut self) {
     self.delta = self.loop_helper.loop_start_s();
 
-
     //? Here is where the logic loop goes.
 
     //* Begin server/client on_tick()
@@ -197,7 +196,6 @@ impl<'game> Game<'game> {
   /// This is the actual entry point for the game.
   ///
   pub fn enter_main_loop(&mut self) {
-
     while !self.should_close {
       self.main()
     }

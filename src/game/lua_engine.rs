@@ -19,7 +19,7 @@ pub struct LuaEngine<'game> {
   lua: Lua,
   output_code_string: bool,
   game: Option<Rc<RefCell<Game<'game>>>>,
-  server_vm: bool
+  server_vm: bool,
 }
 
 impl<'game> LuaEngine<'game> {
@@ -28,7 +28,7 @@ impl<'game> LuaEngine<'game> {
       lua: Lua::new(),
       output_code_string: false,
       game: None,
-      server_vm
+      server_vm,
     };
 
     new_engine.game = Some(reference);
@@ -52,7 +52,9 @@ impl<'game> LuaEngine<'game> {
   pub fn generate_internal(&self) {
     if self.server_vm {
       self.run_file("./api/server/__internal.lua".to_string())
-    } else /*it's a client vm*/ {
+    } else
+    /*it's a client vm*/
+    {
       println!("we need a client vm");
     }
   }
