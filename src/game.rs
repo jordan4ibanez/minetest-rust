@@ -2,7 +2,7 @@ mod client;
 mod lua_engine;
 mod server;
 
-use std::{cell::RefCell, ops::Deref, sync::Arc};
+use std::{cell::RefCell, ops::Deref, sync::Arc, rc::Rc};
 
 use spin_sleep::LoopHelper;
 
@@ -27,11 +27,11 @@ pub struct Game<'game> {
   // double - (2)
   // triple - (3)
   vsync_mode: i8,
-  smart_pointer: Option<Arc<RefCell<Game<'game>>>>,
+  smart_pointer: Option<Rc<RefCell<Game<'game>>>>,
 }
 
 impl<'game> Game<'game> {
-  pub fn new(cli: CommandLineInterface) -> Arc<RefCell<Game<'game>>> {
+  pub fn new(cli: CommandLineInterface) -> Rc<RefCell<Game<'game>>> {
     println!("Minetest initialized!");
 
     // 60 FPS goal for the moment.
@@ -90,7 +90,7 @@ impl<'game> Game<'game> {
     // with interior mutability with RefCell.
 
     // Interior mutability. Like a final java object.
-    let new_smart_pointer = Arc::new(RefCell::new(new_game));
+    let new_smart_pointer = Rc::new(RefCell::new(new_game));
 
     // We can simply dispatch the smart pointer to this struct by cloning it now.
     new_smart_pointer.deref().borrow_mut().smart_pointer = Some(new_smart_pointer.clone());
@@ -102,7 +102,7 @@ impl<'game> Game<'game> {
   /// Allow self to distribute a clone of it's ARC smart pointer.
   /// It's written like this so it's more obvious what's going on.
   ///
-  pub fn clone_smart_pointer(&self) -> Arc<RefCell<Game<'game>>> {
+  pub fn clone_smart_pointer(&self) -> Rc<RefCell<Game<'game>>> {
     self.smart_pointer.clone().unwrap()
   }
 

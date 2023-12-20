@@ -1,7 +1,7 @@
 mod lua_file_helpers;
 
 use core::panic;
-use std::{cell::RefCell, sync::Arc};
+use std::{cell::RefCell, sync::Arc, rc::Rc};
 
 use configparser::ini::Ini;
 use mlua::Lua;
@@ -18,11 +18,11 @@ use super::Game;
 pub struct LuaEngine<'game> {
   lua: Lua,
   output_code_string: bool,
-  game: Option<Arc<RefCell<Game<'game>>>>,
+  game: Option<Rc<RefCell<Game<'game>>>>,
 }
 
 impl<'game> LuaEngine<'game> {
-  pub fn new(reference: Arc<RefCell<Game<'game>>>) -> Self {
+  pub fn new(reference: Rc<RefCell<Game<'game>>>) -> Self {
     let mut new_engine = LuaEngine {
       lua: Lua::new(),
       output_code_string: false,
