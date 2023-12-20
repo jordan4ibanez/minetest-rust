@@ -19,14 +19,16 @@ pub struct LuaEngine<'game> {
   lua: Lua,
   output_code_string: bool,
   game: Option<Rc<RefCell<Game<'game>>>>,
+  server_vm: bool
 }
 
 impl<'game> LuaEngine<'game> {
-  pub fn new(reference: Rc<RefCell<Game<'game>>>) -> Self {
+  pub fn new(reference: Rc<RefCell<Game<'game>>>, server_vm: bool) -> Self {
     let mut new_engine = LuaEngine {
       lua: Lua::new(),
       output_code_string: false,
       game: None,
+      server_vm
     };
 
     new_engine.game = Some(reference);
@@ -34,7 +36,7 @@ impl<'game> LuaEngine<'game> {
 
     new_engine.generate_internal();
 
-    return new_engine;
+    new_engine
   }
 
   ///
@@ -48,7 +50,11 @@ impl<'game> LuaEngine<'game> {
   /// Generates the on_step(delta: number) function so it becomes a secret and hidden engine component.
   ///
   pub fn generate_internal(&self) {
-    self.run_file("./api/__internal.lua".to_string())
+    if self.server_vm {
+      self.run_file("./api/server/__internal.lua".to_string())
+    } else /*it's a client vm*/ {
+      println!("we need a client vm");
+    }
   }
 
   ///
