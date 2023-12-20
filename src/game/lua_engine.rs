@@ -1,7 +1,7 @@
 mod lua_file_helpers;
 
 use core::panic;
-use std::{cell::RefCell, sync::Arc, rc::Rc};
+use std::{cell::RefCell, rc::Rc};
 
 use configparser::ini::Ini;
 use mlua::Lua;
