@@ -2,19 +2,20 @@ mod client;
 mod lua_engine;
 mod server;
 
-use std::{cell::RefCell, ops::Deref, sync::Arc, rc::Rc};
+use std::{cell::RefCell, ops::Deref, rc::Rc};
 
 use spin_sleep::LoopHelper;
 
 use crate::command_line::CommandLineInterface;
 
-use self::{client::Client, lua_engine::LuaEngine, server::Server};
+use self::{client::Client, server::Server};
 
 pub struct Game<'game> {
   should_close: bool,
   goal_frames_per_second: f64,
   goal_ticks_per_second: f64,
-  server: Option<Server>,
+  // ! Might need to be a separate lifetime
+  server: Option<Server<'game>>,
   client: Option<Client>,
   is_server: bool,
   is_client: bool,
@@ -40,16 +41,9 @@ impl<'game> Game<'game> {
     // 20 Tick Per Second goal.
     let goal_ticks_per_second = 20.0;
 
-    // We could parse the player's name instead from a file, or a first time ask. This is mutable after all.
-    let client = match cli.server {
-      false => Some(Client::new(String::from("singleplayer"))),
-      true => None,
-    };
-
-    // Can auto deploy server and treat this struct like a simplified dispatcher.
-    let (server, loop_helper_goal) = match cli.server {
-      true => (Some(Server::new()), goal_ticks_per_second),
-      false => (None, goal_frames_per_second),
+    let loop_helper_goal = match cli.server {
+      true => goal_ticks_per_second,
+      false => goal_frames_per_second,
     };
 
     let loop_helper = LoopHelper::builder()
@@ -65,8 +59,8 @@ impl<'game> Game<'game> {
       goal_frames_per_second,
       goal_ticks_per_second,
 
-      client,
-      server,
+      client: None,
+      server: None,
 
       // Simply reverse these then we can plop in a server when
       // the player enters singleplayer.
@@ -94,6 +88,18 @@ impl<'game> Game<'game> {
 
     // We can simply dispatch the smart pointer to this struct by cloning it now.
     new_smart_pointer.deref().borrow_mut().smart_pointer = Some(new_smart_pointer.clone());
+
+    // We could parse the player's name instead from a file, or a first time ask. This is mutable after all.
+    new_smart_pointer.deref().borrow_mut().client = match cli.server {
+      false => Some(Client::new(String::from("singleplayer"))),
+      true => None,
+    };
+
+    // Can auto deploy server and treat this struct like a simplified dispatcher.
+    new_smart_pointer.deref().borrow_mut().server = match cli.server {
+      true => Some(Server::new(new_smart_pointer.clone())),
+      false => None,
+    };
 
     new_smart_pointer
   }
