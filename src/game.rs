@@ -157,6 +157,9 @@ impl<'game> Game<'game> {
     // Might make this a client/server separated VM.
     // self.lua_engine.as_ref().unwrap().on_step(self.delta);
 
+    //todo: make this a configuration for debugging.
+    //todo: this can also be linked into the client struct to report
+    //todo: the current framerate.
     if let Some(fps) = self.loop_helper.report_rate() {
       self.current_fps = fps;
       let time_measurement = match self.is_client {
