@@ -19,9 +19,24 @@ impl<'server> Server<'server> {
     new_server
   }
 
+  pub fn delete_lua_vm(&mut self) {
+    self.lua_engine = None
+  }
+
+  pub fn create_lua_vm(&mut self) {
+    self.lua_engine = Some(LuaEngine::new(self.game_pointer.clone(), true));
   }
 
   pub fn on_tick(&mut self, delta: f64) {
     println!("server on tick! {}", delta);
+
+    // This insanity destroys the lua vm one frame
+    // then creates a new one, server internal parse and all.
+    if self.lua_engine.is_some() {
+      self.lua_engine.as_ref().unwrap().on_step(delta);
+      self.delete_lua_vm()
+    } else {
+      self.create_lua_vm()
+    }
   }
 }
