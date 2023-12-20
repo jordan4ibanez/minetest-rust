@@ -159,11 +159,14 @@ impl<'game> Game<'game> {
     //* Begin server/client on_tick()
 
     // self.lua_engine.as_ref().unwrap().on_step(self.delta);
-    if self.server.is_some() {
-      // self.server.as_ref().unwrap().on_tick(self.delta)
+
+    if self.is_server && self.server.is_some() {
       self.server.as_mut().unwrap().on_tick(self.delta);
     }
 
+    if self.is_client && self.client.is_some() {
+      self.client.as_mut().unwrap().on_tick(self.delta);
+    }
 
     //* End server/client on_tick()
 
