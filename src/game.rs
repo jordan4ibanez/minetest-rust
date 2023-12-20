@@ -21,6 +21,12 @@ pub struct Game<'game> {
   loop_helper: LoopHelper,
   delta: f64,
   current_fps: f64,
+  // vsync can be:
+  // off    - (0)
+  // on     - (1)
+  // double - (2)
+  // triple - (3)
+  vsync_mode: i8,
   smart_pointer: Option<Arc<RefCell<Game<'game>>>>,
 }
 
@@ -70,6 +76,9 @@ impl<'game> Game<'game> {
 
       delta: 0.0,
       current_fps: 0.0,
+
+      //todo: fix this when the minetest.conf parser is implemented
+      vsync_mode: 0,
 
       smart_pointer: None,
     };
@@ -154,7 +163,9 @@ impl<'game> Game<'game> {
       println!("Debug {}: {}", time_measurement, self.current_fps)
     }
 
-    self.loop_helper.loop_sleep();
+    if self.vsync_mode == 0 || self.is_server {
+      self.loop_helper.loop_sleep();
+    }
   }
 
   ///
