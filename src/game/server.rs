@@ -10,6 +10,6 @@ impl Server {
   }
 
   pub fn on_tick(&mut self, delta: f64) {
-    println!("server tick");
+    println!("server on tick! {}", delta);
   }
 }
