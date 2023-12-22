@@ -83,6 +83,9 @@ end
 * 
 * todo: more ideas
 *
+* Make it so the end user can move the android touch screen
+* buttons around in the settings menu.
+*
 * celeron55:
 * "i think ideally the server should just tell the client a list of 
 * key mappings with default keys and the user should be able to 
