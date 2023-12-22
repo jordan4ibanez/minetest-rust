@@ -51,11 +51,11 @@ impl<'game> LuaEngine<'game> {
   ///
   pub fn generate_internal(&self) {
     if self.server_vm {
-      self.run_file("./api/server/__internal_server.lua".to_string())
-    } else
-    /*it's a client vm*/
-    {
-      println!("we need a client vm");
+      // it's a server vm
+      self.run_file("./api/server/__internal_server.lua".to_string());
+    } else {
+      // it's a client vm
+      self.run_file("./api/client/__internal_client.lua".to_string());
     }
   }
 
