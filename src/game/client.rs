@@ -31,6 +31,9 @@ impl<'client> Client<'client> {
   }
 
   pub fn on_tick(&mut self, delta: f64) {
-    println!("client on tick! {}", delta);
+    match &self.lua_engine {
+      Some(lua_engine) => lua_engine.on_step(delta),
+      None => panic!("minetest: client LuaEngine does not exist!"),
+    }
   }
 }
