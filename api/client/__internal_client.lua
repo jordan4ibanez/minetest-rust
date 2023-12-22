@@ -62,3 +62,27 @@ _G.engine_on_step_function = function(delta: number)
 
   old_time_stamp = time_stamp
 end
+
+--[[
+* Rambly ideas:
+*
+* Might need some kind of client mods folder or something.
+* Unless we can just trigger out client things via shipping
+* lua code to the client marked with "client mod" or something.
+*
+* Walking view bobbing animation can be done procedurally.
+* Maybe:
+* minetest.set_client_walk_animation(procedure: (number) -> void)
+*
+* Digging/placing animation can be done procedurally.
+* These can also be done separately!
+* These could be customized per block!
+* Maybe:
+* minetest.set_dig_animation(procedure: (number) -> void)
+* minetest.set_place_animation(procedure: (number) -> void)
+* 
+* todo: more ideas
+*
+*
+*
+]]
