@@ -83,7 +83,7 @@ end
 * 
 * todo: more ideas
 *
-* Celeron55:
+* celeron55:
 * "i think ideally the server should just tell the client a list of 
 * key mappings with default keys and the user should be able to 
 * remap them on the client"
@@ -102,5 +102,13 @@ end
 * be able to deal with that"
 *
 * todo: ^ figure out how to do this without causing spaghetti.
+*
+* grorp:
+* "the touchscreen controls are really bad. what they need is not more
+* buttons, but "sub"game control. "sub"game-defined, context-dependent
+* touchscreen controls. otherwise, the controls will always feel like
+* a low-effort port of the desktop controls."
+*
+* todo: ^ figure out how to do this without causing Olive Garden.
 *
 ]]
