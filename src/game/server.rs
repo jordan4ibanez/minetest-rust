@@ -27,6 +27,11 @@ impl<'server> Server<'server> {
     self.lua_engine = Some(LuaEngine::new(self.game_pointer.clone(), true));
   }
 
+  pub fn reset_lua_vm(&mut self) {
+    self.delete_lua_vm();
+    self.create_lua_vm();
+  }
+
   pub fn on_tick(&mut self, delta: f64) {
     println!("server on tick! {}", delta);
 
