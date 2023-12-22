@@ -5,7 +5,7 @@
 print("minetest is running: " .. _VERSION)
 
 ----------
--- "Check" if a mod is trying to hijack __internal.
+-- "Check" if a mod is trying to hijack __internal_server.
 -- This is done naively with a ton of room for improvement.
 -- This will need an engine side lock.
 
@@ -15,11 +15,11 @@ local clock: () -> number = os.clock;
 local current_time: number = 0;
 
 if (_G.internal_created_do_not_modify) then 
-  error("minetest: DO NOT import __internal into your mods!")
+  error("minetest: DO NOT import __internal_server into your mods!")
 else
   local check: number | nil = _G.internal_creation_time_stamp_do_not_modify
   if (check ~= nil and check ~= current_time) then
-    error("minetest: DO NOT import __internal into your mods!")
+    error("minetest: DO NOT import __internal_server into your mods!")
   end
 end
 
