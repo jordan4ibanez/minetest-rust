@@ -40,14 +40,14 @@ impl<'game> LuaEngine<'game> {
   }
 
   ///
-  /// Run the global on_step function in the LuauJIT VM environment.
+  /// Run the global on_tick function in the LuauJIT VM environment.
   ///
-  pub fn on_step(&self, delta: f64) {
-    self.run_code(format!("_G.engine_on_step_function({})", delta))
+  pub fn on_tick(&self, delta: f64) {
+    self.run_code(format!("_G.engine_on_tick_function({})", delta))
   }
 
   ///
-  /// Generates the on_step(delta: number) function so it becomes a secret and hidden engine component.
+  /// Generates the on_tick(delta: number) function so it becomes a secret and hidden engine component.
   ///
   pub fn generate_internal(&self) {
     if self.server_vm {
