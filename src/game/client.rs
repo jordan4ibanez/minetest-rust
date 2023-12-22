@@ -1,6 +1,6 @@
-use std::{rc::Rc, cell::RefCell};
+use std::{cell::RefCell, rc::Rc};
 
-use super::{Game, lua_engine::LuaEngine};
+use super::{lua_engine::LuaEngine, Game};
 
 pub struct Client<'client> {
   name: String,
@@ -13,7 +13,7 @@ impl<'client> Client<'client> {
     let mut new_client = Client {
       name: player_name,
       lua_engine: None,
-      game_pointer: game_pointer.clone()
+      game_pointer: game_pointer.clone(),
     };
 
     new_client.lua_engine = Some(LuaEngine::new(game_pointer, false));

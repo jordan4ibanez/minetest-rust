@@ -91,7 +91,10 @@ impl<'game> Game<'game> {
 
     // We could parse the player's name instead from a file, or a first time ask. This is mutable after all.
     new_smart_pointer.deref().borrow_mut().client = match cli.server {
-      false => Some(Client::new(new_smart_pointer.clone(), String::from("singleplayer"))),
+      false => Some(Client::new(
+        new_smart_pointer.clone(),
+        String::from("singleplayer"),
+      )),
       true => None,
     };
 
