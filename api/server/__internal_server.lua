@@ -2,14 +2,18 @@
 
 ----------
 -- Start by printing the running Lua VM version.
-print("minetest is running: " .. _VERSION)
+print("minetest server is running: " .. _VERSION)
+
+
+----------
+-- Cached function references.
+local clock: () -> number = os.clock;
+
 
 ----------
 -- "Check" if a mod is trying to hijack __internal_server.
 -- This is done naively with a ton of room for improvement.
 -- This will need an engine side lock.
-
-local clock: () -> number = os.clock;
 
 -- Let's start where it all began.
 local current_time: number = 0;
@@ -26,10 +30,12 @@ end
 _G.internal_created_do_not_modify = true
 _G.internal_creation_time_stamp_do_not_modify = current_time
 
+
 ----------
 -- Next we simply require the api to create and access the base implementation.
 
 local minetest = require("api/api")
+
 
 ----------
 -- Now we can create internalized procedures with defined components.
