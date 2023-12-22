@@ -56,7 +56,7 @@ impl<'server> Server<'server> {
     // This insanity destroys the lua vm one frame
     // then creates a new one, server internal parse and all.
     if self.lua_engine.is_some() {
-      self.lua_engine.as_ref().unwrap().on_step(delta);
+      self.lua_engine.as_ref().unwrap().on_tick(delta);
       self.delete_lua_vm()
     } else {
       self.create_lua_vm()
