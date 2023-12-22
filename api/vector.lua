@@ -1,3 +1,6 @@
+--!strict
+
+----------
 -- Raw types.
 export type Vec2 = {
   x: number,
@@ -10,6 +13,7 @@ export type Vec3 = {
   z: number
 }
 
+----------
 -- Implementation.
 local vector = {}
 
