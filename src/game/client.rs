@@ -1,10 +1,24 @@
-pub struct Client {
+use std::{rc::Rc, cell::RefCell};
+
+use super::{Game, lua_engine::LuaEngine};
+
+pub struct Client<'client> {
   name: String,
+  lua_engine: Option<LuaEngine<'client>>,
+  game_pointer: Rc<RefCell<Game<'client>>>,
 }
 
-impl Client {
-  pub fn new(player_name: String) -> Self {
-    Client { name: player_name }
+impl<'client> Client<'client> {
+  pub fn new(game_pointer: Rc<RefCell<Game<'client>>>, player_name: String) -> Self {
+    let mut new_client = Client {
+      name: player_name,
+      lua_engine: None,
+      game_pointer: game_pointer.clone()
+    };
+
+    new_client.lua_engine = Some(LuaEngine::new(game_pointer, false));
+
+    new_client
   }
 
   pub fn change_name(&mut self, new_player_name: String) {
