@@ -29,16 +29,16 @@ export type ItemDefinition = {
 }
 
 -- A fancy closure.
-export type OnStep = (delta: number) -> nil
+export type OnTick = (delta: number) -> nil
 
 -- Singleton instances of raw data.
 _G.blocks  = _G.blocks  or {}
 _G.items   = _G.items   or {}
-_G.on_step = _G.on_step or {}
+_G.on_tick = _G.on_tick or {}
 
 local blocks:  {[string] : BlockDefinition} = _G.blocks
 local items:   {[string] : ItemDefinition}  = _G.items
-local on_step: Array<OnStep>                = _G.on_step
+local on_tick: Array<OnTick>                = _G.on_tick
 
 ----------
 -- Now we can ship the rest of the codebase back to the mod as a module.
@@ -73,8 +73,8 @@ function minetest.register_item(definition: ItemDefinition)
   end
 end
 
-function minetest.register_on_step(step_closure: OnStep)
-  insert(on_step, step_closure)
+function minetest.register_on_tick(tick_closure: OnTick)
+  insert(on_tick, tick_closure)
 end
 
 
