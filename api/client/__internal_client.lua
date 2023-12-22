@@ -43,22 +43,22 @@ local minetest = require("api/api")
 
 local old_time_stamp: number = clock()
 
-local on_step: minetest.Array<minetest.OnStep> = _G.on_step
+local on_tick: minetest.Array<minetest.OnTick> = _G.on_tick
 
-local function do_on_step(delta: number)
-  for _,func in ipairs(on_step) do
+local function do_on_tick(delta: number)
+  for _,func in ipairs(on_tick) do
     func(delta)
   end
 end
 
-_G.engine_on_step_function = function(delta: number)
+_G.engine_on_tick_function = function(delta: number)
   local time_stamp: number = clock()  
 
   if (old_time_stamp == time_stamp) then
-    error("minetest: DO NOT run _G.on_step in your mods!")
+    error("minetest: DO NOT run _G.on_tick in your mods!")
   end
 
-  do_on_step(delta)
+  do_on_tick(delta)
 
   old_time_stamp = time_stamp
 end
