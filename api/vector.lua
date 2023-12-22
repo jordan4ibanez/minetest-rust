@@ -13,6 +13,7 @@ export type Vec3 = {
   z: number
 }
 
+
 ----------
 -- Implementation.
 local vector = {}
@@ -32,5 +33,8 @@ function vector.vec3(x: number, y: number, z: number): Vec3
   }
 end
 
+
+----------
+-- It is returned as a module.
 
 return vector
