@@ -83,6 +83,13 @@ end
 * 
 * todo: more ideas
 *
+* Celeron55:
+* "i think ideally the server should just tell the client a list of 
+* key mappings with default keys and the user should be able to 
+* remap them on the client"
 *
+* This is for accessibility for things like mobile clients.
+*
+* todo: ^ figure out how to do this without causing spaghetti.
 *
 ]]
