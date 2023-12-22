@@ -77,4 +77,8 @@ function minetest.register_on_step(step_closure: OnStep)
   insert(on_step, step_closure)
 end
 
+
+----------
+-- API is returned as a module.
+
 return minetest
