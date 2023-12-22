@@ -19,11 +19,11 @@ impl<'server> Server<'server> {
     new_server
   }
 
-  pub fn delete_lua_vm(&mut self) {
+  fn delete_lua_vm(&mut self) {
     self.lua_engine = None
   }
 
-  pub fn create_lua_vm(&mut self) {
+  fn create_lua_vm(&mut self) {
     self.lua_engine = Some(LuaEngine::new(self.game_pointer.clone(), true));
   }
 
