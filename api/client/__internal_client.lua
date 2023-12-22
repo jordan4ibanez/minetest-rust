@@ -90,6 +90,17 @@ end
 *
 * This is for accessibility for things like mobile clients.
 *
+* "this would allow mobile clients to still be useful even if a 
+* game has many extra inputs - it could just list them as buttons
+* in a menu or on an automatically generated top layer HUD or whatever.
+* and of course let's not forget accessibility, mobile is a pretty
+* good excercise in that too from the server and protocol perspective"
+*
+* "so if your game is very specifically about sitting and everyone
+* needs to be able to sit at any moment, you'd add "sit" with the
+* default key "x" or whatever, and then every client and user will
+* be able to deal with that"
+*
 * todo: ^ figure out how to do this without causing spaghetti.
 *
 ]]
