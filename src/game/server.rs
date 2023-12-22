@@ -21,14 +21,14 @@ impl<'server> Server<'server> {
 
   ///
   /// Deletes the lua VM.
-  /// 
+  ///
   fn delete_lua_vm(&mut self) {
     self.lua_engine = None
   }
 
   ///
   /// Creates a new client lua VM.
-  /// 
+  ///
   fn create_lua_vm(&mut self) {
     self.lua_engine = Some(LuaEngine::new(self.game_pointer.clone(), true));
   }
@@ -36,7 +36,7 @@ impl<'server> Server<'server> {
   ///
   /// Wipe the memory of the lua VM.
   /// Automatically regenerates a blank server VM.
-  /// 
+  ///
   pub fn reset_lua_vm(&mut self) {
     self.delete_lua_vm();
     self.create_lua_vm();
@@ -44,12 +44,12 @@ impl<'server> Server<'server> {
 
   ///
   /// Tick tock.
-  /// 
+  ///
   /// Every time the game goes into the next main loop iteration
   /// this is run.
-  /// 
+  ///
   /// This is referred to as on_step in C++ minetest.
-  /// 
+  ///
   pub fn on_tick(&mut self, delta: f64) {
     println!("server on tick! {}", delta);
 

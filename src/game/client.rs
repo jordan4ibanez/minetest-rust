@@ -23,14 +23,14 @@ impl<'client> Client<'client> {
 
   ///
   /// Change the client's name.
-  /// 
+  ///
   pub fn change_name(&mut self, new_player_name: String) {
     self.name = new_player_name;
   }
-  
+
   ///
   /// Get the client's name.
-  /// 
+  ///
   pub fn get_name(&self) -> String {
     // Just fire off new heap memory.
     self.name.clone()
@@ -38,14 +38,14 @@ impl<'client> Client<'client> {
 
   ///
   /// Deletes the lua VM.
-  /// 
+  ///
   fn delete_lua_vm(&mut self) {
     self.lua_engine = None
   }
 
   ///
   /// Creates a new client lua VM.
-  /// 
+  ///
   fn create_lua_vm(&mut self) {
     self.lua_engine = Some(LuaEngine::new(self.game_pointer.clone(), false));
   }
@@ -53,7 +53,7 @@ impl<'client> Client<'client> {
   ///
   /// Wipe the memory of the lua VM.
   /// Automatically regenerates a blank client VM.
-  /// 
+  ///
   pub fn reset_lua_vm(&mut self) {
     self.delete_lua_vm();
     self.create_lua_vm();
@@ -61,12 +61,12 @@ impl<'client> Client<'client> {
 
   ///
   /// Tick tock.
-  /// 
+  ///
   /// Every time the game goes into the next main loop iteration
   /// this is run.
-  /// 
+  ///
   /// This is referred to as on_step in C++ minetest.
-  /// 
+  ///
   pub fn on_tick(&mut self, delta: f64) {
     // We want this to throw a runtime panic if we make a logic error.
     // ! Never turn this into a silent bypass via: is_some()
