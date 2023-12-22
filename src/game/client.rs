@@ -30,6 +30,19 @@ impl<'client> Client<'client> {
     self.name.clone()
   }
 
+  pub fn delete_lua_vm(&mut self) {
+    self.lua_engine = None
+  }
+
+  pub fn create_lua_vm(&mut self) {
+    self.lua_engine = Some(LuaEngine::new(self.game_pointer.clone(), false));
+  }
+
+  pub fn reset_lua_vm(&mut self) {
+    self.delete_lua_vm();
+    self.create_lua_vm();
+  }
+
   pub fn on_tick(&mut self, delta: f64) {
     // We want this to throw a runtime panic if we make a logic error.
     // ! Never turn this into a silent bypass via: is_some()
