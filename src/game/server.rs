@@ -1,3 +1,5 @@
+mod connection;
+
 use std::{cell::RefCell, rc::Rc};
 
 use super::{lua_engine::LuaEngine, Game};
