@@ -1,9 +1,14 @@
+mod client_connection;
+
 use std::{cell::RefCell, rc::Rc};
+
+use self::client_connection::ClientConnection;
 
 use super::{lua_engine::LuaEngine, Game};
 
 pub struct Client<'client> {
   name: String,
+  connection: Option<ClientConnection>,
   lua_engine: Option<LuaEngine<'client>>,
   game_pointer: Rc<RefCell<Game<'client>>>,
 }
@@ -12,6 +17,7 @@ impl<'client> Client<'client> {
   pub fn new(game_pointer: Rc<RefCell<Game<'client>>>, player_name: String) -> Self {
     let mut new_client = Client {
       name: player_name,
+      connection: None,
       lua_engine: None,
       game_pointer: game_pointer.clone(),
     };

@@ -1,11 +1,11 @@
-pub struct ServerConnection {
+pub struct ClientConnection {
   address: String,
   port: i32,
 }
 
-impl ServerConnection {
+impl ClientConnection {
   pub fn new() -> Self {
-    ServerConnection {
+    ClientConnection {
       address: "127.0.0.1".to_string(),
       port: 30_001,
     }
