@@ -16,7 +16,7 @@ impl<'client> Client<'client> {
       game_pointer: game_pointer.clone(),
     };
 
-    new_client.lua_engine = Some(LuaEngine::new(game_pointer, false));
+    new_client.reset_lua_vm();
 
     new_client
   }

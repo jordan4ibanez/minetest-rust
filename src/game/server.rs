@@ -14,7 +14,7 @@ impl<'server> Server<'server> {
       game_pointer: game_pointer.clone(),
     };
 
-    new_server.lua_engine = Some(LuaEngine::new(game_pointer.clone(), true));
+    new_server.reset_lua_vm();
 
     new_server
   }
