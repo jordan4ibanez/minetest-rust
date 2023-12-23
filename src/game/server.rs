@@ -51,15 +51,11 @@ impl<'server> Server<'server> {
   /// This is referred to as on_step in C++ minetest.
   ///
   pub fn on_tick(&mut self, delta: f64) {
-    println!("server on tick! {}", delta);
-
-    // This insanity destroys the lua vm one frame
-    // then creates a new one, server internal parse and all.
-    if self.lua_engine.is_some() {
-      self.lua_engine.as_ref().unwrap().on_tick(delta);
-      self.delete_lua_vm()
-    } else {
-      self.create_lua_vm()
+    // We want this to throw a runtime panic if we make a logic error.
+    // ! Never turn this into a silent bypass via: is_some()
+    match &self.lua_engine {
+      Some(lua_engine) => lua_engine.on_tick(delta),
+      None => panic!("minetest: Server LuaEngine does not exist!"),
     }
   }
 }
