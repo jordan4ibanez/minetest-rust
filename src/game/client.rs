@@ -72,7 +72,7 @@ impl<'client> Client<'client> {
     // ! Never turn this into a silent bypass via: is_some()
     match &self.lua_engine {
       Some(lua_engine) => lua_engine.on_tick(delta),
-      None => panic!("minetest: client LuaEngine does not exist!"),
+      None => panic!("minetest: Client LuaEngine does not exist!"),
     }
   }
 }
