@@ -2,10 +2,13 @@ mod connection;
 
 use std::{cell::RefCell, rc::Rc};
 
+use self::connection::Connection;
+
 use super::{lua_engine::LuaEngine, Game};
 
 pub struct Server<'server> {
   lua_engine: Option<LuaEngine<'server>>,
+  connection: Connection,
   game_pointer: Rc<RefCell<Game<'server>>>,
 }
 
@@ -13,6 +16,7 @@ impl<'server> Server<'server> {
   pub fn new(game_pointer: Rc<RefCell<Game<'server>>>) -> Self {
     let mut new_server = Server {
       lua_engine: None,
+      connection: Connection::new(),
       game_pointer: game_pointer.clone(),
     };
 
