@@ -70,18 +70,10 @@ impl<'client> ClientConnection<'client> {
   }
 
   pub fn event_reaction(&mut self, event: StoredNetEvent) {
-    match event {
-      StoredNetEvent::Connected(endpoint, established) => {
-        println!("connecting...");
-        if !established {
-          panic!("minetest: failed to establish a connection.");
-        } else {
-          println!("minetest: established a connection. [{}]", endpoint)
-        }
-      },
-      StoredNetEvent::Accepted(a, b) => todo!(),
-      StoredNetEvent::Message(_, _) => todo!(),
-      StoredNetEvent::Disconnected(_) => todo!(),
+
+    // We don't need to match, we're using UDP which is connectionless.
+    if let StoredNetEvent::Message(end_point,raw_message) = event {
+
     }
   }
 
