@@ -129,7 +129,7 @@ impl<'game> Game<'game> {
 
   ///
   /// This simply returns the current delta time.
-  /// 
+  ///
   pub fn get_delta(&self) -> f64 {
     self.delta
   }
