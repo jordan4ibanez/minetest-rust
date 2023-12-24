@@ -70,6 +70,9 @@ impl<'client> ClientConnection<'client> {
 
 impl<'client> Drop for ClientConnection<'client> {
   fn drop(&mut self) {
+    // Need to close client connection, maybe?
+    // Might need to send out the disconnect signal.
+    // todo: experiment with this.
     println!("ClientConnection dropped!")
   }
 }
