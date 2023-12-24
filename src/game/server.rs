@@ -90,13 +90,12 @@ impl<'server> Server<'server> {
   /// This is referred to as on_step in C++ minetest.
   ///
   pub fn on_tick(&mut self, delta: f64) {
-
     // Poll any incoming network traffic. (non blocking)
     match &mut self.connection {
-        Some(connection) => {
-          connection.listen();
-        },
-        None => panic!("minetest: tried to listen on non-existent Server connection!"),
+      Some(connection) => {
+        connection.listen();
+      }
+      None => panic!("minetest: tried to listen on non-existent Server connection!"),
     }
 
     // We want this to throw a runtime panic if we make a logic error.
