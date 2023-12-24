@@ -1,6 +1,6 @@
-use std::{cell::RefCell, rc::Rc, net::ToSocketAddrs};
+use std::{cell::RefCell, net::ToSocketAddrs, rc::Rc};
 
-use message_io::network::Transport;
+use message_io::{network::Transport, node};
 
 use super::Client;
 
@@ -65,6 +65,15 @@ impl<'client> ClientConnection<'client> {
     // todo: will need to do a handshake here.
     // todo: will need to be initialized by the gui component.
 
+    let (handler, listener) = node::split::<()>();
+
+    let (server_id, local_address) = match handler
+      .network()
+      .connect(transport_protocol, socket_address)
+    {
+      Ok((end_point, socket_address)) => (end_point, socket_address),
+      Err(e) => panic!("{}", e),
+    };
   }
 }
 
