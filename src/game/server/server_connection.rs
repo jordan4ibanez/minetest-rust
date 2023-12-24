@@ -3,7 +3,7 @@ use std::{cell::RefCell, net::ToSocketAddrs, rc::Rc, time::Duration};
 use message_io::{
   events::EventReceiver,
   network::Transport,
-  node::{self, NodeTask, StoredNodeEvent},
+  node::{self, NodeTask, StoredNodeEvent, StoredNetEvent},
 };
 
 use super::Server;
@@ -63,20 +63,41 @@ impl<'server> ServerConnection<'server> {
     socket
   }
 
+  ///
+  /// A procedure to react to a network event.
+  /// 
+  pub fn event_reaction(&mut self, event: StoredNetEvent) {
+    match event {
+      node::StoredNetEvent::Connected(_, _) => {
+        println!("minetest: connection created")
+      },
+      node::StoredNetEvent::Accepted(_, _) => todo!(),
+      node::StoredNetEvent::Message(endpoint, message) => {
+        let receieved_string = match String::from_utf8(message) {
+            Ok(new_string) => new_string,
+            Err(_) => {
+              println!("minetest: message buffer attack detected, bailing on deserialization!");
+              "".to_string()
+            },
+        };
+        
+        println!("minetest: received message: {}", receieved_string);
+      },
+      node::StoredNetEvent::Disconnected(_) => todo!(),
+    }
+  }
+
+  ///
+  /// Non-blocking listener for network events.
+  /// 
   pub fn listen(&mut self) {
     match &mut self.listener {
       Some(listener) => {
         match listener.receive_timeout(Duration::new(0,0)) {
           Some(event) => {
             match event {
-              StoredNodeEvent::Network(event) => {
-                match event {
-                    node::StoredNetEvent::Connected(_, _) => todo!(),
-                    node::StoredNetEvent::Accepted(_, _) => todo!(),
-                    node::StoredNetEvent::Message(_, _) => todo!(),
-                    node::StoredNetEvent::Disconnected(_) => todo!(),
-                }
-              },
+              StoredNodeEvent::Network(event) => self.event_reaction(event),
+              // todo: figure out what a signal is!
               StoredNodeEvent::Signal(_) => todo!(),
             }
           },
