@@ -8,7 +8,7 @@ use super::{lua_engine::LuaEngine, Game};
 
 pub struct Server<'server> {
   lua_engine: Option<LuaEngine<'server>>,
-  connection: Option<ServerConnection>,
+  connection: Option<ServerConnection<'server>>,
   game_pointer: Rc<RefCell<Game<'server>>>,
   server_pointer: Option<Rc<RefCell<Server<'server>>>>,
 }
@@ -21,11 +21,12 @@ impl<'server> Server<'server> {
   ) -> Rc<RefCell<Self>> {
     let new_server = Rc::new(RefCell::new(Server {
       lua_engine: None,
-      connection: Some(ServerConnection::new(address, port)),
+      connection: None,
       game_pointer: game_pointer.clone(),
       server_pointer: None,
     }));
 
+    // ! this is a test to see how we can work with this
     match &new_server.deref().borrow_mut().connection {
         Some(connection) => {
           println!("minetest: running on socket: {} (match)", connection.get_socket());
@@ -36,8 +37,12 @@ impl<'server> Server<'server> {
       "minetest: running on socket: {}",
       new_server.deref().borrow_mut().connection.as_ref().unwrap().get_socket()
     );
+    // ! end test
 
     new_server.deref().borrow_mut().server_pointer = Some(new_server.clone());
+
+    new_server.deref().borrow_mut().connection = Some(ServerConnection::new(new_server.clone(), address, port));
+
 
     new_server.deref().borrow_mut().reset_lua_vm();
 
