@@ -13,10 +13,10 @@ pub struct Server<'server> {
 }
 
 impl<'server> Server<'server> {
-  pub fn new(game_pointer: Rc<RefCell<Game<'server>>>) -> Self {
+  pub fn new(game_pointer: Rc<RefCell<Game<'server>>>, address: String, port: i32) -> Self {
     let mut new_server = Server {
       lua_engine: None,
-      connection: ServerConnection::new(),
+      connection: ServerConnection::new(address, port),
       game_pointer: game_pointer.clone(),
     };
 
