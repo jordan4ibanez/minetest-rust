@@ -96,7 +96,7 @@ impl<'game> Game<'game> {
         new_game_pointer.clone(),
         cli.client_name,
         cli.address.clone(),
-        cli.port
+        cli.port,
       )),
       true => None,
     };
