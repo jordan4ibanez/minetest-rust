@@ -25,6 +25,10 @@ pub struct CommandLineInterface {
   #[arg(short, long, default_value_t = String::from("minetest"))]
   pub game: String,
 
+  /// Start the server on a specific address.
+  #[arg(short, long, default_value_t = String::from("127.0.0.1"))]
+  pub address: String,
+
   /// Start server on a specific port.
   #[arg(short, long, default_value_t = 30_001)]
   pub port: i32,
