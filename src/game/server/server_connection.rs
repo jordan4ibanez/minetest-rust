@@ -16,6 +16,7 @@ use super::Server;
 pub struct ServerConnection<'server> {
   address: String,
   port: i32,
+  
   task: Option<NodeTask>,
   handler: Option<NodeHandler<()>>,
   event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
