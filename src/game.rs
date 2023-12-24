@@ -170,9 +170,7 @@ impl<'game> Game<'game> {
 
     if self.is_client {
       match &mut self.client {
-        Some(client) => {
-          client.deref().borrow_mut().on_tick(self.delta)
-        },
+        Some(client) => client.deref().borrow_mut().on_tick(self.delta),
         None => panic!("minetest: attempted to run a client that does not exist."),
       }
     }
