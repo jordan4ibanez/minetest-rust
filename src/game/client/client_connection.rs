@@ -1,4 +1,6 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, rc::Rc, net::ToSocketAddrs};
+
+use message_io::network::Transport;
 
 use super::Client;
 
@@ -57,7 +59,11 @@ impl<'client> ClientConnection<'client> {
   /// Internal initializer procedure automatically run on a new ServerConnection.
   ///
   fn initialize(&mut self) {
-    
+    let socket_address = self.get_socket().to_socket_addrs().unwrap().next().unwrap();
+    let transport_protocol = Transport::Udp;
+
+    // todo: will need to do a handshake here.
+    // todo: will need to be initialized by the gui component.
 
   }
 }
