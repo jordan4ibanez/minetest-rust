@@ -135,6 +135,10 @@ impl<'client> ClientConnection<'client> {
     self.handler = Some(handler);
     self.task = Some(task);
     self.event_receiver = Some(event_receiver);
+
+    // Can possibly be used as a handshake
+    // ! Note: this literally is the handshake right now
+    self.handler.borrow_mut().clone().unwrap().network().send(self.end_point.unwrap(), "handshake".as_bytes());
   }
 }
 
