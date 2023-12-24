@@ -1,8 +1,8 @@
-use std::{cell::RefCell, net::ToSocketAddrs, rc::Rc, time::Duration};
+use std::{cell::RefCell, collections::HashMap, net::ToSocketAddrs, rc::Rc, time::Duration};
 
 use message_io::{
   events::EventReceiver,
-  network::Transport,
+  network::{Endpoint, Transport},
   node::{self, NodeTask, StoredNetEvent, StoredNodeEvent},
 };
 
@@ -18,6 +18,7 @@ pub struct ServerConnection<'server> {
   port: i32,
   task: Option<NodeTask>,
   listener: Option<EventReceiver<StoredNodeEvent<()>>>,
+  clients: HashMap<Endpoint, String>,
 
   server_pointer: Rc<RefCell<Server<'server>>>,
 }
@@ -29,6 +30,7 @@ impl<'server> ServerConnection<'server> {
       port,
       task: None,
       listener: None,
+      clients: HashMap::new(),
 
       server_pointer,
     };
