@@ -94,7 +94,9 @@ impl<'game> Game<'game> {
     new_game_pointer.deref().borrow_mut().client = match cli.server {
       false => Some(Client::new(
         new_game_pointer.clone(),
-        String::from("singleplayer"),
+        cli.client_name,
+        cli.address.clone(),
+        cli.port
       )),
       true => None,
     };
