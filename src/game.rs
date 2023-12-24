@@ -168,17 +168,11 @@ impl<'game> Game<'game> {
     //* Begin server/client on_tick()
 
     if self.is_server {
-      match self.server.is_some() {
-        true => {
-          self
-            .server
-            .as_mut()
-            .unwrap()
-            .deref()
-            .borrow_mut()
-            .on_tick(self.delta);
+      match &self.server {
+        Some(server) => {
+          server.deref().borrow_mut().on_tick(self.delta);
         }
-        false => panic!("minetest: attempted to run a server that does not exist."),
+        None => panic!("minetest: attempted to run a server that does not exist."),
       }
     }
 
