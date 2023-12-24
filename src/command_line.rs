@@ -32,4 +32,8 @@ pub struct CommandLineInterface {
   /// Start server on a specific port.
   #[arg(short, long, default_value_t = 30_001)]
   pub port: i32,
+
+  /// The default name for your player. (this is a placholder)
+  #[arg(short, long, default_value_t = String::from("singleplayer"))]
+  pub client_name: String,
 }
