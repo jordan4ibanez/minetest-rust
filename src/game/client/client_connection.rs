@@ -17,6 +17,7 @@ pub struct ClientConnection<'client> {
   address: String,
   port: i32,
 
+  end_point: Option<Endpoint>,
   task: Option<NodeTask>,
   handler: Option<NodeHandler<()>>,
   event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
@@ -30,6 +31,7 @@ impl<'client> ClientConnection<'client> {
       address,
       port,
 
+      end_point: None,
       task: None,
       handler: None,
       event_receiver: None,
