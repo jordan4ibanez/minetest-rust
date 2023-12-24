@@ -3,7 +3,7 @@ use std::{cell::RefCell, collections::HashMap, net::ToSocketAddrs, rc::Rc, time:
 use message_io::{
   events::EventReceiver,
   network::{Endpoint, Transport},
-  node::{self, NodeTask, StoredNetEvent, StoredNodeEvent, NodeHandler},
+  node::{self, NodeHandler, NodeTask, StoredNetEvent, StoredNodeEvent},
 };
 
 use super::Server;
@@ -30,7 +30,7 @@ impl<'server> ServerConnection<'server> {
     let mut new_server_connection = ServerConnection {
       address,
       port,
-      
+
       task: None,
       handler: None,
       event_receiver: None,
@@ -75,9 +75,11 @@ impl<'server> ServerConnection<'server> {
   pub fn event_reaction(&mut self, event: StoredNetEvent) {
     match event {
       node::StoredNetEvent::Connected(_, _) => {
-        println!("minetest: connection created")
+        println!("minetest: client connection created.")
       }
-      node::StoredNetEvent::Accepted(_, _) => todo!(),
+      node::StoredNetEvent::Accepted(_, _) => {
+        println!("minetest: client connection accepted.")
+      }
       node::StoredNetEvent::Message(endpoint, message) => {
         let receieved_string = match String::from_utf8(message) {
           Ok(new_string) => new_string,
@@ -89,7 +91,9 @@ impl<'server> ServerConnection<'server> {
 
         println!("minetest: received message: {}", receieved_string);
       }
-      node::StoredNetEvent::Disconnected(_) => todo!(),
+      node::StoredNetEvent::Disconnected(_) => {
+        println!("minetest: client disconnected.")
+      }
     }
   }
 
@@ -101,7 +105,7 @@ impl<'server> ServerConnection<'server> {
       Some(event_receiver) => {
         if let Some(event) = event_receiver.receive_timeout(Duration::new(0, 0)) {
           match event {
-            StoredNodeEvent::Network(event) => self.event_reaction(event),
+            StoredNodeEvent::Network(new_event) => self.event_reaction(new_event),
             // todo: figure out what a signal is!
             StoredNodeEvent::Signal(_) => todo!(),
           }
