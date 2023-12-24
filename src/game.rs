@@ -2,6 +2,7 @@ mod client;
 mod lua_engine;
 mod server;
 
+use core::panic;
 use std::{cell::RefCell, ops::Deref, rc::Rc};
 
 use spin_sleep::LoopHelper;
@@ -166,14 +167,19 @@ impl<'game> Game<'game> {
 
     //* Begin server/client on_tick()
 
-    if self.is_server && self.server.is_some() {
-      self
-        .server
-        .as_mut()
-        .unwrap()
-        .deref()
-        .borrow_mut()
-        .on_tick(self.delta);
+    if self.is_server {
+      match self.server.is_some() {
+        true => {
+          self
+            .server
+            .as_mut()
+            .unwrap()
+            .deref()
+            .borrow_mut()
+            .on_tick(self.delta);
+        }
+        false => panic!("minetest: attempted to run a server that does not exist."),
+      }
     }
 
     if self.is_client && self.client.is_some() {
