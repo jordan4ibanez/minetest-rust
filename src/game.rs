@@ -28,7 +28,7 @@ pub struct Game<'game> {
   // double - (2)
   // triple - (3)
   vsync_mode: i8,
-  smart_pointer: Option<Rc<RefCell<Game<'game>>>>,
+  game_pointer: Option<Rc<RefCell<Game<'game>>>>,
 }
 
 impl<'game> Game<'game> {
@@ -77,42 +77,42 @@ impl<'game> Game<'game> {
       //todo: fix this when the minetest.conf parser is implemented
       vsync_mode: 0,
 
-      smart_pointer: None,
+      game_pointer: None,
     };
 
     // We now transfer ownership of the entire Game into an ARC
     // with interior mutability with RefCell.
 
     // Interior mutability. Like a final java object.
-    let new_smart_pointer = Rc::new(RefCell::new(new_game));
+    let new_game_pointer = Rc::new(RefCell::new(new_game));
 
     // We can simply dispatch the smart pointer to this struct by cloning it now.
-    new_smart_pointer.deref().borrow_mut().smart_pointer = Some(new_smart_pointer.clone());
+    new_game_pointer.deref().borrow_mut().game_pointer = Some(new_game_pointer.clone());
 
     // We could parse the player's name instead from a file, or a first time ask. This is mutable after all.
-    new_smart_pointer.deref().borrow_mut().client = match cli.server {
+    new_game_pointer.deref().borrow_mut().client = match cli.server {
       false => Some(Client::new(
-        new_smart_pointer.clone(),
+        new_game_pointer.clone(),
         String::from("singleplayer"),
       )),
       true => None,
     };
 
     // Can auto deploy server and treat this struct like a simplified dispatcher.
-    new_smart_pointer.deref().borrow_mut().server = match cli.server {
-      true => Some(Server::new(new_smart_pointer.clone(), cli.address, cli.port)),
+    new_game_pointer.deref().borrow_mut().server = match cli.server {
+      true => Some(Server::new(new_game_pointer.clone(), cli.address, cli.port)),
       false => None,
     };
 
-    new_smart_pointer
+    new_game_pointer
   }
 
   ///
   /// Allow self to distribute a clone of it's ARC smart pointer.
   /// It's written like this so it's more obvious what's going on.
   ///
-  pub fn clone_smart_pointer(&self) -> Rc<RefCell<Game<'game>>> {
-    self.smart_pointer.clone().unwrap()
+  pub fn clone_game_pointer(&self) -> Rc<RefCell<Game<'game>>> {
+    self.game_pointer.clone().unwrap()
   }
 
   ///
