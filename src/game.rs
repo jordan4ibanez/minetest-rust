@@ -167,7 +167,13 @@ impl<'game> Game<'game> {
     //* Begin server/client on_tick()
 
     if self.is_server && self.server.is_some() {
-      self.server.as_mut().unwrap().deref().borrow_mut().on_tick(self.delta);
+      self
+        .server
+        .as_mut()
+        .unwrap()
+        .deref()
+        .borrow_mut()
+        .on_tick(self.delta);
     }
 
     if self.is_client && self.client.is_some() {

@@ -1,6 +1,6 @@
 mod server_connection;
 
-use std::{cell::RefCell, rc::Rc, ops::Deref};
+use std::{cell::RefCell, ops::Deref, rc::Rc};
 
 use self::server_connection::ServerConnection;
 
@@ -10,11 +10,15 @@ pub struct Server<'server> {
   lua_engine: Option<LuaEngine<'server>>,
   connection: ServerConnection,
   game_pointer: Rc<RefCell<Game<'server>>>,
-  server_pointer: Option<Rc<RefCell<Server<'server>>>>
+  server_pointer: Option<Rc<RefCell<Server<'server>>>>,
 }
 
 impl<'server> Server<'server> {
-  pub fn new(game_pointer: Rc<RefCell<Game<'server>>>, address: String, port: i32) -> Rc<RefCell<Self>> {
+  pub fn new(
+    game_pointer: Rc<RefCell<Game<'server>>>,
+    address: String,
+    port: i32,
+  ) -> Rc<RefCell<Self>> {
     let new_server = Rc::new(RefCell::new(Server {
       lua_engine: None,
       connection: ServerConnection::new(address, port),
@@ -22,7 +26,10 @@ impl<'server> Server<'server> {
       server_pointer: None,
     }));
 
-    println!("minetest: running on socket: {}", new_server.deref().borrow_mut().connection.get_socket());
+    println!(
+      "minetest: running on socket: {}",
+      new_server.deref().borrow_mut().connection.get_socket()
+    );
 
     new_server.deref().borrow_mut().server_pointer = Some(new_server.clone());
 
