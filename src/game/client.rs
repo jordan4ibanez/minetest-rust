@@ -8,7 +8,7 @@ use super::{lua_engine::LuaEngine, Game};
 
 pub struct Client<'client> {
   name: String,
-  connection: Option<ClientConnection>,
+  connection: Option<ClientConnection<'client>>,
   lua_engine: Option<LuaEngine<'client>>,
   game_pointer: Rc<RefCell<Game<'client>>>,
   client_pointer: Option<Rc<RefCell<Client<'client>>>>,
