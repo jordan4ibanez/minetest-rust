@@ -32,4 +32,8 @@ impl ServerConnection {
 
     socket
   }
+
+  pub fn initialize() {
+    
+  }
 }
