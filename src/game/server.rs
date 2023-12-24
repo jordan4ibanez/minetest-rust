@@ -96,7 +96,7 @@ impl<'server> Server<'server> {
         Some(connection) => {
           connection.listen();
         },
-        None => panic!("minetest: tried to poll non-existent Server connection!"),
+        None => panic!("minetest: tried to listen on non-existent Server connection!"),
     }
 
     // We want this to throw a runtime panic if we make a logic error.
