@@ -6,8 +6,6 @@ use message_io::{
   node::{self, NodeHandler, NodeTask, StoredNetEvent, StoredNodeEvent},
 };
 
-use crate::game::Game;
-
 use super::Client;
 
 ///
@@ -21,6 +19,7 @@ pub struct ClientConnection<'client> {
 
   connected: bool,
   timeout: f64,
+  test_remove_this: i32,
 
   end_point: Option<Endpoint>,
   task: Option<NodeTask>,
@@ -38,6 +37,7 @@ impl<'client> ClientConnection<'client> {
 
       connected: false,
       timeout: 0.0,
+      test_remove_this: 0,
 
       end_point: None,
       task: None,
@@ -95,9 +95,18 @@ impl<'client> ClientConnection<'client> {
       // Attempt to handshake with the server
       if !self.connected && receieved_string == "MINETEST_HAND_SHAKE_CONFIRMED" {
         self.connected = true;
-        self.timeout = 0.0
+        self.timeout = 0.0;
+        println!("minetest: Handshake received!");
       }
     }
+  }
+
+  fn test_implementation(&mut self) {
+    self.handler.clone().unwrap().network().send(
+      self.end_point.unwrap(),
+      format!("testing: {}", self.test_remove_this).as_bytes(),
+    );
+    self.test_remove_this += 1;
   }
 
   ///
@@ -126,6 +135,9 @@ impl<'client> ClientConnection<'client> {
       if self.timeout >= 3.0 {
         panic!("minetest: attempt to connect to server timed out.")
       }
+    } else {
+      // we're testing the implementation here.
+      self.test_implementation();
     }
   }
 
@@ -136,7 +148,6 @@ impl<'client> ClientConnection<'client> {
     let remote_address = self.get_socket().to_remote_addr().unwrap();
     let transport_protocol = Transport::Udp;
 
-    // todo: will need to do a handshake here.
     // todo: will need to be initialized by the gui component.
 
     let (handler, listener) = node::split();
@@ -146,6 +157,7 @@ impl<'client> ClientConnection<'client> {
       .connect(transport_protocol, remote_address)
     {
       Ok((end_point, local_address)) => {
+        // UDP is connectionless, but it's still good to know it's working.
         println!(
           "minetest: established connection to server at id [{}], local address [{}]",
           end_point, local_address
