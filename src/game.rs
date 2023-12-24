@@ -176,8 +176,15 @@ impl<'game> Game<'game> {
       }
     }
 
-    if self.is_client && self.client.is_some() {
-      self.client.as_mut().unwrap().on_tick(self.delta);
+    if self.is_client {
+      match &mut self.client {
+        Some(client) => {
+          client.on_tick(self.delta);
+          //todo: for when this is a smart pointer
+          // client.deref().borrow_mut().on_tick(self.delta)
+        },
+        None => panic!("minetest: attempted to run a client that does not exist."),
+      }
     }
 
     //* End server/client on_tick()
