@@ -1,6 +1,10 @@
-use std::{cell::RefCell, net::ToSocketAddrs, rc::Rc};
+use std::{cell::RefCell, net::ToSocketAddrs, rc::Rc, time::Duration};
 
-use message_io::{network::Transport, node};
+use message_io::{
+  events::EventReceiver,
+  network::{Transport, ToRemoteAddr},
+  node::{self, NodeHandler, NodeTask, StoredNetEvent, StoredNodeEvent},
+};
 
 use super::Client;
 
@@ -13,6 +17,10 @@ pub struct ClientConnection<'client> {
   address: String,
   port: i32,
 
+  task: Option<NodeTask>,
+  handler: Option<NodeHandler<()>>,
+  event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
+
   client_pointer: Rc<RefCell<Client<'client>>>,
 }
 
@@ -21,6 +29,10 @@ impl<'client> ClientConnection<'client> {
     let mut new_client_connection = ClientConnection {
       address,
       port,
+
+      task: None,
+      handler: None,
+      event_receiver: None,
 
       client_pointer,
     };
@@ -55,6 +67,41 @@ impl<'client> ClientConnection<'client> {
     socket
   }
 
+  pub fn event_reaction(&mut self, event: StoredNetEvent) {
+    match event {
+      StoredNetEvent::Connected(endpoint, established) => {
+        println!("connecting...");
+        if !established {
+          panic!("minetest: failed to establish a connection.");
+        } else {
+          println!("minetest: established a connection. [{}]", endpoint)
+        }
+      },
+      StoredNetEvent::Accepted(a, b) => todo!(),
+      StoredNetEvent::Message(_, _) => todo!(),
+      StoredNetEvent::Disconnected(_) => todo!(),
+    }
+  }
+
+  ///
+  /// Non-blocking event receiver for network events.
+  ///
+  pub fn receive(&mut self) {
+    match &mut self.event_receiver {
+      Some(event_receiver) => {
+        if let Some(event) = event_receiver.receive_timeout(Duration::new(0, 0)) {
+          match event {
+            StoredNodeEvent::Network(new_event) => self.event_reaction(new_event),
+            // todo: figure out what a signal is!
+            StoredNodeEvent::Signal(_) => todo!(),
+          }
+        }
+      },
+      None => panic!("minetest: ClientConnection listener does not exist!"),
+    }    
+  }
+
+
   ///
   /// Internal initializer procedure automatically run on a new ServerConnection.
   ///
@@ -71,9 +118,20 @@ impl<'client> ClientConnection<'client> {
       .network()
       .connect(transport_protocol, socket_address)
     {
-      Ok((end_point, socket_address)) => (end_point, socket_address),
+      Ok((end_point, socket_address)) => {
+        println!(
+          "minetest: established connection to server at id [{}], real_address [{}]",
+          end_point, socket_address
+        );
+        (end_point, socket_address)
+      }
       Err(e) => panic!("{}", e),
     };
+
+    let (task, event_receiver) = listener.enqueue();
+    self.handler = Some(handler);
+    self.task = Some(task);
+    self.event_receiver = Some(event_receiver);
   }
 }
 
