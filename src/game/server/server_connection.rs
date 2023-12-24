@@ -93,15 +93,12 @@ impl<'server> ServerConnection<'server> {
   pub fn listen(&mut self) {
     match &mut self.listener {
       Some(listener) => {
-        match listener.receive_timeout(Duration::new(0,0)) {
-          Some(event) => {
-            match event {
-              StoredNodeEvent::Network(event) => self.event_reaction(event),
-              // todo: figure out what a signal is!
-              StoredNodeEvent::Signal(_) => todo!(),
-            }
-          },
-          None => println!("minetest: Server: no events received."),
+        if let Some(event) = listener.receive_timeout(Duration::new(0,0)) {
+          match event {
+            StoredNodeEvent::Network(event) => self.event_reaction(event),
+            // todo: figure out what a signal is!
+            StoredNodeEvent::Signal(_) => todo!(),
+          }
         }
       },
       None => panic!("minetest: ServerConnection listener does not exist!"),
