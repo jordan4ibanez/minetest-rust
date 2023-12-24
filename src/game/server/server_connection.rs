@@ -1,4 +1,4 @@
-use std::{cell::RefCell, net::ToSocketAddrs, rc::Rc};
+use std::{cell::RefCell, net::ToSocketAddrs, rc::Rc, time::Duration};
 
 use message_io::{
   events::EventReceiver,
@@ -61,6 +61,23 @@ impl<'server> ServerConnection<'server> {
     socket.push_str(self.port.to_string().as_str());
 
     socket
+  }
+
+  pub fn listen(&mut self) {
+    match &mut self.listener {
+      Some(listener) => {
+        match listener.receive_timeout(Duration::new(0,0)) {
+          Some(event) => {
+            match event {
+              StoredNodeEvent::Network(_) => todo!(),
+              StoredNodeEvent::Signal(_) => todo!(),
+            }
+          },
+          None => println!("minetest: Server: no events received."),
+        }
+      },
+      None => panic!("minetest: ServerConnection listener does not exist!"),
+    }
   }
 
   ///
