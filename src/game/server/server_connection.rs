@@ -1,11 +1,29 @@
-pub struct ServerConnection {
+use std::{rc::Rc, cell::RefCell};
+
+use super::Server;
+
+///
+/// ServerConnection and Server can be considered 1 entity.
+/// 
+/// This is why server_pointer is not an Option<>.
+/// 
+pub struct ServerConnection<'server> {
   address: String,
   port: i32,
+  server_pointer: Rc<RefCell<Server<'server>>>
 }
 
-impl ServerConnection {
-  pub fn new(address: String, port: i32) -> Self {
-    ServerConnection { address, port }
+impl<'server> ServerConnection<'server> {
+  pub fn new(server_pointer: Rc<RefCell<Server<'server>>>,address: String, port: i32) -> Self {
+    let mut new_server_connection = ServerConnection {
+      address,
+      port,
+      server_pointer
+    };
+
+    new_server_connection.initialize();
+
+    new_server_connection
   }
 
   ///
@@ -33,12 +51,16 @@ impl ServerConnection {
     socket
   }
 
-  pub fn initialize() {
+  ///
+  /// Internal initializer procedure automatically run on a new ServerConnection.
+  /// 
+  fn initialize(&mut self) {
+    
 
   }
 }
 
-impl Drop for ServerConnection {
+impl<'server> Drop for ServerConnection<'server> {
   fn drop(&mut self) {
     println!("ServerConnection dropped!")   
   }
