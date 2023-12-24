@@ -69,7 +69,14 @@ impl<'server> ServerConnection<'server> {
         match listener.receive_timeout(Duration::new(0,0)) {
           Some(event) => {
             match event {
-              StoredNodeEvent::Network(_) => todo!(),
+              StoredNodeEvent::Network(event) => {
+                match event {
+                    node::StoredNetEvent::Connected(_, _) => todo!(),
+                    node::StoredNetEvent::Accepted(_, _) => todo!(),
+                    node::StoredNetEvent::Message(_, _) => todo!(),
+                    node::StoredNetEvent::Disconnected(_) => todo!(),
+                }
+              },
               StoredNodeEvent::Signal(_) => todo!(),
             }
           },
