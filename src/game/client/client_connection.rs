@@ -1,8 +1,8 @@
-use std::{cell::RefCell, net::ToSocketAddrs, rc::Rc, time::Duration};
+use std::{cell::RefCell, rc::Rc, time::Duration, borrow::BorrowMut};
 
 use message_io::{
   events::EventReceiver,
-  network::{Transport, ToRemoteAddr},
+  network::{Transport, ToRemoteAddr, Endpoint},
   node::{self, NodeHandler, NodeTask, StoredNetEvent, StoredNodeEvent},
 };
 
