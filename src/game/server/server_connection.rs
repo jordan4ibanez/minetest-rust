@@ -73,28 +73,27 @@ impl<'server> ServerConnection<'server> {
   /// A procedure to react to a network event.
   ///
   pub fn event_reaction(&mut self, event: StoredNetEvent) {
-    match event {
-      node::StoredNetEvent::Connected(_, _) => {
-        println!("minetest: client connection created.")
-      }
-      node::StoredNetEvent::Accepted(_, _) => {
-        println!("minetest: client connection accepted.")
-      }
-      node::StoredNetEvent::Message(endpoint, raw_message) => {
-        // todo: use https://github.com/serde-rs/bytes
-        let receieved_string = match String::from_utf8(raw_message) {
-          Ok(new_string) => new_string,
-          Err(_) => {
-            println!("minetest: message buffer attack detected, bailing on deserialization!");
-            "".to_string()
-          }
-        };
+    // We don't need to match, we're using UDP which is connectionless.
+    if let StoredNetEvent::Message(end_point, raw_message) = event {
+      // todo: use https://github.com/serde-rs/bytes
+      let receieved_string = match String::from_utf8(raw_message) {
+        Ok(new_string) => new_string,
+        Err(_) => {
+          println!("minetest: message buffer attack detected, bailing on deserialization!");
+          "".to_string()
+        }
+      };
 
-        println!("minetest: received message: {}", receieved_string);
+      if receieved_string == "MINETEST_HAND_SHAKE" {
+        self
+          .handler
+          .clone()
+          .unwrap()
+          .network()
+          .send(end_point, "MINETEST_HAND_SHAKE_CONFIRMED".as_bytes());
       }
-      node::StoredNetEvent::Disconnected(_) => {
-        println!("minetest: client disconnected.")
-      }
+
+      println!("minetest: Server received message: {}", receieved_string);
     }
   }
 
