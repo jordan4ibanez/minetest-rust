@@ -1,6 +1,6 @@
 mod client_connection;
 
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, rc::Rc, ops::Deref};
 
 use self::client_connection::ClientConnection;
 
@@ -11,18 +11,23 @@ pub struct Client<'client> {
   connection: Option<ClientConnection>,
   lua_engine: Option<LuaEngine<'client>>,
   game_pointer: Rc<RefCell<Game<'client>>>,
+  client_pointer: Option<Rc<RefCell<Client<'client>>>>
 }
 
 impl<'client> Client<'client> {
-  pub fn new(game_pointer: Rc<RefCell<Game<'client>>>, player_name: String) -> Self {
-    let mut new_client = Client {
+  pub fn new(game_pointer: Rc<RefCell<Game<'client>>>, player_name: String) -> Rc<RefCell<Self>> {
+    let mut new_client = Rc::new(RefCell::new(Client {
       name: player_name,
       connection: None,
       lua_engine: None,
       game_pointer: game_pointer.clone(),
-    };
+      client_pointer: None,
+    }));
 
-    new_client.reset_lua_vm();
+
+    new_client.deref().borrow_mut().client_pointer = Some(new_client.clone());
+
+    new_client.deref().borrow_mut().reset_lua_vm();
 
     new_client
   }
