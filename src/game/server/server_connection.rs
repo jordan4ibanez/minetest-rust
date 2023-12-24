@@ -133,6 +133,8 @@ impl<'server> ServerConnection<'server> {
 
 impl<'server> Drop for ServerConnection<'server> {
   fn drop(&mut self) {
+    // Need to close server, maybe?
+    // todo: experiment with this.
     println!("ServerConnection dropped!")
   }
 }
