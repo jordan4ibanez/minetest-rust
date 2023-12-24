@@ -84,6 +84,8 @@ impl<'server> ServerConnection<'server> {
         }
       };
 
+      println!("minetest: Server received message: {}", receieved_string);
+
       if receieved_string == "MINETEST_HAND_SHAKE" {
         println!("minetest: sending out connection handshake confirmation");
         self
@@ -93,8 +95,6 @@ impl<'server> ServerConnection<'server> {
           .network()
           .send(end_point, "MINETEST_HAND_SHAKE_CONFIRMED".as_bytes());
       }
-
-      println!("minetest: Server received message: {}", receieved_string);
     }
   }
 
