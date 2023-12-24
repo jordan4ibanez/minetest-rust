@@ -7,7 +7,7 @@ use self::client_connection::ClientConnection;
 use super::{lua_engine::LuaEngine, Game};
 
 pub struct Client<'client> {
-  name: String,
+  client_name: String,
   connection: Option<ClientConnection<'client>>,
   lua_engine: Option<LuaEngine<'client>>,
   game_pointer: Rc<RefCell<Game<'client>>>,
@@ -17,7 +17,7 @@ pub struct Client<'client> {
 impl<'client> Client<'client> {
   pub fn new(game_pointer: Rc<RefCell<Game<'client>>>, client_name: String, address: String, port: i32) -> Rc<RefCell<Self>> {
     let new_client = Rc::new(RefCell::new(Client {
-      name: client_name,
+      client_name,
       connection: None,
       lua_engine: None,
       game_pointer: game_pointer.clone(),
@@ -30,7 +30,7 @@ impl<'client> Client<'client> {
 
     new_client.deref().borrow_mut().reset_lua_vm();
 
-    println!("minetest: player name is: {}", &new_client.deref().borrow().name);
+    println!("minetest: player name is: {}", &new_client.deref().borrow().client_name);
 
     new_client
   }
@@ -39,7 +39,7 @@ impl<'client> Client<'client> {
   /// Change the client's name.
   ///
   pub fn change_name(&mut self, new_client_name: String) {
-    self.name = new_client_name;
+    self.client_name = new_client_name;
   }
 
   ///
@@ -47,7 +47,7 @@ impl<'client> Client<'client> {
   ///
   pub fn get_name(&self) -> String {
     // Just fire off new heap memory.
-    self.name.clone()
+    self.client_name.clone()
   }
 
   ///
