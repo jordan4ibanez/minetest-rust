@@ -1,10 +1,12 @@
-use std::{cell::RefCell, rc::Rc, time::Duration, borrow::BorrowMut};
+use std::{cell::RefCell, rc::Rc, time::Duration};
 
 use message_io::{
   events::EventReceiver,
-  network::{Transport, ToRemoteAddr, Endpoint},
+  network::{Endpoint, ToRemoteAddr, Transport},
   node::{self, NodeHandler, NodeTask, StoredNetEvent, StoredNodeEvent},
 };
+
+use crate::game::Game;
 
 use super::Client;
 
@@ -16,6 +18,9 @@ use super::Client;
 pub struct ClientConnection<'client> {
   address: String,
   port: i32,
+
+  connected: bool,
+  timeout: f64,
 
   end_point: Option<Endpoint>,
   task: Option<NodeTask>,
@@ -30,6 +35,9 @@ impl<'client> ClientConnection<'client> {
     let mut new_client_connection = ClientConnection {
       address,
       port,
+
+      connected: false,
+      timeout: 0.0,
 
       end_point: None,
       task: None,
@@ -69,9 +77,12 @@ impl<'client> ClientConnection<'client> {
     socket
   }
 
+  ///
+  /// A procedure to react to a network event.
+  ///
   pub fn event_reaction(&mut self, event: StoredNetEvent) {
     // We don't need to match, we're using UDP which is connectionless.
-    if let StoredNetEvent::Message(end_point,raw_message) = event {
+    if let StoredNetEvent::Message(end_point, raw_message) = event {
       // todo: use https://github.com/serde-rs/bytes
       let receieved_string = match String::from_utf8(raw_message) {
         Ok(new_string) => new_string,
@@ -81,13 +92,18 @@ impl<'client> ClientConnection<'client> {
         }
       };
 
+      // Attempt to handshake with the server
+      if !self.connected && receieved_string == "MINETEST_HAND_SHAKE_CONFIRMED" {
+        self.connected = true;
+        self.timeout = 0.0
+      }
     }
   }
 
   ///
   /// Non-blocking event receiver for network events.
   ///
-  pub fn receive(&mut self) {
+  pub fn receive(&mut self, delta: f64) {
     match &mut self.event_receiver {
       Some(event_receiver) => {
         if let Some(event) = event_receiver.receive_timeout(Duration::new(0, 0)) {
@@ -97,13 +113,21 @@ impl<'client> ClientConnection<'client> {
             StoredNodeEvent::Signal(_) => todo!(),
           }
         }
-      },
+      }
       None => panic!("minetest: ClientConnection listener does not exist!"),
-    }    
+    }
 
-    // let cool = self.handler.borrow_mut().clone().unwrap().network().send(self.end_point.unwrap(), "hello".as_bytes());
+    // Handshake timeout, aka server connection timeout
+    if !self.connected {
+      self.timeout += delta;
+
+      // 3 second timeout.
+      // todo: make this not a panic.
+      if self.timeout >= 3.0 {
+        panic!("minetest: attempt to connect to server timed out.")
+      }
+    }
   }
-
 
   ///
   /// Internal initializer procedure automatically run on a new ServerConnection.
@@ -139,7 +163,12 @@ impl<'client> ClientConnection<'client> {
 
     // Can possibly be used as a handshake
     // ! Note: this literally is the handshake right now
-    self.handler.borrow_mut().clone().unwrap().network().send(self.end_point.unwrap(), "handshake".as_bytes());
+    self
+      .handler
+      .clone()
+      .unwrap()
+      .network()
+      .send(self.end_point.unwrap(), "MINETEST_HAND_SHAKE".as_bytes());
   }
 }
 
