@@ -128,6 +128,13 @@ impl<'game> Game<'game> {
   }
 
   ///
+  /// This simply returns the current delta time.
+  /// 
+  pub fn get_delta(&self) -> f64 {
+    self.delta
+  }
+
+  ///
   /// Update the games' target FPS.
   ///! Only has side effects if this is a client/singleplayer.
   ///  
