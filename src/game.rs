@@ -17,7 +17,7 @@ pub struct Game<'game> {
   goal_ticks_per_second: f64,
   // ! Might need to be a separate lifetime
   server: Option<Rc<RefCell<Server<'game>>>>,
-  client: Option<Client<'game>>,
+  client: Option<Rc<RefCell<Client<'game>>>>,
   is_server: bool,
   is_client: bool,
   loop_helper: LoopHelper,
@@ -179,9 +179,7 @@ impl<'game> Game<'game> {
     if self.is_client {
       match &mut self.client {
         Some(client) => {
-          client.on_tick(self.delta);
-          //todo: for when this is a smart pointer
-          // client.deref().borrow_mut().on_tick(self.delta)
+          client.deref().borrow_mut().on_tick(self.delta)
         },
         None => panic!("minetest: attempted to run a client that does not exist."),
       }
