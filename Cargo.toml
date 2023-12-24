@@ -8,6 +8,8 @@ authors = ["jordan4ibanez", "for the moment"]
 
 [lints.rust]
 unsafe_code = "forbid"
+dead_code = "allow"
+unused_variables = "allow"
 
 [dependencies]
 clap = { version = "4.4.11", features = ["derive"] }
