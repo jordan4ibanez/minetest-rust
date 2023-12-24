@@ -80,8 +80,9 @@ impl<'server> ServerConnection<'server> {
       node::StoredNetEvent::Accepted(_, _) => {
         println!("minetest: client connection accepted.")
       }
-      node::StoredNetEvent::Message(endpoint, message) => {
-        let receieved_string = match String::from_utf8(message) {
+      node::StoredNetEvent::Message(endpoint, raw_message) => {
+        // todo: use https://github.com/serde-rs/bytes
+        let receieved_string = match String::from_utf8(raw_message) {
           Ok(new_string) => new_string,
           Err(_) => {
             println!("minetest: message buffer attack detected, bailing on deserialization!");

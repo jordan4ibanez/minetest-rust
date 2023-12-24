@@ -70,9 +70,16 @@ impl<'client> ClientConnection<'client> {
   }
 
   pub fn event_reaction(&mut self, event: StoredNetEvent) {
-
     // We don't need to match, we're using UDP which is connectionless.
     if let StoredNetEvent::Message(end_point,raw_message) = event {
+      // todo: use https://github.com/serde-rs/bytes
+      let receieved_string = match String::from_utf8(raw_message) {
+        Ok(new_string) => new_string,
+        Err(_) => {
+          println!("minetest: message buffer attack detected, bailing on deserialization!");
+          "".to_string()
+        }
+      };
 
     }
   }
