@@ -101,17 +101,23 @@ impl<'server> ServerConnection<'server> {
   /// Non-blocking event receiver for network events.
   ///
   pub fn receive(&mut self) {
-    match &mut self.event_receiver {
-      Some(event_receiver) => {
-        if let Some(event) = event_receiver.receive_timeout(Duration::new(0, 0)) {
-          match event {
-            StoredNodeEvent::Network(new_event) => self.event_reaction(new_event),
-            // todo: figure out what a signal is!
-            StoredNodeEvent::Signal(_) => todo!(),
+    let mut has_new_event = true;
+    // We want to grind through ALL the events.
+    while has_new_event {
+      match &mut self.event_receiver {
+        Some(event_receiver) => {
+          if let Some(event) = event_receiver.receive_timeout(Duration::new(0, 0)) {
+            match event {
+              StoredNodeEvent::Network(new_event) => self.event_reaction(new_event),
+              // todo: figure out what a signal is!
+              StoredNodeEvent::Signal(_) => todo!(),
+            }
+          } else {
+            has_new_event = false;
           }
         }
+        None => panic!("minetest: ServerConnection listener does not exist!"),
       }
-      None => panic!("minetest: ServerConnection listener does not exist!"),
     }
   }
 
