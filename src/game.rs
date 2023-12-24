@@ -15,7 +15,7 @@ pub struct Game<'game> {
   goal_frames_per_second: f64,
   goal_ticks_per_second: f64,
   // ! Might need to be a separate lifetime
-  server: Option<Server<'game>>,
+  server: Option<Rc<RefCell<Server<'game>>>>,
   client: Option<Client<'game>>,
   is_server: bool,
   is_client: bool,
@@ -167,7 +167,7 @@ impl<'game> Game<'game> {
     //* Begin server/client on_tick()
 
     if self.is_server && self.server.is_some() {
-      self.server.as_mut().unwrap().on_tick(self.delta);
+      self.server.as_mut().unwrap().deref().borrow_mut().on_tick(self.delta);
     }
 
     if self.is_client && self.client.is_some() {
