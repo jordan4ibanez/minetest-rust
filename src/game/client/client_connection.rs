@@ -101,6 +101,8 @@ impl<'client> ClientConnection<'client> {
       },
       None => panic!("minetest: ClientConnection listener does not exist!"),
     }    
+
+    // let cool = self.handler.borrow_mut().clone().unwrap().network().send(self.end_point.unwrap(), "hello".as_bytes());
   }
 
 
