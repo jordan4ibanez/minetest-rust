@@ -17,7 +17,7 @@ pub struct ServerConnection<'server> {
   address: String,
   port: i32,
   task: Option<NodeTask>,
-  listener: Option<EventReceiver<StoredNodeEvent<()>>>,
+  event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
   clients: HashMap<Endpoint, String>,
 
   server_pointer: Rc<RefCell<Server<'server>>>,
@@ -29,7 +29,7 @@ impl<'server> ServerConnection<'server> {
       address,
       port,
       task: None,
-      listener: None,
+      event_receiver: None,
       clients: HashMap::new(),
 
       server_pointer,
@@ -90,12 +90,12 @@ impl<'server> ServerConnection<'server> {
   }
 
   ///
-  /// Non-blocking listener for network events.
+  /// Non-blocking event receiver for network events.
   ///
-  pub fn listen(&mut self) {
-    match &mut self.listener {
-      Some(listener) => {
-        if let Some(event) = listener.receive_timeout(Duration::new(0, 0)) {
+  pub fn receive(&mut self) {
+    match &mut self.event_receiver {
+      Some(event_receiver) => {
+        if let Some(event) = event_receiver.receive_timeout(Duration::new(0, 0)) {
           match event {
             StoredNodeEvent::Network(event) => self.event_reaction(event),
             // todo: figure out what a signal is!
@@ -125,9 +125,10 @@ impl<'server> ServerConnection<'server> {
       }
       Err(e) => panic!("{}", e),
     }
-    let (task, listener) = listener.enqueue();
+
+    let (task, event_receiver) = listener.enqueue();
     self.task = Some(task);
-    self.listener = Some(listener);
+    self.event_receiver = Some(event_receiver);
   }
 }
 
