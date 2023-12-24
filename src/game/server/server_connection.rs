@@ -3,7 +3,7 @@ use std::{cell::RefCell, collections::HashMap, net::ToSocketAddrs, rc::Rc, time:
 use message_io::{
   events::EventReceiver,
   network::{Endpoint, Transport},
-  node::{self, NodeTask, StoredNetEvent, StoredNodeEvent},
+  node::{self, NodeTask, StoredNetEvent, StoredNodeEvent, NodeHandler},
 };
 
 use super::Server;
@@ -17,6 +17,7 @@ pub struct ServerConnection<'server> {
   address: String,
   port: i32,
   task: Option<NodeTask>,
+  handler: Option<NodeHandler<()>>,
   event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
   clients: HashMap<Endpoint, String>,
 
@@ -29,6 +30,7 @@ impl<'server> ServerConnection<'server> {
       address,
       port,
       task: None,
+      handler: None,
       event_receiver: None,
       clients: HashMap::new(),
 
@@ -127,6 +129,7 @@ impl<'server> ServerConnection<'server> {
     }
 
     let (task, event_receiver) = listener.enqueue();
+    self.handler = Some(handler);
     self.task = Some(task);
     self.event_receiver = Some(event_receiver);
   }
