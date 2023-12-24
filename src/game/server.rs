@@ -26,22 +26,22 @@ impl<'server> Server<'server> {
       server_pointer: None,
     }));
 
-    // ! this is a test to see how we can work with this
-    match &new_server.deref().borrow_mut().connection {
-        Some(connection) => {
-          println!("minetest: running on socket: {} (match)", connection.get_socket());
-        },
-        None => (),
-    }
-    println!(
-      "minetest: running on socket: {}",
-      new_server.deref().borrow_mut().connection.as_ref().unwrap().get_socket()
-    );
-    // ! end test
-
     new_server.deref().borrow_mut().server_pointer = Some(new_server.clone());
 
     new_server.deref().borrow_mut().connection = Some(ServerConnection::new(new_server.clone(), address, port));
+
+    // ! this is a test to see how we can work with this
+    match &new_server.deref().borrow_mut().connection {
+      Some(connection) => {
+        println!("minetest: running on socket: {} (match)", connection.get_socket());
+      },
+      None => (),
+  }
+  println!(
+    "minetest: running on socket: {}",
+    new_server.deref().borrow_mut().connection.as_ref().unwrap().get_socket()
+  );
+  // ! end test
 
 
     new_server.deref().borrow_mut().reset_lua_vm();
