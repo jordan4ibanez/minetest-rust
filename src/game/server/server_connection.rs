@@ -16,7 +16,7 @@ use super::Server;
 pub struct ServerConnection<'server> {
   address: String,
   port: i32,
-  
+
   task: Option<NodeTask>,
   handler: Option<NodeHandler<()>>,
   event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
@@ -30,6 +30,7 @@ impl<'server> ServerConnection<'server> {
     let mut new_server_connection = ServerConnection {
       address,
       port,
+      
       task: None,
       handler: None,
       event_receiver: None,
