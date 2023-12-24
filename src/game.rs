@@ -100,7 +100,7 @@ impl<'game> Game<'game> {
 
     // Can auto deploy server and treat this struct like a simplified dispatcher.
     new_smart_pointer.deref().borrow_mut().server = match cli.server {
-      true => Some(Server::new(new_smart_pointer.clone())),
+      true => Some(Server::new(new_smart_pointer.clone(), cli.address, cli.port)),
       false => None,
     };
 
