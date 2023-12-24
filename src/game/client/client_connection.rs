@@ -106,29 +106,30 @@ impl<'client> ClientConnection<'client> {
   /// Internal initializer procedure automatically run on a new ServerConnection.
   ///
   fn initialize(&mut self) {
-    let socket_address = self.get_socket().to_socket_addrs().unwrap().next().unwrap();
+    let remote_address = self.get_socket().to_remote_addr().unwrap();
     let transport_protocol = Transport::Udp;
 
     // todo: will need to do a handshake here.
     // todo: will need to be initialized by the gui component.
 
-    let (handler, listener) = node::split::<()>();
+    let (handler, listener) = node::split();
 
     let (server_id, local_address) = match handler
       .network()
-      .connect(transport_protocol, socket_address)
+      .connect(transport_protocol, remote_address)
     {
-      Ok((end_point, socket_address)) => {
+      Ok((end_point, local_address)) => {
         println!(
-          "minetest: established connection to server at id [{}], real_address [{}]",
-          end_point, socket_address
+          "minetest: established connection to server at id [{}], local address [{}]",
+          end_point, local_address
         );
-        (end_point, socket_address)
+        (end_point, local_address)
       }
       Err(e) => panic!("{}", e),
     };
 
     let (task, event_receiver) = listener.enqueue();
+    self.end_point = Some(server_id);
     self.handler = Some(handler);
     self.task = Some(task);
     self.event_receiver = Some(event_receiver);
