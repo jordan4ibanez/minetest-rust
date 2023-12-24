@@ -1,6 +1,6 @@
 mod server_connection;
 
-use std::{cell::RefCell, ops::Deref, rc::Rc, borrow::BorrowMut};
+use std::{cell::RefCell, ops::Deref, rc::Rc};
 
 use self::server_connection::ServerConnection;
 
