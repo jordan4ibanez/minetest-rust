@@ -85,6 +85,7 @@ impl<'server> ServerConnection<'server> {
       };
 
       if receieved_string == "MINETEST_HAND_SHAKE" {
+        println!("minetest: sending out connection handshake confirmation");
         self
           .handler
           .clone()
