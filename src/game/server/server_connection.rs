@@ -4,10 +4,10 @@ pub struct ServerConnection {
 }
 
 impl ServerConnection {
-  pub fn new() -> Self {
+  pub fn new(address: String, port: i32) -> Self {
     ServerConnection {
-      address: "127.0.0.1".to_string(),
-      port: 30_001,
+      address,
+      port,
     }
   }
 
