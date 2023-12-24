@@ -26,13 +26,13 @@ impl ServerConnection {
   }
 
   ///
-  /// Construct the address & port into a parsable string.
+  /// Construct the address & port into a parsable socket string.
   /// 
-  pub fn get_address(&self) -> String {
-    let mut final_address = self.address.clone();
-    final_address.push(':');
-    final_address.push_str(self.port.to_string().as_str());
+  pub fn get_socket(&self) -> String {
+    let mut socket = self.address.clone();
+    socket.push(':');
+    socket.push_str(self.port.to_string().as_str());
 
-    final_address
+    socket
   }
 }
