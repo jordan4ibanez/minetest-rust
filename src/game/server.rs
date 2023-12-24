@@ -93,7 +93,7 @@ impl<'server> Server<'server> {
     // Poll any incoming network traffic. (non blocking)
     match &mut self.connection {
       Some(connection) => {
-        connection.listen();
+        connection.receive();
       }
       None => panic!("minetest: tried to listen on non-existent Server connection!"),
     }
