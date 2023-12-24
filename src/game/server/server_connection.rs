@@ -1,4 +1,6 @@
-use std::{rc::Rc, cell::RefCell};
+use std::{rc::Rc, cell::RefCell,net::{SocketAddr,ToSocketAddrs}};
+
+use message_io::{network::Transport, node};
 
 use super::Server;
 
@@ -55,7 +57,17 @@ impl<'server> ServerConnection<'server> {
   /// Internal initializer procedure automatically run on a new ServerConnection.
   /// 
   fn initialize(&mut self) {
-    
+    let socket_address = self.get_socket().to_socket_addrs().unwrap().next().unwrap();
+    let transpor_protocol = Transport::Udp;
+
+    let (handler, listener) = node::split::<()>();
+
+    match handler.network().listen(transpor_protocol, socket_address) {
+        Ok((id,real_address)) => {
+          println!("minetest: connection created at id [{}], real address [{}]", id, real_address);
+        },
+        Err(e) => panic!("{}", e),
+    }
 
   }
 }
