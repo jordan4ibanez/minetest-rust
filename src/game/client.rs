@@ -16,7 +16,7 @@ pub struct Client<'client> {
 
 impl<'client> Client<'client> {
   pub fn new(game_pointer: Rc<RefCell<Game<'client>>>, player_name: String) -> Rc<RefCell<Self>> {
-    let mut new_client = Rc::new(RefCell::new(Client {
+    let new_client = Rc::new(RefCell::new(Client {
       name: player_name,
       connection: None,
       lua_engine: None,
