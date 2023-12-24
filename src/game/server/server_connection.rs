@@ -34,6 +34,12 @@ impl ServerConnection {
   }
 
   pub fn initialize() {
-    
+
+  }
+}
+
+impl Drop for ServerConnection {
+  fn drop(&mut self) {
+    println!("ServerConnection dropped!")   
   }
 }
