@@ -1,32 +1,36 @@
-use std::{rc::Rc, cell::RefCell,net::ToSocketAddrs};
+use std::{cell::RefCell, net::ToSocketAddrs, rc::Rc};
 
-use message_io::{network::Transport, node::{self, NodeTask, StoredNodeEvent}, events::EventReceiver};
+use message_io::{
+  events::EventReceiver,
+  network::Transport,
+  node::{self, NodeTask, StoredNodeEvent},
+};
 
 use super::Server;
 
 ///
 /// ServerConnection and Server can be considered 1 entity.
-/// 
+///
 /// This is why server_pointer is not an Option<>.
-/// 
+///
 pub struct ServerConnection<'server> {
   address: String,
   port: i32,
   task: Option<NodeTask>,
   listener: Option<EventReceiver<StoredNodeEvent<()>>>,
 
-  server_pointer: Rc<RefCell<Server<'server>>>
+  server_pointer: Rc<RefCell<Server<'server>>>,
 }
 
 impl<'server> ServerConnection<'server> {
-  pub fn new(server_pointer: Rc<RefCell<Server<'server>>>,address: String, port: i32) -> Self {
+  pub fn new(server_pointer: Rc<RefCell<Server<'server>>>, address: String, port: i32) -> Self {
     let mut new_server_connection = ServerConnection {
       address,
       port,
       task: None,
       listener: None,
 
-      server_pointer
+      server_pointer,
     };
 
     new_server_connection.initialize();
@@ -61,7 +65,7 @@ impl<'server> ServerConnection<'server> {
 
   ///
   /// Internal initializer procedure automatically run on a new ServerConnection.
-  /// 
+  ///
   fn initialize(&mut self) {
     let socket_address = self.get_socket().to_socket_addrs().unwrap().next().unwrap();
     let transpor_protocol = Transport::Udp;
@@ -69,9 +73,12 @@ impl<'server> ServerConnection<'server> {
     let (handler, listener) = node::split::<()>();
 
     match handler.network().listen(transpor_protocol, socket_address) {
-      Ok((id,real_address)) => {
-        println!("minetest: connection created at id [{}], real address [{}]", id, real_address);
-      },
+      Ok((id, real_address)) => {
+        println!(
+          "minetest: connection created at id [{}], real address [{}]",
+          id, real_address
+        );
+      }
       Err(e) => panic!("{}", e),
     }
     let (task, listener) = listener.enqueue();
@@ -82,6 +89,6 @@ impl<'server> ServerConnection<'server> {
 
 impl<'server> Drop for ServerConnection<'server> {
   fn drop(&mut self) {
-    println!("ServerConnection dropped!")   
+    println!("ServerConnection dropped!")
   }
 }
