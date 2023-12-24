@@ -15,7 +15,7 @@ pub struct Client<'client> {
 }
 
 impl<'client> Client<'client> {
-  pub fn new(game_pointer: Rc<RefCell<Game<'client>>>, player_name: String) -> Rc<RefCell<Self>> {
+  pub fn new(game_pointer: Rc<RefCell<Game<'client>>>, player_name: String, address: String, port: i32) -> Rc<RefCell<Self>> {
     let new_client = Rc::new(RefCell::new(Client {
       name: player_name,
       connection: None,
@@ -26,7 +26,11 @@ impl<'client> Client<'client> {
 
     new_client.deref().borrow_mut().client_pointer = Some(new_client.clone());
 
+    new_client.deref().borrow_mut().connection = Some(ClientConnection::new(new_client.clone(), address, port));
+
     new_client.deref().borrow_mut().reset_lua_vm();
+
+    println!("minetest: player name is: {}", &new_client.deref().borrow().name);
 
     new_client
   }
