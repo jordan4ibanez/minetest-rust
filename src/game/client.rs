@@ -15,9 +15,9 @@ pub struct Client<'client> {
 }
 
 impl<'client> Client<'client> {
-  pub fn new(game_pointer: Rc<RefCell<Game<'client>>>, player_name: String, address: String, port: i32) -> Rc<RefCell<Self>> {
+  pub fn new(game_pointer: Rc<RefCell<Game<'client>>>, client_name: String, address: String, port: i32) -> Rc<RefCell<Self>> {
     let new_client = Rc::new(RefCell::new(Client {
-      name: player_name,
+      name: client_name,
       connection: None,
       lua_engine: None,
       game_pointer: game_pointer.clone(),
@@ -38,8 +38,8 @@ impl<'client> Client<'client> {
   ///
   /// Change the client's name.
   ///
-  pub fn change_name(&mut self, new_player_name: String) {
-    self.name = new_player_name;
+  pub fn change_name(&mut self, new_client_name: String) {
+    self.name = new_client_name;
   }
 
   ///
