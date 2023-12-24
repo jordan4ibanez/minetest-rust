@@ -109,14 +109,6 @@ impl<'game> Game<'game> {
   }
 
   ///
-  /// Allow self to distribute a clone of it's ARC smart pointer.
-  /// It's written like this so it's more obvious what's going on.
-  ///
-  pub fn clone_game_pointer(&self) -> Rc<RefCell<Game<'game>>> {
-    self.game_pointer.clone().unwrap()
-  }
-
-  ///
   /// This does the actual work of updating the framerate goal.
   /// It also automatically decides which one to use if this is
   /// A client, server, or singleplayer.
