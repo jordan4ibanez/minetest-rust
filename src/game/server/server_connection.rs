@@ -1,6 +1,6 @@
-use std::{rc::Rc, cell::RefCell,net::{SocketAddr,ToSocketAddrs}};
+use std::{rc::Rc, cell::RefCell,net::ToSocketAddrs};
 
-use message_io::{network::Transport, node};
+use message_io::{network::Transport, node::{self, NodeTask, StoredNodeEvent}, events::EventReceiver};
 
 use super::Server;
 
@@ -12,6 +12,9 @@ use super::Server;
 pub struct ServerConnection<'server> {
   address: String,
   port: i32,
+  task: Option<NodeTask>,
+  listener: Option<EventReceiver<StoredNodeEvent<()>>>,
+
   server_pointer: Rc<RefCell<Server<'server>>>
 }
 
@@ -20,6 +23,9 @@ impl<'server> ServerConnection<'server> {
     let mut new_server_connection = ServerConnection {
       address,
       port,
+      task: None,
+      listener: None,
+
       server_pointer
     };
 
@@ -63,12 +69,14 @@ impl<'server> ServerConnection<'server> {
     let (handler, listener) = node::split::<()>();
 
     match handler.network().listen(transpor_protocol, socket_address) {
-        Ok((id,real_address)) => {
-          println!("minetest: connection created at id [{}], real address [{}]", id, real_address);
-        },
-        Err(e) => panic!("{}", e),
+      Ok((id,real_address)) => {
+        println!("minetest: connection created at id [{}], real address [{}]", id, real_address);
+      },
+      Err(e) => panic!("{}", e),
     }
-
+    let (task, listener) = listener.enqueue();
+    self.task = Some(task);
+    self.listener = Some(listener);
   }
 }
 
