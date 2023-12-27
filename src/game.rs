@@ -11,6 +11,25 @@ use crate::command_line::CommandLineInterface;
 
 use self::{client::Client, server::Server};
 
+///
+/// The master container for the game.
+///
+/// The main architectural design pattern for the engine is:
+/// * Composition over inheritance.
+///
+/// All code from this point downward should be straight forward
+/// and as un-mystical and magicless as possible.
+///
+/// All logic and storage will branch off of this and flow
+/// downwards like a tree. If you want to find something, simply
+/// follow the components in the direction you think they are.
+///
+/// * Note: The only thing that should be higher up in the stack
+/// * is the actual main() entry point of the program that's
+/// * encapsulating this struct as a requirement in rust.
+///
+/// ! Do not create multiple instances of game. It's monolithic.
+///
 pub struct Game<'game> {
   should_close: bool,
   goal_frames_per_second: f64,
