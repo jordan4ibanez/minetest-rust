@@ -133,7 +133,7 @@ impl<'game> LuaEngine<'game> {
   /// ? note: Due to the nature of LuauJIT, I'm not sure we
   /// ? actually need to sort anything.
   ///
-  fn load_game_mods(&self, game_folder_name: String) {}
+  fn load_game_mods(&self, game_name: String) {}
 
   ///
   /// Load up a game directly.
