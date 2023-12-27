@@ -104,7 +104,7 @@ impl<'server> ServerConnection<'server> {
         "hi" => self.send_data(end_point, "hi there!"),
         "MINETEST_HAND_SHAKE" => self.send_data(end_point, "MINETEST_HAND_SHAKE_CONFIRMED"),
         // ! Oh yeah, just accept any shut down request.
-        // ! I'm sure there's no way this can go wrong
+        // ! I'm sure there's no way this can go wrong.
         // ! If it's not obvious [THIS IS DEBUGGING]
         "MINETEST_SHUT_DOWN_REQUEST" => {
           println!("minetest: shutdown request received! Shutting down [now].");
