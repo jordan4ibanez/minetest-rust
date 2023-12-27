@@ -120,6 +120,27 @@ fn game_has_mods(games_dir: &str, game_name: &str) -> bool {
 }
 
 ///
+/// Automatically get the mod folders in a game's directory as a vector of strings.
+///
+pub fn get_game_mod_folders(games_dir: &str, game_name: &str) -> Vec<String> {
+  let mut container = Vec::<String>::new();
+
+  let folders: ReadDir = get_game_mods_dir_raw_files(games_dir, game_name);
+
+  for folder_result in folders {
+    // We could chain these unwraps to tell the user they don't have access.
+    // Use a match if this is decided upon.
+    if folder_result.unwrap().file_type().unwrap().is_dir() {
+      container.push(String::from(
+        folder_result.unwrap().file_name().to_str().unwrap(),
+      ))
+    }
+  }
+
+  container
+}
+
+///
 /// Ensure that each of the game's mods has a main.lua and a mod.conf file.
 ///
 /// Result<(), (mod name, mod.conf/main.lua)>
