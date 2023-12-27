@@ -32,22 +32,27 @@ use self::{client::Client, server::Server};
 ///
 pub struct Game<'game> {
   should_close: bool,
+
   goal_frames_per_second: f64,
   goal_ticks_per_second: f64,
-  // ! Might need to be a separate lifetime
+
   server: Option<Rc<RefCell<Server<'game>>>>,
   client: Option<Rc<RefCell<Client<'game>>>>,
+
   is_server: bool,
   is_client: bool,
+
   loop_helper: LoopHelper,
   delta: f64,
   current_fps: f64,
+
   // vsync can be:
   // off    - (0)
   // on     - (1)
   // double - (2)
   // triple - (3)
   vsync_mode: i8,
+
   game_pointer: Option<Rc<RefCell<Game<'game>>>>,
 }
 
