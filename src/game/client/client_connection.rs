@@ -78,6 +78,18 @@ impl<'client> ClientConnection<'client> {
   }
 
   ///
+  /// Send raw data to the EndPoint (ServerConnection).
+  ///
+  fn send_data(&self, end_point: Endpoint, data: &str) {
+    self
+      .handler
+      .clone()
+      .unwrap()
+      .network()
+      .send(end_point, data.as_bytes());
+  }
+
+  ///
   /// A procedure to react to a network event.
   ///
   pub fn event_reaction(&mut self, event: StoredNetEvent) {
