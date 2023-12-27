@@ -101,6 +101,13 @@ impl<'client> ClientConnection<'client> {
     }
   }
 
+  ///
+  /// Test implementation is literally sending the server
+  /// the word testing followed by the counter.
+  ///
+  /// Why yes, this will cause a panic in debug mode if you
+  /// decide to run it for a few weeks stright.
+  ///
   fn test_implementation(&mut self) {
     self.handler.clone().unwrap().network().send(
       self.end_point.unwrap(),
