@@ -4,8 +4,8 @@
 ///
 /// This is specifically written for the LuaEngine.
 ///
-/// This flows down in complexity until you get the the public procedure
-/// This is: check_game
+/// This flows down in complexity until you get the the public procedures
+/// these are: check_game, get_game_mod_folders
 ///
 use std::{
   fs::{self, read_dir, ReadDir},
@@ -129,6 +129,43 @@ fn game_has_mods(games_dir: &str, game_name: &str) -> bool {
 }
 
 ///
+/// Ensure that each of the game's mods has a main.lua and a mod.conf file.
+///
+/// Result<(), (mod name, mod.conf/main.lua)>
+///
+/// The second result component is:
+/// (which mod failed, if it's missing mod.conf or main.lua)
+///
+fn game_mods_have_main_and_conf(games_dir: &str, game_name: &str) -> Result<(), (String, String)> {
+  // Iterate each file in game's /mods/ folder.
+  for mod_directory in get_game_mod_folders(games_dir, game_name) {
+    //* First we check main.lua
+
+    let mut main_lua_file = mod_directory.mod_path.clone();
+    main_lua_file.push_str("/main.lua");
+
+    if !file_exists(&main_lua_file) {
+      //todo: We should have a conf parser to get the mod name.
+      // We'll just use the folder name for now.
+      return Err((mod_directory.mod_name, "main.lua".to_string()));
+    }
+
+    //* Then we check mod.conf
+
+    let mut mod_conf_file = mod_directory.mod_path.clone();
+    mod_conf_file.push_str("/mod.conf");
+
+    if !file_exists(&mod_conf_file) {
+      //todo: We should have a conf parser to get the mod name.
+      // We'll just use the folder name for now.
+      return Err((mod_directory.mod_name, "mod.conf".to_string()));
+    }
+  }
+
+  Ok(())
+}
+
+///
 /// Automatically get the mod folders in a game's directory as a vector of ModDirectory.
 ///
 pub fn get_game_mod_folders(games_dir: &str, game_name: &str) -> Vec<ModDirectory> {
@@ -167,43 +204,6 @@ pub fn get_game_mod_folders(games_dir: &str, game_name: &str) -> Vec<ModDirector
   }
 
   container
-}
-
-///
-/// Ensure that each of the game's mods has a main.lua and a mod.conf file.
-///
-/// Result<(), (mod name, mod.conf/main.lua)>
-///
-/// The second result component is:
-/// (which mod failed, if it's missing mod.conf or main.lua)
-///
-fn game_mods_have_main_and_conf(games_dir: &str, game_name: &str) -> Result<(), (String, String)> {
-  // Iterate each file in game's /mods/ folder.
-  for mod_directory in get_game_mod_folders(games_dir, game_name) {
-    //* First we check main.lua
-
-    let mut main_lua_file = mod_directory.mod_path.clone();
-    main_lua_file.push_str("/main.lua");
-
-    if !file_exists(&main_lua_file) {
-      //todo: We should have a conf parser to get the mod name.
-      // We'll just use the folder name for now.
-      return Err((mod_directory.mod_name, "main.lua".to_string()));
-    }
-
-    //* Then we check mod.conf
-
-    let mut mod_conf_file = mod_directory.mod_path.clone();
-    mod_conf_file.push_str("/mod.conf");
-
-    if !file_exists(&mod_conf_file) {
-      //todo: We should have a conf parser to get the mod name.
-      // We'll just use the folder name for now.
-      return Err((mod_directory.mod_name, "mod.conf".to_string()));
-    }
-  }
-
-  Ok(())
 }
 
 ///
