@@ -129,20 +129,40 @@ fn game_has_mods(games_dir: &str, game_name: &str) -> bool {
 }
 
 ///
-/// Automatically get the mod folders in a game's directory as a vector of strings.
+/// Automatically get the mod folders in a game's directory as a vector of ModDirectory.
 ///
-pub fn get_game_mod_folders(games_dir: &str, game_name: &str) -> Vec<String> {
-  let mut container = Vec::<String>::new();
+pub fn get_game_mod_folders(games_dir: &str, game_name: &str) -> Vec<ModDirectory> {
+  let mut container = Vec::<ModDirectory>::new();
 
   let folders: ReadDir = get_game_mods_dir_raw_files(games_dir, game_name);
 
   for folder_result in folders {
     // We could chain these unwraps to tell the user they don't have access.
     // Use a match if this is decided upon.
-    if folder_result.unwrap().file_type().unwrap().is_dir() {
-      container.push(String::from(
-        folder_result.unwrap().file_name().to_str().unwrap(),
-      ))
+    if folder_result
+      .as_ref()
+      .unwrap()
+      .file_type()
+      .unwrap()
+      .is_dir()
+    {
+      let mod_name = folder_result
+        .as_ref()
+        .unwrap()
+        .file_name()
+        .to_str()
+        .unwrap()
+        .to_string();
+
+      let mod_path = folder_result
+        .as_ref()
+        .unwrap()
+        .path()
+        .to_str()
+        .unwrap()
+        .to_string();
+
+      container.push(ModDirectory { mod_name, mod_path });
     }
   }
 
