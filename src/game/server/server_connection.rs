@@ -1,4 +1,6 @@
-use std::{cell::RefCell, collections::HashMap, net::ToSocketAddrs, rc::Rc, time::Duration};
+use std::{
+  cell::RefCell, collections::HashMap, net::ToSocketAddrs, ops::Deref, rc::Rc, time::Duration,
+};
 
 use message_io::{
   events::EventReceiver,
@@ -101,7 +103,21 @@ impl<'server> ServerConnection<'server> {
       match receieved_string.as_str() {
         "hi" => self.send_data(end_point, "hi there!"),
         "MINETEST_HAND_SHAKE" => self.send_data(end_point, "MINETEST_HAND_SHAKE_CONFIRMED"),
-        
+        // ! Oh yeah, just accept any shut down request.
+        // ! I'm sure there's no way this can go wrong
+        // ! If it's not obvious [THIS IS DEBUGGING]
+        "MINETEST_SHUT_DOWN_REQUEST" => {
+          println!("minetest: shutdown request received! Shutting down [now].");
+          self
+            .server_pointer
+            .clone()
+            .deref()
+            .borrow()
+            .game_pointer
+            .deref()
+            .borrow_mut()
+            .shutdown_game();
+        }
         _ => (),
       }
 
