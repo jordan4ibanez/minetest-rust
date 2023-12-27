@@ -95,11 +95,18 @@ impl<'server> Server<'server> {
   ///
   /// This is referred to as on_step in C++ minetest.
   ///
-  pub fn on_tick(&mut self, delta: f64) {
+  /// Returns shutdown signal.
+  ///
+  pub fn on_tick(&mut self, delta: f64) -> bool {
+    let mut shutdown = false;
+
     // Process any incoming network traffic. (non blocking)
     match &mut self.connection {
       Some(connection) => {
-        connection.receive();
+        // ! todo: this absolutely needs to be checked for server privs!
+        if let Some(end_point) = connection.receive() {
+          shutdown = true
+        }
       }
       None => panic!("minetest: tried to receive data on a non-existent Server connection!"),
     }
@@ -110,5 +117,7 @@ impl<'server> Server<'server> {
       Some(lua_engine) => lua_engine.on_tick(delta),
       None => panic!("minetest: Server LuaEngine does not exist!"),
     }
+
+    shutdown
   }
 }
