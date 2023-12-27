@@ -6,6 +6,16 @@ use self::server_connection::ServerConnection;
 
 use super::{lua_engine::LuaEngine, Game};
 
+///
+/// The Server component for the engine.
+/// 
+/// The Server component will act as a few things:
+/// 1.) Processes LuaEngine just as LuaJIT does in Minetest C++'s server.
+/// 2.) Hold a ServerConnection component which will handle talking to clients.
+/// 3.) [in the future] Be the main handler for ServerAuthentication.
+///  - ServerAuthentication does exactly what you think it does.
+///  - It handles the client auth for the server.
+/// 
 pub struct Server<'server> {
   lua_engine: Option<LuaEngine<'server>>,
   connection: Option<ServerConnection<'server>>,
