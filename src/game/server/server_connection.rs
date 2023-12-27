@@ -166,6 +166,9 @@ impl<'server> ServerConnection<'server> {
 
     let (handler, listener) = node::split::<()>();
 
+    // todo: fixme: this is udp, why are we doing a match here?
+    // todo: If this fails, the server probably doesn't have a network
+    // todo: adapter! Why is it a server?!
     match handler.network().listen(transport_protocol, socket_address) {
       Ok((id, real_address)) => {
         println!(

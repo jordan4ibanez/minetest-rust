@@ -172,7 +172,7 @@ impl<'client> ClientConnection<'client> {
     let (handler, listener) = node::split();
 
     // todo: fixme: this is udp, why are we doing a match here?
-    // todo: If this fails, the use probably doesn't have a network
+    // todo: If this fails, the user probably doesn't have a network
     // todo: adapter!
     let (server_id, local_address) = match handler
       .network()
