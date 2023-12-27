@@ -171,6 +171,6 @@ impl<'game> LuaEngine<'game> {
     self.parse_game_conf(&games_dir, &game_name);
 
     // Now we finally load the actual game files into the LuaEngine.
-    self.load_game_files(game_name);
+    self.load_game_files(&games_dir, &game_name);
   }
 }
