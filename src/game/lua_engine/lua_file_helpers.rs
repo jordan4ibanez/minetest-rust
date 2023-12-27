@@ -17,8 +17,8 @@ use std::{
 /// to follow when reading it.
 ///
 pub struct ModDirectory {
-  mod_name: String,
-  mod_path: String,
+  pub mod_name: String,
+  pub mod_path: String,
 }
 
 ///
