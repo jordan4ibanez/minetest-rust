@@ -139,7 +139,7 @@ impl<'game> LuaEngine<'game> {
   /// Load up a game directly.
   ///
   /// This should _only_ be run on a server LuaEngine.
-  /// ! Never run this function on a Client!
+  /// ! **Never run this function on a Client!**
   ///
   pub fn load_game(&mut self, game_name: String) {
     // We _do not_ want a client to even attempt to load anything.
