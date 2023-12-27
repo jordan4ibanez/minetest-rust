@@ -13,6 +13,15 @@ use std::{
 };
 
 ///
+/// Makes the implementation of working with mod folders easier
+/// to follow when reading it.
+///
+pub struct ModDir {
+  mod_name: String,
+  mod_path: String,
+}
+
+///
 /// A micro helper function.
 /// Simply check if a directory exists.
 ///
