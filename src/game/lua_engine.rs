@@ -85,8 +85,8 @@ impl<'game> LuaEngine<'game> {
   /// ! We are letting LuauJIT be the sandbox. Look into this if
   /// ! we think we should implement better protection!
   ///
-  pub fn run_file(&self, file_location: String) -> Result<(), String> {
-    let raw_code_string = read_file_to_string(&file_location);
+  pub fn run_file(&self, file_location: &str) -> Result<(), String> {
+    let raw_code_string = read_file_to_string(file_location);
 
     if self.output_code_string {
       println!("{}", raw_code_string);
@@ -110,7 +110,7 @@ impl<'game> LuaEngine<'game> {
   /// Parses the game.conf file.
   /// A double check on the conf file's existence.
   ///
-  fn parse_game_conf(&mut self, games_dir: &String, game_name: &String) {
+  fn parse_game_conf(&mut self, games_dir: &str, game_name: &String) {
     let mut base_path = get_game_path(games_dir, game_name);
     base_path.push_str("/game.conf");
 
