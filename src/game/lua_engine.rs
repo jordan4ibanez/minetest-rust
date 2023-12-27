@@ -77,7 +77,7 @@ impl<'game> LuaEngine<'game> {
   /// ! We are letting LuauJIT be the sandbox. Look into this if
   /// ! we think we should implement better protection!
   ///
-  pub fn run_file(&self, file_location: String) {
+  pub fn run_file(&self, file_location: String) -> Result<(), String> {
     let raw_code_string = read_file_to_string(&file_location);
 
     if self.output_code_string {
@@ -85,15 +85,15 @@ impl<'game> LuaEngine<'game> {
     }
 
     match self.lua.load(raw_code_string).exec() {
-      Ok(_) => (),
+      Ok(_) => Ok(()),
       Err(err) => {
         // This needs some modification so we can post just these two elements:
         // 1.) Lua file
         // 2.) Line/Offset
-        panic!(
+        Err(format!(
           "minetest: encountered fatal mod error in {}: {}",
           file_location, err
-        )
+        ))
       }
     }
   }
