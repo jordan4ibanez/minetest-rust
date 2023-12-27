@@ -78,7 +78,7 @@ impl<'server> Server<'server> {
       Some(connection) => {
         connection.receive();
       }
-      None => panic!("minetest: tried to listen on non-existent Server connection!"),
+      None => panic!("minetest: tried to receive data on a non-existent Server connection!"),
     }
 
     // We want this to throw a runtime panic if we make a logic error.
