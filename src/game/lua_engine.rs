@@ -18,6 +18,9 @@ use super::Game;
 pub struct LuaEngine<'game> {
   lua: Lua,
   output_code_string: bool,
+  // ! Note: Might want to hold Server and Client instead of just game.
+  // ! Note: Doing it like this might be overly verbose.
+  // ! todo: See how this goes during development.
   game: Option<Rc<RefCell<Game<'game>>>>,
   server_vm: bool,
 }
