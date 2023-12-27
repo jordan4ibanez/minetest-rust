@@ -45,7 +45,7 @@ impl<'server> Server<'server> {
       "minetest: running on socket: {}",
       new_server
         .deref()
-        .borrow_mut()
+        .borrow()
         .connection
         .as_ref()
         .unwrap()
