@@ -12,9 +12,9 @@ use super::{lua_engine::LuaEngine, Game};
 /// The Server component has 4 jobs:
 /// 1.) Processes LuaEngine just as LuaJIT does in Minetest C++'s server.
 /// 2.) Hold a ServerConnection component which will handle talking to clients.
-/// 3.) [in the future] Be the main handler for ServerAuthentication.
-///  - ServerAuthentication does exactly what you think it does.
-///  - It handles the client auth for the server.
+/// * 3.) [in the future] Be the main handler for ServerAuthentication.
+/// *  - ServerAuthentication does exactly what you think it does.
+/// *  - It handles the client auth for the server.
 /// ? 4.) Handle GameConfig as a component to be utilized during runtime.
 /// ?  - Marked with ? because it's still being thought out at the moment.
 ///
