@@ -26,8 +26,12 @@ impl<'server> Server<'server> {
       server_pointer: None,
     }));
 
+    // The Server component will live for the lifetime of the program.
+    // We need the ability for it to pass the reference to itself outwards.
     new_server.deref().borrow_mut().server_pointer = Some(new_server.clone());
 
+    // Create the actual ServerConnection component.
+    // This is utilized to actually talk to the clients that are connected.
     new_server.deref().borrow_mut().connection =
       Some(ServerConnection::new(new_server.clone(), address, port));
 
