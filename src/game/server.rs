@@ -15,6 +15,8 @@ use super::{lua_engine::LuaEngine, Game};
 /// 3.) [in the future] Be the main handler for ServerAuthentication.
 ///  - ServerAuthentication does exactly what you think it does.
 ///  - It handles the client auth for the server.
+/// ? 4.) Handle GameConfig as a component to be utilized during runtime.
+/// ?  - Marked with ? because it's still being thought out at the moment.
 ///
 pub struct Server<'server> {
   lua_engine: Option<LuaEngine<'server>>,
