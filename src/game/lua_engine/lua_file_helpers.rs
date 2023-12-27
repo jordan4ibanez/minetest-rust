@@ -22,6 +22,14 @@ pub struct ModDirectory {
 }
 
 ///
+/// Makes the possible error at the end of check_game() easier to read.
+///
+struct CheckGameError {
+  mod_name: String,
+  conf_or_main: String,
+}
+
+///
 /// A micro helper function.
 /// Simply check if a directory exists.
 ///
@@ -131,12 +139,7 @@ fn game_has_mods(games_dir: &str, game_name: &str) -> bool {
 ///
 /// Ensure that each of the game's mods has a main.lua and a mod.conf file.
 ///
-/// Result<(), (mod name, mod.conf/main.lua)>
-///
-/// The second result component is:
-/// (which mod failed, if it's missing mod.conf or main.lua)
-///
-fn game_mods_have_main_and_conf(games_dir: &str, game_name: &str) -> Result<(), (String, String)> {
+fn game_mods_have_main_and_conf(games_dir: &str, game_name: &str) -> Result<(), CheckGameError> {
   // Iterate each file in game's /mods/ folder.
   for mod_directory in get_game_mod_folders(games_dir, game_name) {
     //* First we check main.lua
@@ -147,7 +150,10 @@ fn game_mods_have_main_and_conf(games_dir: &str, game_name: &str) -> Result<(), 
     if !file_exists(&main_lua_file) {
       //todo: We should have a conf parser to get the mod name.
       // We'll just use the folder name for now.
-      return Err((mod_directory.mod_name, "main.lua".to_string()));
+      return Err(CheckGameError {
+        mod_name: mod_directory.mod_name,
+        conf_or_main: "main.lua".to_string(),
+      });
     }
 
     //* Then we check mod.conf
@@ -158,7 +164,10 @@ fn game_mods_have_main_and_conf(games_dir: &str, game_name: &str) -> Result<(), 
     if !file_exists(&mod_conf_file) {
       //todo: We should have a conf parser to get the mod name.
       // We'll just use the folder name for now.
-      return Err((mod_directory.mod_name, "mod.conf".to_string()));
+      return Err(CheckGameError {
+        mod_name: mod_directory.mod_name,
+        conf_or_main: "mod.conf".to_string(),
+      });
     }
   }
 
@@ -238,9 +247,9 @@ pub fn check_game(games_dir: &str, game_name: &str) {
 
   match game_mods_have_main_and_conf(games_dir, game_name) {
     Ok(_) => (),
-    Err(error_tuple) => panic!(
+    Err(check_game_error) => panic!(
       "minetest: mod [{}] in game [{}] has no [{}]!",
-      error_tuple.0, game_name, error_tuple.1
+      check_game_error.mod_name, game_name, check_game_error.conf_or_main
     ),
   }
 }
