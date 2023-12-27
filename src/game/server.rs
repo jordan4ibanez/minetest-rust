@@ -30,6 +30,7 @@ impl<'server> Server<'server> {
     game_pointer: Rc<RefCell<Game<'server>>>,
     address: String,
     port: i32,
+    game_name: String,
   ) -> Rc<RefCell<Self>> {
     let new_server = Rc::new(RefCell::new(Server {
       lua_engine: None,
@@ -49,6 +50,9 @@ impl<'server> Server<'server> {
 
     // Automatically create a new Server LuaEngine.
     new_server.deref().borrow_mut().reset_lua_vm();
+
+    // Automatically load up the requested game into memory.
+    new_server.deref().borrow_mut().load_game(game_name);
 
     new_server
   }
@@ -74,6 +78,13 @@ impl<'server> Server<'server> {
   pub fn reset_lua_vm(&mut self) {
     self.delete_lua_vm();
     self.create_lua_vm();
+  }
+
+  ///
+  /// Chain initial game load into LuaEngine to clean up new() implemenetation.
+  ///
+  pub fn load_game(&mut self, game_name: String) {
+    self.lua_engine.as_mut().unwrap().load_game(game_name)
   }
 
   ///
