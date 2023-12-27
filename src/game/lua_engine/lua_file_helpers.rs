@@ -4,7 +4,8 @@
 ///
 /// This is specifically written for the LuaEngine.
 ///
-/// This flows down in complexity until you get the the public procedure.
+/// This flows down in complexity until you get the the public procedure
+/// This is: check_game
 ///
 use std::{
   fs::{self, read_dir, ReadDir},
