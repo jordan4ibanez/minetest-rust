@@ -134,19 +134,19 @@ fn game_has_mods(games_dir: &str, game_name: &str) -> bool {
 pub fn get_game_mod_folders(games_dir: &str, game_name: &str) -> Vec<ModDirectory> {
   let mut container = Vec::<ModDirectory>::new();
 
-  let folders: ReadDir = get_game_mods_dir_raw_files(games_dir, game_name);
+  let raw_files: ReadDir = get_game_mods_dir_raw_files(games_dir, game_name);
 
-  for folder_result in folders {
+  for directory_result in raw_files {
     // We could chain these unwraps to tell the user they don't have access.
     // Use a match if this is decided upon.
-    if folder_result
+    if directory_result
       .as_ref()
       .unwrap()
       .file_type()
       .unwrap()
       .is_dir()
     {
-      let mod_name = folder_result
+      let mod_name = directory_result
         .as_ref()
         .unwrap()
         .file_name()
@@ -154,7 +154,7 @@ pub fn get_game_mod_folders(games_dir: &str, game_name: &str) -> Vec<ModDirector
         .unwrap()
         .to_string();
 
-      let mod_path = folder_result
+      let mod_path = directory_result
         .as_ref()
         .unwrap()
         .path()
