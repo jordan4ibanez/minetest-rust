@@ -133,7 +133,7 @@ impl<'game> LuaEngine<'game> {
   /// ? note: Due to the nature of LuauJIT, I'm not sure we
   /// ? actually need to sort anything.
   ///
-  fn load_game_mods(&self, game_name: String) {
+  fn load_game_files(&self, game_name: String) {
     // Pretty much all of these functions come from lua_file_helpers.
   }
 
@@ -161,5 +161,8 @@ impl<'game> LuaEngine<'game> {
     //todo: mod conf parser to set game state variables.
     // Use this to set server variables.
     self.parse_game_conf(&games_dir, &game_name);
+
+    // Now we finally load the actual game files into the LuaEngine.
+    self.load_game_files(game_name);
   }
 }
