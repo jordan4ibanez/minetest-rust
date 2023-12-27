@@ -1,6 +1,4 @@
-use std::{
-  cell::RefCell, collections::HashMap, net::ToSocketAddrs, ops::Deref, rc::Rc, time::Duration,
-};
+use std::{cell::RefCell, collections::HashMap, net::ToSocketAddrs, rc::Rc, time::Duration};
 
 use message_io::{
   events::EventReceiver,
