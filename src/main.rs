@@ -7,6 +7,10 @@ use clap::Parser;
 use command_line::CommandLineInterface;
 use game::*;
 
+///
+/// ! main()'s sole purpose is to encapsulate and initialize
+/// ! the Game struct. Nothing else should appear in here.
+///
 fn main() {
   // Game is held in an RC smart pointer.
   //* - (R)eference
