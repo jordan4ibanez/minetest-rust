@@ -194,12 +194,7 @@ impl<'client> ClientConnection<'client> {
 
     // Can possibly be used as a handshake
     // ! Note: this literally is the handshake right now
-    self
-      .handler
-      .clone()
-      .unwrap()
-      .network()
-      .send(self.end_point.unwrap(), "MINETEST_HAND_SHAKE".as_bytes());
+    self.send_data(self.end_point.unwrap(), "MINETEST_HAND_SHAKE");
   }
 }
 
