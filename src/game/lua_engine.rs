@@ -32,7 +32,6 @@ impl<'game> LuaEngine<'game> {
     };
 
     new_engine.game = Some(reference);
-    // game: Some(reference),
 
     new_engine.generate_internal();
 
