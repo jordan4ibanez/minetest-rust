@@ -58,14 +58,10 @@ impl<'game> LuaEngine<'game> {
     // You can't build upon what is fundamentally broken.
     if self.server_vm {
       // it's a server vm
-      self
-        .run_file("./api/server/__internal_server.lua".to_string())
-        .unwrap();
+      self.run_file("./api/server/__internal_server.lua").unwrap();
     } else {
       // it's a client vm
-      self
-        .run_file("./api/client/__internal_client.lua".to_string())
-        .unwrap();
+      self.run_file("./api/client/__internal_client.lua").unwrap();
     }
   }
 
