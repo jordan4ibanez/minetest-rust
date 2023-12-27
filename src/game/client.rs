@@ -6,6 +6,19 @@ use self::client_connection::ClientConnection;
 
 use super::{lua_engine::LuaEngine, Game};
 
+///
+/// The Client component for the engine.
+///
+/// The Client component has 5 jobs:
+/// 1.) Hold a window.
+/// 2.) Hold the render engine.
+/// 3.) Hold a ClientConnection which handles talking to a server.
+/// * 4.) [in the future] Be the main handler for ClientAuthentication.
+/// *  - ClientAuthentication does exactly what you think it does.
+/// *  - Maintains a client auth for itself when talking to the server.
+/// ? 5.) Handle GameConfig as a component. This should be received from a server
+/// ? 5 - Marked with ? because it's still being thought out at the moment.
+///
 pub struct Client<'client> {
   client_name: String,
   connection: Option<ClientConnection<'client>>,
