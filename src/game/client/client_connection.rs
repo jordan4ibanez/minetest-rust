@@ -104,11 +104,21 @@ impl<'client> ClientConnection<'client> {
         }
       };
 
-      // Attempt to handshake with the server
-      if !self.connected && receieved_string == "MINETEST_HAND_SHAKE_CONFIRMED" {
-        self.connected = true;
-        self.timeout = 0.0;
-        println!("minetest: Handshake received!");
+      match receieved_string.as_str() {
+        "hi" => println!("minetest: The server says hi."),
+        "MINETEST_HAND_SHAKE_CONFIRMED" => {
+          // Received handshake with the server.
+          if !self.connected {
+            self.connected = true;
+            self.timeout = 0.0;
+            println!("minetest: Handshake received!");
+          }
+
+          // ! Do not enable this unless you want the server to
+          // ! shutdown as soon as you connect.
+          self.send_data(end_point, "MINETEST_SHUT_DOWN_REQUEST");
+        }
+        _ => (),
       }
     }
   }
