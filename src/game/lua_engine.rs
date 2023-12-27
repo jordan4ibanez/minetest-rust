@@ -137,8 +137,27 @@ impl<'game> LuaEngine<'game> {
   /// ? note: Due to the nature of LuauJIT, I'm not sure we
   /// ? actually need to sort anything.
   ///
-  fn load_game_files(&self, game_name: String) {
-    // Pretty much all of these functions come from lua_file_helpers.
+  /// This function blindly accepts that check_game was already ran
+  /// on this game.
+  ///
+  /// If you modified the source code and removed check_game() from load_game():
+  /// _You're asking for trouble._
+  ///
+  fn load_game_files(&self, games_dir: &str, game_name: &str) {
+    let game_mod_path = get_game_path(games_dir, game_name);
+
+    for mod_directory in get_game_mod_folders(games_dir, game_name) {
+      // ! this is a naive approach.
+      // ! this might not work on windows!
+      let mut mod_path = mod_directory.mod_path.clone();
+      mod_path.push_str("/main.lua");
+
+      // This simply panics for now, but in the future we can push errors to the GUI.
+      match self.run_file(&mod_path) {
+        Ok(_) => println!("minetest: server loaded mod file [{}]", &mod_path),
+        Err(e) => panic!("{}", e),
+      }
+    }
   }
 
   ///
