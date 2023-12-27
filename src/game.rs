@@ -209,7 +209,11 @@ impl<'game> Game<'game> {
     if self.is_server {
       match &self.server {
         Some(server) => {
-          server.deref().borrow_mut().on_tick(self.delta);
+          // ! todo: this absolutely needs to be checked for server privs!
+          // Shut the server down if the shutdown signal was received.
+          if server.deref().borrow_mut().on_tick(self.delta) {
+            self.shutdown_game();
+          }
         }
         None => panic!("minetest: attempted to run a server that does not exist."),
       }
