@@ -127,6 +127,9 @@ impl<'game> LuaEngine<'game> {
   /// Load up each mod in a game.
   /// todo: use dependency hierarchy [topological sorting (reverse postorder)topological sorting (reverse postorder)] <- luatic
   ///
+  /// ? note: Due to the nature of LuauJIT, I'm not sure we
+  /// ? actually need to sort anything.
+  ///
   fn load_game_mods(&self, game_name: String) {}
 
   ///
