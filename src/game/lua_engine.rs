@@ -71,6 +71,9 @@ impl<'game> LuaEngine<'game> {
   ///
   /// Completely unfiltered and unsandboxed file compiler/runner.
   ///
+  /// ! We are letting LuauJIT be the sandbox. Look into this if
+  /// ! we think we should implement better protection!
+  ///
   pub fn run_file(&self, file_location: String) {
     let raw_code_string = read_file_to_string(&file_location);
 
