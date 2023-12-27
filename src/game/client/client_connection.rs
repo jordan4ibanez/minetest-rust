@@ -116,7 +116,7 @@ impl<'client> ClientConnection<'client> {
 
           // ! Do not enable this unless you want the server to
           // ! shutdown as soon as you connect.
-          self.send_data(end_point, "MINETEST_SHUT_DOWN_REQUEST");
+          // self.send_data(end_point, "MINETEST_SHUT_DOWN_REQUEST");
         }
         _ => (),
       }
