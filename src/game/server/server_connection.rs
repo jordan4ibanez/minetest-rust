@@ -84,7 +84,10 @@ impl<'server> ServerConnection<'server> {
   ///
   /// A procedure to react to a network event.
   ///
-  pub fn event_reaction(&mut self, event: StoredNetEvent) {
+  /// Returns if the connection received the shutdown signal from a client
+  ///
+  pub fn event_reaction(&mut self, event: StoredNetEvent) -> bool {
+    let mut term_signal = false;
     // We don't need to match, we're using UDP which is connectionless.
     if let StoredNetEvent::Message(end_point, raw_message) = event {
       // todo: use https://github.com/serde-rs/bytes
@@ -105,20 +108,14 @@ impl<'server> ServerConnection<'server> {
         // ! I'm sure there's no way this can go wrong.
         // ! If it's not obvious [THIS IS DEBUGGING]
         "MINETEST_SHUT_DOWN_REQUEST" => {
+          term_signal = true;
           println!("minetest: shutdown request received! Shutting down [now].");
-          self
-            .server_pointer
-            .clone()
-            .deref()
-            .borrow()
-            .game_pointer
-            .deref()
-            .borrow_mut()
-            .shutdown_game();
         }
         _ => (),
       }
     }
+
+    term_signal
   }
 
   ///
