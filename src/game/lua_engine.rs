@@ -11,7 +11,7 @@ use self::lua_file_helpers::{check_game, get_game_path, read_file_to_string};
 use super::Game;
 
 ///
-/// LuaEngine encapsulates the Luau virtual machine.
+/// LuaEngine encapsulates the LuauJIT virtual machine.
 /// It is done this way so we can utilize LuauJIT as
 /// elegantly as possible.
 ///
@@ -133,7 +133,9 @@ impl<'game> LuaEngine<'game> {
   /// ? note: Due to the nature of LuauJIT, I'm not sure we
   /// ? actually need to sort anything.
   ///
-  fn load_game_mods(&self, game_name: String) {}
+  fn load_game_mods(&self, game_name: String) {
+    // Pretty much all of these functions come from lua_file_helpers.
+  }
 
   ///
   /// Load up a game directly.
@@ -150,9 +152,10 @@ impl<'game> LuaEngine<'game> {
     }
 
     // Todo: Maybe this can be a compile time const?
-    // We can choose between run-in-place or system installed
+    // We can choose between run-in-place or system installed.
     let games_dir = String::from("./games");
 
+    // Comes from lua_file_helpers.
     check_game(&games_dir, &game_name);
 
     //todo: mod conf parser to set game state variables.
