@@ -35,6 +35,7 @@ impl<'server> Server<'server> {
     new_server.deref().borrow_mut().connection =
       Some(ServerConnection::new(new_server.clone(), address, port));
 
+    // Automatically create a new Server LuaEngine.
     new_server.deref().borrow_mut().reset_lua_vm();
 
     new_server
@@ -72,7 +73,7 @@ impl<'server> Server<'server> {
   /// This is referred to as on_step in C++ minetest.
   ///
   pub fn on_tick(&mut self, delta: f64) {
-    // Poll any incoming network traffic. (non blocking)
+    // Process any incoming network traffic. (non blocking)
     match &mut self.connection {
       Some(connection) => {
         connection.receive();
