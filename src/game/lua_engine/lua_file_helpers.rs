@@ -104,9 +104,9 @@ fn game_has_conf_file(games_dir: &str, game_name: &str) -> bool {
 }
 
 ///
-/// Get the mods folders inside of a game's dir.
+/// Get the raw files inside of a game's dir.
 ///
-fn get_game_mods_folders(games_dir: &str, game_name: &str) -> ReadDir {
+fn get_game_mods_dir_raw_files(games_dir: &str, game_name: &str) -> ReadDir {
   read_dir(get_game_mod_path(games_dir, game_name)).unwrap()
 }
 
@@ -114,7 +114,7 @@ fn get_game_mods_folders(games_dir: &str, game_name: &str) -> ReadDir {
 /// Ensure that the game's mods dir has at least one folder.
 ///
 fn game_has_mods(games_dir: &str, game_name: &str) -> bool {
-  let folders: ReadDir = get_game_mods_folders(games_dir, game_name);
+  let folders: ReadDir = get_game_mods_dir_raw_files(games_dir, game_name);
 
   let mut folder_counter = 0;
   for folder_result in folders {
@@ -174,41 +174,34 @@ pub fn get_game_mod_folders(games_dir: &str, game_name: &str) -> Vec<ModDirector
 ///
 /// Result<(), (mod name, mod.conf/main.lua)>
 ///
+/// The second result component is:
+/// (which mod failed, if it's missing mod.conf or main.lua)
+///
 fn game_mods_have_main_and_conf(games_dir: &str, game_name: &str) -> Result<(), (String, String)> {
   // Iterate each file in game's /mods/ folder.
-  for folder_result in get_game_mods_folders(games_dir, game_name) {
-    let current_mod_result = folder_result.unwrap();
-
-    // In case dumping random files into the /mods/ folder ever
-    // causes this to try to iterate it, skip it.
-    if !current_mod_result.file_type().unwrap().is_dir() {
-      continue;
-    }
-
-    let current_mod_dir = String::from(current_mod_result.path().to_str().unwrap());
-
+  for folder_tuple in get_game_mod_folders(games_dir, game_name) {
     //* First we check main.lua
 
-    let mut main_lua_file = current_mod_dir.clone();
+    let mut main_lua_file = folder_tuple.mod_path.clone();
     main_lua_file.push_str("/main.lua");
 
     if !file_exists(&main_lua_file) {
       //todo: We should have a conf parser to get the mod name.
       // We'll just use the folder name for now.
-      let current_mod_name = String::from(current_mod_result.file_name().to_str().unwrap());
+      let current_mod_name = folder_tuple.mod_name;
 
       return Err((current_mod_name, "main.lua".to_string()));
     }
 
     //* Then we check mod.conf
 
-    let mut mod_conf_file = current_mod_dir.clone();
+    let mut mod_conf_file = folder_tuple.mod_path.clone();
     mod_conf_file.push_str("/mod.conf");
 
     if !file_exists(&mod_conf_file) {
       //todo: We should have a conf parser to get the mod name.
       // We'll just use the folder name for now.
-      let current_mod_name = String::from(current_mod_result.file_name().to_str().unwrap());
+      let current_mod_name = folder_tuple.mod_name;
 
       return Err((current_mod_name, "mod.conf".to_string()));
     }
