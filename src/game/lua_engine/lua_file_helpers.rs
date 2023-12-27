@@ -179,29 +179,29 @@ pub fn get_game_mod_folders(games_dir: &str, game_name: &str) -> Vec<ModDirector
 ///
 fn game_mods_have_main_and_conf(games_dir: &str, game_name: &str) -> Result<(), (String, String)> {
   // Iterate each file in game's /mods/ folder.
-  for folder_tuple in get_game_mod_folders(games_dir, game_name) {
+  for mod_directory in get_game_mod_folders(games_dir, game_name) {
     //* First we check main.lua
 
-    let mut main_lua_file = folder_tuple.mod_path.clone();
+    let mut main_lua_file = mod_directory.mod_path.clone();
     main_lua_file.push_str("/main.lua");
 
     if !file_exists(&main_lua_file) {
       //todo: We should have a conf parser to get the mod name.
       // We'll just use the folder name for now.
-      let current_mod_name = folder_tuple.mod_name;
+      let current_mod_name = mod_directory.mod_name;
 
       return Err((current_mod_name, "main.lua".to_string()));
     }
 
     //* Then we check mod.conf
 
-    let mut mod_conf_file = folder_tuple.mod_path.clone();
+    let mut mod_conf_file = mod_directory.mod_path.clone();
     mod_conf_file.push_str("/mod.conf");
 
     if !file_exists(&mod_conf_file) {
       //todo: We should have a conf parser to get the mod name.
       // We'll just use the folder name for now.
-      let current_mod_name = folder_tuple.mod_name;
+      let current_mod_name = mod_directory.mod_name;
 
       return Err((current_mod_name, "mod.conf".to_string()));
     }
