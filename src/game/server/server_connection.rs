@@ -121,7 +121,13 @@ impl<'server> ServerConnection<'server> {
   ///
   /// Non-blocking event receiver for network events.
   ///
-  pub fn receive(&mut self) {
+  /// Returns the EndPoint (ClientConnection) that requested to shut
+  /// down the server.
+  ///
+  /// ! Return is UNSAFE at the moment.
+  ///
+  pub fn receive(&mut self) -> Option<Endpoint> {
+    let mut term_signal: Option<Endpoint> = None;
     let mut has_new_event = true;
     // We want to grind through ALL the events.
     while has_new_event {
@@ -129,7 +135,13 @@ impl<'server> ServerConnection<'server> {
         Some(event_receiver) => {
           if let Some(event) = event_receiver.receive_timeout(Duration::new(0, 0)) {
             match event {
-              StoredNodeEvent::Network(new_event) => self.event_reaction(new_event),
+              StoredNodeEvent::Network(new_event) => {
+                if self.event_reaction(new_event.clone()) {
+                  if let StoredNetEvent::Message(term_end_point, _) = new_event.clone() {
+                    term_signal = Some(term_end_point);
+                  };
+                }
+              }
               // todo: figure out what a signal is!
               StoredNodeEvent::Signal(_) => todo!(),
             }
@@ -140,6 +152,7 @@ impl<'server> ServerConnection<'server> {
         None => panic!("minetest: ServerConnection listener does not exist!"),
       }
     }
+    term_signal
   }
 
   ///
