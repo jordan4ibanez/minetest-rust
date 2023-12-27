@@ -52,12 +52,18 @@ impl<'game> LuaEngine<'game> {
   /// Generates the on_tick(delta: number) function so it becomes a secret and hidden engine component.
   ///
   pub fn generate_internal(&self) {
+    // We want the game to simply crash if the internals have problems.
+    // You can't build upon what is fundamentally broken.
     if self.server_vm {
       // it's a server vm
-      self.run_file("./api/server/__internal_server.lua".to_string());
+      self
+        .run_file("./api/server/__internal_server.lua".to_string())
+        .unwrap();
     } else {
       // it's a client vm
-      self.run_file("./api/client/__internal_client.lua".to_string());
+      self
+        .run_file("./api/client/__internal_client.lua".to_string())
+        .unwrap();
     }
   }
 
