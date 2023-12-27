@@ -133,6 +133,13 @@ impl<'game> LuaEngine<'game> {
   /// Load up a game directly.
   ///
   pub fn load_game(&mut self, game_name: String) {
+    // We _do not_ want a client to even attempt to load anything.
+    // All required information should be sent by the Server to the Client.
+    // Then it should be passed into the LuaEngine as needed.
+    if !self.server_vm {
+      panic!("minetest: tried to load game lua files on a client LuaEngine!")
+    }
+
     // Todo: Maybe this can be a compile time const?
     // We can choose between run-in-place or system installed
     let games_dir = String::from("./games");
