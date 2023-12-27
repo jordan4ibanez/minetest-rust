@@ -188,6 +188,15 @@ impl<'game> Game<'game> {
   }
 
   ///
+  /// Stop the game loop in it's entirety.
+  ///
+  /// ! This shouldn't be used for anything but testing!
+  ///
+  pub fn shutdown_game(&mut self) {
+    self.should_close = true
+  }
+
+  ///
   /// The main loop of the game engine.
   ///
   fn main(&mut self) {
