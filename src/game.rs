@@ -253,6 +253,7 @@ impl<'game> Game<'game> {
 
 impl<'game> Drop for Game<'game> {
   fn drop(&mut self) {
+    // If this doesn't print, there's a memory leak with RC.
     println!("Minetest dropped!");
   }
 }
