@@ -70,6 +70,18 @@ impl<'server> ServerConnection<'server> {
   }
 
   ///
+  /// Send raw data to an EndPoint (ClientConnection).
+  ///
+  fn send_data(&self, end_point: Endpoint, data: &str) {
+    self
+      .handler
+      .clone()
+      .unwrap()
+      .network()
+      .send(end_point, data.as_bytes());
+  }
+
+  ///
   /// A procedure to react to a network event.
   ///
   pub fn event_reaction(&mut self, event: StoredNetEvent) {
@@ -85,6 +97,13 @@ impl<'server> ServerConnection<'server> {
       };
 
       println!("minetest: Server received message: {}", receieved_string);
+
+      match receieved_string.as_str() {
+        "hi" => self.send_data(end_point, "hi there!"),
+        "MINETEST_HAND_SHAKE" => self.send_data(end_point, "MINETEST_HAND_SHAKE_CONFIRMED"),
+        
+        _ => (),
+      }
 
       if receieved_string == "MINETEST_HAND_SHAKE" {
         println!("minetest: sending out connection handshake confirmation");
