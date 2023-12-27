@@ -188,9 +188,7 @@ fn game_mods_have_main_and_conf(games_dir: &str, game_name: &str) -> Result<(), 
     if !file_exists(&main_lua_file) {
       //todo: We should have a conf parser to get the mod name.
       // We'll just use the folder name for now.
-      let current_mod_name = mod_directory.mod_name;
-
-      return Err((current_mod_name, "main.lua".to_string()));
+      return Err((mod_directory.mod_name, "main.lua".to_string()));
     }
 
     //* Then we check mod.conf
@@ -201,9 +199,7 @@ fn game_mods_have_main_and_conf(games_dir: &str, game_name: &str) -> Result<(), 
     if !file_exists(&mod_conf_file) {
       //todo: We should have a conf parser to get the mod name.
       // We'll just use the folder name for now.
-      let current_mod_name = mod_directory.mod_name;
-
-      return Err((current_mod_name, "mod.conf".to_string()));
+      return Err((mod_directory.mod_name, "mod.conf".to_string()));
     }
   }
 
