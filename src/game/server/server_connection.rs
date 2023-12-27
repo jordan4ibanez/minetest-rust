@@ -120,16 +120,6 @@ impl<'server> ServerConnection<'server> {
         }
         _ => (),
       }
-
-      if receieved_string == "MINETEST_HAND_SHAKE" {
-        println!("minetest: sending out connection handshake confirmation");
-        self
-          .handler
-          .clone()
-          .unwrap()
-          .network()
-          .send(end_point, "MINETEST_HAND_SHAKE_CONFIRMED".as_bytes());
-      }
     }
   }
 
