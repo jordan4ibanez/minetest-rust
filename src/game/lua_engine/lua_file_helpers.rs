@@ -54,7 +54,7 @@ fn check_games_folder(games_dir: &String) -> bool {
 ///
 pub fn get_game_path(games_dir: &String, game_name: &String) -> String {
   let mut base_path = games_dir.clone();
-  base_path.push_str("/");
+  base_path.push('/');
   base_path.push_str(&game_name);
   base_path
 }
