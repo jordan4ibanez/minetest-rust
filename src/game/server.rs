@@ -83,14 +83,10 @@ impl Server {
     let mut shutdown = false;
 
     // Process any incoming network traffic. (non blocking)
-    match &mut self.connection {
-      Some(connection) => {
-        // ! todo: this absolutely needs to be checked for server privs!
-        if let Some(end_point) = connection.receive() {
-          shutdown = true
-        }
-      }
-      None => panic!("minetest: tried to receive data on a non-existent Server connection!"),
+
+    // ! todo: this absolutely needs to be checked for server privs!
+    if let Some(end_point) = self.connection.receive() {
+      shutdown = true
     }
 
     // We want this to throw a runtime panic if we make a logic error.
