@@ -1,6 +1,6 @@
 mod server_connection;
 
-use std::{cell::RefCell, ops::Deref, rc::Rc};
+use std::{cell::RefCell, rc::Rc};
 
 use self::server_connection::ServerConnection;
 
@@ -19,10 +19,8 @@ use super::{lua_engine::LuaEngine, Game};
 /// ?  - Marked with ? because it's still being thought out at the moment.
 ///
 pub struct Server<'server> {
-  lua_engine: Option<LuaEngine<'server>>,
-  connection: Option<ServerConnection<'server>>,
-  game_pointer: Rc<RefCell<Game<'server>>>,
-  server_pointer: Option<Rc<RefCell<Server<'server>>>>,
+  lua_engine: Option<LuaEngine>,
+  connection: ServerConnection,
 }
 
 impl<'server> Server<'server> {
@@ -31,28 +29,17 @@ impl<'server> Server<'server> {
     address: String,
     port: i32,
     game_name: String,
-  ) -> Rc<RefCell<Self>> {
-    let new_server = Rc::new(RefCell::new(Server {
+  ) -> Self {
+    let mut new_server = Server {
       lua_engine: None,
-      connection: None,
-      game_pointer: game_pointer.clone(),
-      server_pointer: None,
-    }));
-
-    // The Server component will live for the lifetime of the program.
-    // We need the ability for it to pass the reference to itself outwards.
-    new_server.deref().borrow_mut().server_pointer = Some(new_server.clone());
-
-    // Create the actual ServerConnection component.
-    // This is utilized to actually talk to the clients that are connected.
-    new_server.deref().borrow_mut().connection =
-      Some(ServerConnection::new(new_server.clone(), address, port));
+      connection: ServerConnection::new(address, port),
+    };
 
     // Automatically create a new Server LuaEngine.
-    new_server.deref().borrow_mut().reset_lua_vm();
+    new_server.reset_lua_vm();
 
     // Automatically load up the requested game into memory.
-    new_server.deref().borrow_mut().load_game(game_name);
+    new_server.load_game(game_name);
 
     new_server
   }
@@ -68,7 +55,7 @@ impl<'server> Server<'server> {
   /// Creates a new client lua VM.
   ///
   fn create_lua_vm(&mut self) {
-    self.lua_engine = Some(LuaEngine::new(self.game_pointer.clone(), true));
+    self.lua_engine = Some(LuaEngine::new(true));
   }
 
   ///
