@@ -13,7 +13,7 @@ use super::Client;
 ///
 /// This is why client_pointer is not an Option<>.
 ///
-pub struct ClientConnection<'client> {
+pub struct ClientConnection {
   address: String,
   port: i32,
 
@@ -25,12 +25,10 @@ pub struct ClientConnection<'client> {
   task: Option<NodeTask>,
   handler: Option<NodeHandler<()>>,
   event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
-
-  client_pointer: Rc<RefCell<Client<'client>>>,
 }
 
-impl<'client> ClientConnection<'client> {
-  pub fn new(client_pointer: Rc<RefCell<Client<'client>>>, address: String, port: i32) -> Self {
+impl ClientConnection {
+  pub fn new(address: String, port: i32) -> Self {
     let mut new_client_connection = ClientConnection {
       address,
       port,
@@ -43,8 +41,6 @@ impl<'client> ClientConnection<'client> {
       task: None,
       handler: None,
       event_receiver: None,
-
-      client_pointer,
     };
 
     new_client_connection.initialize();
@@ -211,7 +207,7 @@ impl<'client> ClientConnection<'client> {
   }
 }
 
-impl<'client> Drop for ClientConnection<'client> {
+impl Drop for ClientConnection {
   fn drop(&mut self) {
     // Need to close client connection, maybe?
     // Might need to send out the disconnect signal.
