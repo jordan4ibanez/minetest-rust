@@ -10,8 +10,6 @@ use self::lua_file_helpers::{
   check_game, get_game_mod_folders, get_game_path, read_file_to_string,
 };
 
-use super::Game;
-
 ///
 /// LuaEngine encapsulates the LuauJIT virtual machine.
 /// It is done this way so we can utilize LuauJIT as
