@@ -36,8 +36,8 @@ pub struct Game<'game> {
   goal_frames_per_second: f64,
   goal_ticks_per_second: f64,
 
-  server: Option<Rc<RefCell<Server<'game>>>>,
-  client: Option<Rc<RefCell<Client<'game>>>>,
+  server: Option<Server>,
+  client: Option<Client>,
 
   is_server: bool,
   is_client: bool,
@@ -116,23 +116,13 @@ impl<'game> Game<'game> {
 
     // We could parse the player's name instead from a file, or a first time ask. This is mutable after all.
     new_game_pointer.deref().borrow_mut().client = match cli.server {
-      false => Some(Client::new(
-        new_game_pointer.clone(),
-        cli.client_name,
-        cli.address.clone(),
-        cli.port,
-      )),
+      false => Some(Client::new(cli.client_name, cli.address.clone(), cli.port)),
       true => None,
     };
 
     // Can auto deploy server and treat this struct like a simplified dispatcher.
     new_game_pointer.deref().borrow_mut().server = match cli.server {
-      true => Some(Server::new(
-        new_game_pointer.clone(),
-        cli.address,
-        cli.port,
-        cli.game,
-      )),
+      true => Some(Server::new(cli.address, cli.port, cli.game)),
       false => None,
     };
 
@@ -207,11 +197,11 @@ impl<'game> Game<'game> {
     //* Begin server/client on_tick()
 
     if self.is_server {
-      match &self.server {
+      match &mut self.server {
         Some(server) => {
           // ! todo: this absolutely needs to be checked for server privs!
           // Shut the server down if the shutdown signal was received.
-          if server.deref().borrow_mut().on_tick(self.delta) {
+          if server.on_tick(self.delta) {
             self.shutdown_game();
           }
         }
@@ -221,7 +211,7 @@ impl<'game> Game<'game> {
 
     if self.is_client {
       match &mut self.client {
-        Some(client) => client.deref().borrow_mut().on_tick(self.delta),
+        Some(client) => client.on_tick(self.delta),
         None => panic!("minetest: attempted to run a client that does not exist."),
       }
     }
