@@ -13,7 +13,7 @@ use super::Server;
 ///
 /// This is why server_pointer is not an Option<>.
 ///
-pub struct ServerConnection<'server> {
+pub struct ServerConnection {
   address: String,
   port: i32,
 
@@ -21,12 +21,10 @@ pub struct ServerConnection<'server> {
   handler: Option<NodeHandler<()>>,
   event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
   clients: HashMap<Endpoint, String>,
-
-  server_pointer: Rc<RefCell<Server<'server>>>,
 }
 
-impl<'server> ServerConnection<'server> {
-  pub fn new(server_pointer: Rc<RefCell<Server<'server>>>, address: String, port: i32) -> Self {
+impl ServerConnection {
+  pub fn new(address: String, port: i32) -> Self {
     let mut new_server_connection = ServerConnection {
       address,
       port,
@@ -35,8 +33,6 @@ impl<'server> ServerConnection<'server> {
       handler: None,
       event_receiver: None,
       clients: HashMap::new(),
-
-      server_pointer,
     };
 
     new_server_connection.initialize();
@@ -184,7 +180,7 @@ impl<'server> ServerConnection<'server> {
   }
 }
 
-impl<'server> Drop for ServerConnection<'server> {
+impl Drop for ServerConnection {
   fn drop(&mut self) {
     // Need to close server connection, maybe?
     // Might need to send out the disconnect signal.
