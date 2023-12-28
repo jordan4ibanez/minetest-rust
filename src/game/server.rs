@@ -4,7 +4,7 @@ use std::{cell::RefCell, rc::Rc};
 
 use self::server_connection::ServerConnection;
 
-use super::{lua_engine::LuaEngine, Game};
+use super::lua_engine::LuaEngine;
 
 ///
 /// The Server component for the engine.
@@ -18,18 +18,13 @@ use super::{lua_engine::LuaEngine, Game};
 /// ? 4.) Handle GameConfig as a component to be utilized during runtime.
 /// ?  - Marked with ? because it's still being thought out at the moment.
 ///
-pub struct Server<'server> {
+pub struct Server {
   lua_engine: Option<LuaEngine>,
   connection: ServerConnection,
 }
 
-impl<'server> Server<'server> {
-  pub fn new(
-    game_pointer: Rc<RefCell<Game<'server>>>,
-    address: String,
-    port: i32,
-    game_name: String,
-  ) -> Self {
+impl Server {
+  pub fn new(address: String, port: i32, game_name: String) -> Self {
     let mut new_server = Server {
       lua_engine: None,
       connection: ServerConnection::new(address, port),
