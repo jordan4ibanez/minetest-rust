@@ -17,26 +17,19 @@ use super::Game;
 /// It is done this way so we can utilize LuauJIT as
 /// elegantly as possible.
 ///
-pub struct LuaEngine<'game> {
+pub struct LuaEngine {
   lua: Lua,
   output_code_string: bool,
-  // ! Note: Might want to hold Server and Client instead of just game.
-  // ! Note: Doing it like this might be overly verbose.
-  // ! todo: See how this goes during development.
-  game: Option<Rc<RefCell<Game<'game>>>>,
   server_vm: bool,
 }
 
-impl<'game> LuaEngine<'game> {
-  pub fn new(reference: Rc<RefCell<Game<'game>>>, server_vm: bool) -> Self {
+impl LuaEngine {
+  pub fn new(server_vm: bool) -> Self {
     let mut new_engine = LuaEngine {
       lua: Lua::new(),
       output_code_string: false,
-      game: None,
       server_vm,
     };
-
-    new_engine.game = Some(reference);
 
     new_engine.generate_internal();
 
