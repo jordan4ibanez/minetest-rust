@@ -1,8 +1,10 @@
 mod server_connection;
 
+use message_to_parent::MessageToParent;
+
 use self::server_connection::ServerConnection;
 
-use super::lua_engine::LuaEngine;
+use super::{lua_engine::LuaEngine, Game};
 
 ///
 /// The Server component for the engine.
@@ -19,6 +21,7 @@ use super::lua_engine::LuaEngine;
 pub struct Server {
   lua_engine: Option<LuaEngine>,
   connection: ServerConnection,
+  term_signal_received: bool,
 }
 
 impl Server {
@@ -26,6 +29,7 @@ impl Server {
     let mut new_server = Server {
       lua_engine: None,
       connection: ServerConnection::new(address, port),
+      term_signal_received: false,
     };
 
     // Automatically create a new Server LuaEngine.
@@ -77,11 +81,22 @@ impl Server {
   ///
   /// Returns shutdown signal.
   ///
-  pub fn on_tick(&mut self, delta: f64) {
+  pub fn on_tick(&mut self, delta: f64, game_messages: &mut MessageToParent<Game, ()>) {
     // Process any incoming network traffic. (non blocking)
+    let mut server_messages = MessageToParent::<Server, ()>::new();
 
     // ! todo: this absolutely needs to be checked for server privs!
-    self.connection.receive();
+    self.connection.receive(&mut server_messages);
+
+    server_messages.run_side_effects(self);
+
+    if self.term_signal_received {
+      game_messages.add_side_effect(|game| {
+        game.shutdown_game();
+      });
+
+      return;
+    }
 
     // We want this to throw a runtime panic if we make a logic error.
     // ! Never turn this into a silent bypass via: is_some()

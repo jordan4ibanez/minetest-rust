@@ -5,6 +5,9 @@ use message_io::{
   network::{Endpoint, Transport},
   node::{self, NodeHandler, NodeTask, StoredNetEvent, StoredNodeEvent},
 };
+use message_to_parent::MessageToParent;
+
+use super::Server;
 
 ///
 /// ServerConnection and Server can be considered 1 entity.
@@ -19,6 +22,8 @@ pub struct ServerConnection {
   handler: Option<NodeHandler<()>>,
   event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
   clients: HashMap<Endpoint, String>,
+
+  termination_requesters: Vec<Endpoint>,
 }
 
 impl ServerConnection {
@@ -31,6 +36,8 @@ impl ServerConnection {
       handler: None,
       event_receiver: None,
       clients: HashMap::new(),
+
+      termination_requesters: vec![],
     };
 
     new_server_connection.initialize();
@@ -80,7 +87,11 @@ impl ServerConnection {
   ///
   /// Returns if the connection received the shutdown signal from a client
   ///
-  pub fn event_reaction(&mut self, event: StoredNetEvent) {
+  pub fn event_reaction(
+    &mut self,
+    event: StoredNetEvent,
+    server_messages: &mut MessageToParent<Server, ()>,
+  ) {
     // We don't need to match, we're using UDP which is connectionless.
     if let StoredNetEvent::Message(end_point, raw_message) = event {
       // todo: use https://github.com/serde-rs/bytes
@@ -102,7 +113,9 @@ impl ServerConnection {
         // ! If it's not obvious [THIS IS DEBUGGING]
         "MINETEST_SHUT_DOWN_REQUEST" => {
           //todo: this is where the endpoint needs to be validated, somehow
-          // term_signal = true;
+
+          server_messages.add_side_effect(|server| {});
+
           println!("minetest: shutdown request received! Shutting down [now].");
         }
         _ => (),
@@ -116,9 +129,7 @@ impl ServerConnection {
   /// Returns the EndPoint (ClientConnection) that requested to shut
   /// down the server.
   ///
-  /// ! Return is UNSAFE at the moment.
-  ///
-  pub fn receive(&mut self) {
+  pub fn receive(&mut self, server_messages: &mut MessageToParent<Server, ()>) {
     let mut has_new_event = true;
 
     // We want to grind through ALL the events.
@@ -128,7 +139,10 @@ impl ServerConnection {
           if let Some(event) = event_receiver.receive_timeout(Duration::new(0, 0)) {
             match event {
               StoredNodeEvent::Network(new_event) => {
-                self.event_reaction(new_event.clone());
+                self.event_reaction(new_event.clone(), server_messages);
+
+                server_messages.add_side_effect(|_| {});
+
                 // if let StoredNetEvent::Message(term_end_point, _) = new_event.clone() {
                 //   //todo: this needs to be reworked!
                 // };

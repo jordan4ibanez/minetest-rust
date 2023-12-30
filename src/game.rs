@@ -186,11 +186,11 @@ impl Game {
     if self.is_server {
       match &mut self.server {
         Some(server) => {
-          let mut server_messages = MessageToParent::<Game, ()>::new();
+          let mut game_messages = MessageToParent::<Game, ()>::new();
 
-          server.on_tick(self.delta);
+          server.on_tick(self.delta, &mut game_messages);
 
-          server_messages.run_side_effects(self);
+          game_messages.run_side_effects(self);
         }
         None => panic!("minetest: attempted to run a server that does not exist."),
       }
