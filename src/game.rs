@@ -3,7 +3,6 @@ mod lua_engine;
 mod server;
 
 use core::panic;
-use std::{cell::RefCell, ops::Deref, rc::Rc};
 
 use spin_sleep::LoopHelper;
 
@@ -30,7 +29,7 @@ use self::{client::Client, server::Server};
 ///
 /// ! Do not create multiple instances of game. It's monolithic.
 ///
-pub struct Game<'game> {
+pub struct Game {
   should_close: bool,
 
   goal_frames_per_second: f64,
@@ -52,12 +51,10 @@ pub struct Game<'game> {
   // double - (2)
   // triple - (3)
   vsync_mode: i8,
-
-  game_pointer: Option<Rc<RefCell<Game<'game>>>>,
 }
 
-impl<'game> Game<'game> {
-  pub fn new(cli: CommandLineInterface) -> Rc<RefCell<Game<'game>>> {
+impl Game {
+  pub fn new(cli: CommandLineInterface) -> Game {
     println!("Minetest initialized!");
 
     // 60 FPS goal for the moment.
@@ -78,7 +75,7 @@ impl<'game> Game<'game> {
     //todo: make this happen!
     println!("we need a minetest.conf parser for vsync!");
 
-    let new_game = Game {
+    let mut new_game = Game {
       should_close: false,
 
       goal_frames_per_second,
@@ -101,32 +98,21 @@ impl<'game> Game<'game> {
 
       //todo: fix this when the minetest.conf parser is implemented
       vsync_mode: 0,
-
-      game_pointer: None,
     };
 
-    // We now transfer ownership of the entire Game into an ARC
-    // with interior mutability with RefCell.
-
-    // Interior mutability. Like a final java object.
-    let new_game_pointer = Rc::new(RefCell::new(new_game));
-
-    // We can simply dispatch the smart pointer to this struct by cloning it now.
-    new_game_pointer.deref().borrow_mut().game_pointer = Some(new_game_pointer.clone());
-
     // We could parse the player's name instead from a file, or a first time ask. This is mutable after all.
-    new_game_pointer.deref().borrow_mut().client = match cli.server {
+    new_game.client = match cli.server {
       false => Some(Client::new(cli.client_name, cli.address.clone(), cli.port)),
       true => None,
     };
 
     // Can auto deploy server and treat this struct like a simplified dispatcher.
-    new_game_pointer.deref().borrow_mut().server = match cli.server {
+    new_game.server = match cli.server {
       true => Some(Server::new(cli.address, cli.port, cli.game)),
       false => None,
     };
 
-    new_game_pointer
+    new_game
   }
 
   ///
@@ -245,7 +231,7 @@ impl<'game> Game<'game> {
   }
 }
 
-impl<'game> Drop for Game<'game> {
+impl Drop for Game {
   fn drop(&mut self) {
     // If this doesn't print, there's a memory leak with RC.
     println!("Minetest dropped!");
