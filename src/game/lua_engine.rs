@@ -1,7 +1,7 @@
 mod lua_file_helpers;
 
 use core::panic;
-use std::{cell::RefCell, rc::Rc};
+
 
 use configparser::ini::Ini;
 use mlua::Lua;
@@ -23,7 +23,7 @@ pub struct LuaEngine {
 
 impl LuaEngine {
   pub fn new(server_vm: bool) -> Self {
-    let mut new_engine = LuaEngine {
+    let new_engine = LuaEngine {
       lua: Lua::new(),
       output_code_string: false,
       server_vm,

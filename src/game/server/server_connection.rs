@@ -1,4 +1,4 @@
-use std::{cell::RefCell, collections::HashMap, net::ToSocketAddrs, rc::Rc, time::Duration};
+use std::{collections::HashMap, net::ToSocketAddrs, time::Duration};
 
 use message_io::{
   events::EventReceiver,
@@ -6,7 +6,7 @@ use message_io::{
   node::{self, NodeHandler, NodeTask, StoredNetEvent, StoredNodeEvent},
 };
 
-use super::Server;
+
 
 ///
 /// ServerConnection and Server can be considered 1 entity.

@@ -1,10 +1,10 @@
 mod client_connection;
 
-use std::{cell::RefCell, ops::Deref, rc::Rc};
+
 
 use self::client_connection::ClientConnection;
 
-use super::{lua_engine::LuaEngine, Game};
+use super::{lua_engine::LuaEngine};
 
 ///
 /// The Client component for the engine.
