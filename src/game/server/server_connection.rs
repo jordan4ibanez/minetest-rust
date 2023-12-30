@@ -18,9 +18,9 @@ pub struct ServerConnection {
   task: Option<NodeTask>,
   handler: Option<NodeHandler<()>>,
   event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
-  clients: HashMap<Endpoint, String>,
+  pub clients: HashMap<Endpoint, String>,
 
-  shutdown_requests: Vec<Endpoint>,
+  pub shutdown_requests: Vec<Endpoint>,
 }
 
 impl ServerConnection {

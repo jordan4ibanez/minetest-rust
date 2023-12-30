@@ -73,7 +73,21 @@ impl Server {
   /// ! (will)
   /// Automatically validate and accept/deny shutdown requests
   fn check_shutdown_requests(&mut self) -> bool {
-    false
+    let mut request_accepted = false;
+
+    // Let's clear out the entire list so we don't cause a memory leak.
+    // ! This NEEDS to check the database for a bad actor.
+    while !self.connection.shutdown_requests.is_empty() {
+      if let Some(shutdown_requester) = self.connection.shutdown_requests.pop() {
+        println!(
+          "minetest: shutdown requested by [{}]",
+          shutdown_requester.addr()
+        );
+        request_accepted = true;
+      }
+    }
+
+    request_accepted
   }
 
   ///
@@ -91,9 +105,11 @@ impl Server {
 
     self.connection.receive();
 
-    game_messages.add_side_effect(|game| {
-      game.shutdown_game();
-    });
+    if self.check_shutdown_requests() {
+      game_messages.add_side_effect(|game| {
+        game.shutdown_game();
+      });
+    }
 
     // We want this to throw a runtime panic if we make a logic error.
     // ! Never turn this into a silent bypass via: is_some()
