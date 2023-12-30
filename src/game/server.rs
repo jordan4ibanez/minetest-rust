@@ -70,8 +70,10 @@ impl Server {
   }
 
   ///
-  /// ! (will)
+  /// ! (will) [not implemented yet]
+  /// todo: implement this somehow
   /// Automatically validate and accept/deny shutdown requests
+  ///
   fn check_shutdown_requests(&mut self) -> bool {
     let mut request_accepted = false;
 
