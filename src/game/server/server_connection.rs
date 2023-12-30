@@ -104,15 +104,7 @@ impl ServerConnection {
       match receieved_string.as_str() {
         "hi" => self.send_data(end_point, "hi there!"),
         "MINETEST_HAND_SHAKE" => self.send_data(end_point, "MINETEST_HAND_SHAKE_CONFIRMED"),
-        // ! Oh yeah, just accept any shut down request.
-        // ! I'm sure there's no way this can go wrong.
-        // ! If it's not obvious [THIS IS DEBUGGING]
-        "MINETEST_SHUT_DOWN_REQUEST" => {
-          // end_point will be validated by Server.
-          self.shutdown_requests.push(end_point);
-
-          // println!("minetest: shutdown request received! Shutting down [now].");
-        }
+        "MINETEST_SHUT_DOWN_REQUEST" => self.shutdown_requests.push(end_point),
         _ => (),
       }
     }
