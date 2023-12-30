@@ -5,9 +5,6 @@ use message_io::{
   network::{Endpoint, Transport},
   node::{self, NodeHandler, NodeTask, StoredNetEvent, StoredNodeEvent},
 };
-use message_to_parent::MessageToParent;
-
-use super::Server;
 
 ///
 /// ServerConnection and Server can be considered 1 entity.
