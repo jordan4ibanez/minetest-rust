@@ -168,9 +168,10 @@ impl ServerConnection {
 
 impl Drop for ServerConnection {
   fn drop(&mut self) {
-    // Need to close server connection, maybe?
-    // Might need to send out the disconnect signal.
-    // todo: experiment with this.
-    println!("ServerConnection dropped!")
+    // ServerConnection must stop the handler entity or the Server
+    // will not shut down.
+    println!("ServerConnection: Shutting down network handler.");
+    NodeHandler::stop(self.handler.as_ref().unwrap());
+    println!("ServerConnection dropped!");
   }
 }
