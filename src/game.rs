@@ -4,7 +4,6 @@ mod server;
 
 use core::panic;
 
-use message_to_parent::MessageToParent;
 use spin_sleep::LoopHelper;
 
 use crate::command_line::CommandLineInterface;
@@ -186,11 +185,11 @@ impl Game {
     if self.is_server {
       match &mut self.server {
         Some(server) => {
-          let mut game_messages = MessageToParent::<Game, ()>::new();
+          server.on_tick(self.delta);
 
-          server.on_tick(self.delta, &mut game_messages);
-
-          game_messages.run_side_effects(self);
+          if server.shutdown_is_approved() {
+            self.shutdown_game()
+          }
         }
         None => panic!("minetest: attempted to run a server that does not exist."),
       }
@@ -227,7 +226,7 @@ impl Game {
   ///
   pub fn enter_main_loop(&mut self) {
     while !self.should_close {
-      self.main()
+      self.main();
     }
   }
 }
