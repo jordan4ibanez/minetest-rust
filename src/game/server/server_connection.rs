@@ -1,4 +1,8 @@
-use std::{collections::HashMap, net::ToSocketAddrs, time::Duration};
+use std::{
+  collections::{vec_deque, HashMap, VecDeque},
+  net::ToSocketAddrs,
+  time::Duration,
+};
 
 use message_io::{
   events::EventReceiver,
@@ -23,7 +27,7 @@ pub struct ServerConnection {
   event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
   clients: HashMap<Endpoint, String>,
 
-  termination_requesters: Vec<Endpoint>,
+  shutdown_requests: Vec<Endpoint>,
 }
 
 impl ServerConnection {
@@ -37,7 +41,7 @@ impl ServerConnection {
       event_receiver: None,
       clients: HashMap::new(),
 
-      termination_requesters: vec![],
+      shutdown_requests: vec![],
     };
 
     new_server_connection.initialize();
@@ -112,11 +116,10 @@ impl ServerConnection {
         // ! I'm sure there's no way this can go wrong.
         // ! If it's not obvious [THIS IS DEBUGGING]
         "MINETEST_SHUT_DOWN_REQUEST" => {
-          //todo: this is where the endpoint needs to be validated, somehow
+          // end_point will be validated by Server.
+          self.shutdown_requests.push(end_point);
 
-          server_messages.add_side_effect(|server| {});
-
-          println!("minetest: shutdown request received! Shutting down [now].");
+          // println!("minetest: shutdown request received! Shutting down [now].");
         }
         _ => (),
       }
