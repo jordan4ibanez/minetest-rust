@@ -6,8 +6,6 @@ use message_io::{
   node::{self, NodeHandler, NodeTask, StoredNetEvent, StoredNodeEvent},
 };
 
-
-
 ///
 /// ServerConnection and Server can be considered 1 entity.
 ///
@@ -82,8 +80,7 @@ impl ServerConnection {
   ///
   /// Returns if the connection received the shutdown signal from a client
   ///
-  pub fn event_reaction(&mut self, event: StoredNetEvent) -> bool {
-    let mut term_signal = false;
+  pub fn event_reaction(&mut self, event: StoredNetEvent) {
     // We don't need to match, we're using UDP which is connectionless.
     if let StoredNetEvent::Message(end_point, raw_message) = event {
       // todo: use https://github.com/serde-rs/bytes
@@ -104,14 +101,13 @@ impl ServerConnection {
         // ! I'm sure there's no way this can go wrong.
         // ! If it's not obvious [THIS IS DEBUGGING]
         "MINETEST_SHUT_DOWN_REQUEST" => {
-          term_signal = true;
+          //todo: this is where the endpoint needs to be validated, somehow
+          // term_signal = true;
           println!("minetest: shutdown request received! Shutting down [now].");
         }
         _ => (),
       }
     }
-
-    term_signal
   }
 
   ///
@@ -122,9 +118,9 @@ impl ServerConnection {
   ///
   /// ! Return is UNSAFE at the moment.
   ///
-  pub fn receive(&mut self) -> Option<Endpoint> {
-    let mut term_signal: Option<Endpoint> = None;
+  pub fn receive(&mut self) {
     let mut has_new_event = true;
+
     // We want to grind through ALL the events.
     while has_new_event {
       match &mut self.event_receiver {
@@ -132,11 +128,10 @@ impl ServerConnection {
           if let Some(event) = event_receiver.receive_timeout(Duration::new(0, 0)) {
             match event {
               StoredNodeEvent::Network(new_event) => {
-                if self.event_reaction(new_event.clone()) {
-                  if let StoredNetEvent::Message(term_end_point, _) = new_event.clone() {
-                    term_signal = Some(term_end_point);
-                  };
-                }
+                self.event_reaction(new_event.clone());
+                // if let StoredNetEvent::Message(term_end_point, _) = new_event.clone() {
+                //   //todo: this needs to be reworked!
+                // };
               }
               // todo: figure out what a signal is!
               StoredNodeEvent::Signal(_) => todo!(),
@@ -148,7 +143,6 @@ impl ServerConnection {
         None => panic!("minetest: ServerConnection listener does not exist!"),
       }
     }
-    term_signal
   }
 
   ///

@@ -1,7 +1,5 @@
 mod server_connection;
 
-
-
 use self::server_connection::ServerConnection;
 
 use super::lua_engine::LuaEngine;
@@ -79,15 +77,11 @@ impl Server {
   ///
   /// Returns shutdown signal.
   ///
-  pub fn on_tick(&mut self, delta: f64) -> bool {
-    let mut shutdown = false;
-
+  pub fn on_tick(&mut self, delta: f64) {
     // Process any incoming network traffic. (non blocking)
 
     // ! todo: this absolutely needs to be checked for server privs!
-    if let Some(end_point) = self.connection.receive() {
-      shutdown = true
-    }
+    self.connection.receive();
 
     // We want this to throw a runtime panic if we make a logic error.
     // ! Never turn this into a silent bypass via: is_some()
@@ -95,7 +89,5 @@ impl Server {
       Some(lua_engine) => lua_engine.on_tick(delta),
       None => panic!("minetest: Server LuaEngine does not exist!"),
     }
-
-    shutdown
   }
 }

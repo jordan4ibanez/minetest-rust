@@ -1,10 +1,8 @@
 mod client_connection;
 
-
-
 use self::client_connection::ClientConnection;
 
-use super::{lua_engine::LuaEngine};
+use super::lua_engine::LuaEngine;
 
 ///
 /// The Client component for the engine.

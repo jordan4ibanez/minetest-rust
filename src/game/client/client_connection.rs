@@ -1,12 +1,10 @@
-use std::{time::Duration};
+use std::time::Duration;
 
 use message_io::{
   events::EventReceiver,
   network::{Endpoint, ToRemoteAddr, Transport},
   node::{self, NodeHandler, NodeTask, StoredNetEvent, StoredNodeEvent},
 };
-
-
 
 ///
 /// ClientConnection and Client can be considered 1 entity.

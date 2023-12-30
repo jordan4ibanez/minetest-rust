@@ -187,9 +187,7 @@ impl Game {
         Some(server) => {
           // ! todo: this absolutely needs to be checked for server privs!
           // Shut the server down if the shutdown signal was received.
-          if server.on_tick(self.delta) {
-            self.shutdown_game();
-          }
+          server.on_tick(self.delta);
         }
         None => panic!("minetest: attempted to run a server that does not exist."),
       }
