@@ -1,10 +1,8 @@
 mod server_connection;
 
-use message_to_parent::MessageToParent;
-
 use self::server_connection::ServerConnection;
 
-use super::{lua_engine::LuaEngine, Game};
+use super::lua_engine::LuaEngine;
 
 ///
 /// The Server component for the engine.
@@ -21,6 +19,7 @@ use super::{lua_engine::LuaEngine, Game};
 pub struct Server {
   lua_engine: Option<LuaEngine>,
   connection: ServerConnection,
+  shutdown_approved: bool,
 }
 
 impl Server {
@@ -28,6 +27,7 @@ impl Server {
     let mut new_server = Server {
       lua_engine: None,
       connection: ServerConnection::new(address, port),
+      shutdown_approved: false,
     };
 
     // Automatically create a new Server LuaEngine.
@@ -70,26 +70,31 @@ impl Server {
   }
 
   ///
+  /// Allows the game to check if the server has approved
+  /// a shutdown request from a client.
+  ///
+  pub fn shutdown_is_approved(&self) -> bool {
+    self.shutdown_approved
+  }
+
+  ///
   /// ! (will) [not implemented yet]
   /// todo: implement this somehow
   /// Automatically validate and accept/deny shutdown requests
   ///
-  fn check_shutdown_requests(&mut self) -> bool {
-    let mut request_accepted = false;
-
+  fn check_shutdown_requests(&mut self) {
     // Let's clear out the entire list so we don't cause a memory leak.
     // ! This NEEDS to check the database for a bad actor.
     while !self.connection.shutdown_requests.is_empty() {
+      println!("looping");
       if let Some(shutdown_requester) = self.connection.shutdown_requests.pop() {
         println!(
           "minetest: shutdown requested by [{}]",
           shutdown_requester.addr()
         );
-        request_accepted = true;
+        self.shutdown_approved = true
       }
     }
-
-    request_accepted
   }
 
   ///
@@ -102,15 +107,14 @@ impl Server {
   ///
   /// Returns shutdown signal.
   ///
-  pub fn on_tick(&mut self, delta: f64, game_messages: &mut MessageToParent<Game, ()>) {
+  pub fn on_tick(&mut self, delta: f64) {
     // Process any incoming network traffic. (non blocking)
 
     self.connection.receive();
 
-    if self.check_shutdown_requests() {
-      game_messages.add_side_effect(|game| {
-        game.shutdown_game();
-      });
+    self.check_shutdown_requests();
+    if self.shutdown_approved {
+      return;
     }
 
     // We want this to throw a runtime panic if we make a logic error.
@@ -119,5 +123,11 @@ impl Server {
       Some(lua_engine) => lua_engine.on_tick(delta),
       None => panic!("minetest: Server LuaEngine does not exist!"),
     }
+  }
+}
+
+impl Drop for Server {
+  fn drop(&mut self) {
+    println!("Server dropped!");
   }
 }
