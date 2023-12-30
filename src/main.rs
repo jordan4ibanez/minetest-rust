@@ -1,7 +1,7 @@
 pub mod command_line;
 pub mod game;
 
-use std::ops::Deref;
+use std::{cell::RefCell, ops::Deref, rc::Rc};
 
 use clap::Parser;
 use command_line::CommandLineInterface;
@@ -18,7 +18,7 @@ fn main() {
   // That's why this is written like this.
   // The entry point is literally borrowing the game struct
   // for the lifetime of the game.
-  Game::new(CommandLineInterface::parse())
+  Rc::new(RefCell::new(Game::new(CommandLineInterface::parse())))
     .deref()
     .borrow_mut()
     .enter_main_loop()
