@@ -69,7 +69,12 @@ impl Server {
     self.lua_engine.as_mut().unwrap().load_game(game_name)
   }
 
-  fn check_shutdown_requests(&mut self) {}
+  ///
+  /// ! (will)
+  /// Automatically validate and accept/deny shutdown requests
+  fn check_shutdown_requests(&mut self) -> bool {
+    false
+  }
 
   ///
   /// Tick tock.
@@ -83,11 +88,8 @@ impl Server {
   ///
   pub fn on_tick(&mut self, delta: f64, game_messages: &mut MessageToParent<Game, ()>) {
     // Process any incoming network traffic. (non blocking)
-    let mut server_messages = MessageToParent::<Server, ()>::new();
 
-    self.connection.receive(&mut server_messages);
-
-    server_messages.run_side_effects(self);
+    self.connection.receive();
 
     game_messages.add_side_effect(|game| {
       game.shutdown_game();

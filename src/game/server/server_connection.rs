@@ -1,8 +1,4 @@
-use std::{
-  collections::HashMap,
-  net::ToSocketAddrs,
-  time::Duration,
-};
+use std::{collections::HashMap, net::ToSocketAddrs, time::Duration};
 
 use message_io::{
   events::EventReceiver,
@@ -91,11 +87,7 @@ impl ServerConnection {
   ///
   /// Returns if the connection received the shutdown signal from a client
   ///
-  pub fn event_reaction(
-    &mut self,
-    event: StoredNetEvent,
-    server_messages: &mut MessageToParent<Server, ()>,
-  ) {
+  pub fn event_reaction(&mut self, event: StoredNetEvent) {
     // We don't need to match, we're using UDP which is connectionless.
     if let StoredNetEvent::Message(end_point, raw_message) = event {
       // todo: use https://github.com/serde-rs/bytes
@@ -132,7 +124,7 @@ impl ServerConnection {
   /// Returns the EndPoint (ClientConnection) that requested to shut
   /// down the server.
   ///
-  pub fn receive(&mut self, server_messages: &mut MessageToParent<Server, ()>) {
+  pub fn receive(&mut self) {
     let mut has_new_event = true;
 
     // We want to grind through ALL the events.
@@ -142,13 +134,7 @@ impl ServerConnection {
           if let Some(event) = event_receiver.receive_timeout(Duration::new(0, 0)) {
             match event {
               StoredNodeEvent::Network(new_event) => {
-                self.event_reaction(new_event.clone(), server_messages);
-
-                server_messages.add_side_effect(|_| {});
-
-                // if let StoredNetEvent::Message(term_end_point, _) = new_event.clone() {
-                //   //todo: this needs to be reworked!
-                // };
+                self.event_reaction(new_event.clone());
               }
               // todo: figure out what a signal is!
               StoredNodeEvent::Signal(_) => todo!(),
