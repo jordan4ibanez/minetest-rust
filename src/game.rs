@@ -4,6 +4,7 @@ mod server;
 
 use core::panic;
 
+use message_to_parent::MessageToParent;
 use spin_sleep::LoopHelper;
 
 use crate::command_line::CommandLineInterface;
@@ -185,9 +186,11 @@ impl Game {
     if self.is_server {
       match &mut self.server {
         Some(server) => {
-          // ! todo: this absolutely needs to be checked for server privs!
-          // Shut the server down if the shutdown signal was received.
+          let mut server_messages = MessageToParent::<Game, ()>::new();
+
           server.on_tick(self.delta);
+
+          server_messages.run_side_effects(self);
         }
         None => panic!("minetest: attempted to run a server that does not exist."),
       }
