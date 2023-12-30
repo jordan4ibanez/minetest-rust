@@ -1,5 +1,5 @@
 use std::{
-  collections::{vec_deque, HashMap, VecDeque},
+  collections::HashMap,
   net::ToSocketAddrs,
   time::Duration,
 };
