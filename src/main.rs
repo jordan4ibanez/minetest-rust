@@ -21,5 +21,7 @@ fn main() {
   Rc::new(RefCell::new(Game::new(CommandLineInterface::parse())))
     .deref()
     .borrow_mut()
-    .enter_main_loop()
+    .enter_main_loop();
+
+  println!("minetest: shutdown procedure completed.");
 }
