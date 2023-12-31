@@ -3,6 +3,10 @@ mod lua_engine;
 mod server;
 
 use core::panic;
+use std::{
+  ops::Deref,
+  sync::{Arc, RwLock},
+};
 
 use spin_sleep::LoopHelper;
 
@@ -30,7 +34,7 @@ use self::{client::Client, server::Server};
 /// ! Do not create multiple instances of game. It's monolithic.
 ///
 pub struct Game {
-  should_close: bool,
+  should_close: Arc<RwLock<bool>>,
 
   goal_frames_per_second: f64,
   goal_ticks_per_second: f64,
@@ -76,7 +80,7 @@ impl Game {
     println!("we need a minetest.conf parser for vsync!");
 
     let mut new_game = Game {
-      should_close: false,
+      should_close: Arc::new(RwLock::new(false)),
 
       goal_frames_per_second,
       goal_ticks_per_second,
@@ -111,6 +115,13 @@ impl Game {
       true => Some(Server::new(cli.address, cli.port, cli.game)),
       false => None,
     };
+
+    // Automatically elegantly stops the game when CTRL+C is hit or user terminates the process.
+
+    let run_clone = new_game.should_close.clone();
+    let _ = ctrlc::set_handler(move || {
+      *run_clone.deref().write().unwrap() = true;
+    });
 
     new_game
   }
@@ -169,7 +180,7 @@ impl Game {
   /// ! This shouldn't be used for anything but testing!
   ///
   pub fn shutdown_game(&mut self) {
-    self.should_close = true
+    *self.should_close.deref().write().unwrap() = true;
   }
 
   ///
@@ -225,7 +236,7 @@ impl Game {
   /// This is the actual entry point for the game.
   ///
   pub fn enter_main_loop(&mut self) {
-    while !self.should_close {
+    while !*self.should_close.deref().read().unwrap() {
       self.main();
     }
   }
