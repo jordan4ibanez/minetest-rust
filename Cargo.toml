@@ -11,7 +11,10 @@ rust-version = "1.75.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lints.rust]
+# DO NOT allow unsafe code.
 unsafe_code = "forbid"
+
+# These can be turned on and off for active development.
 dead_code = "allow"
 unused_variables = "allow"
 
