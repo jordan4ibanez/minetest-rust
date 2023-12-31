@@ -19,6 +19,12 @@ pub struct ClientConnection {
 
   handshake_timeout: f64,
 
+  ping_resend_delta: f64,
+  ping_waiting_receive: bool,
+  ping_timeout: f64,
+
+  lost_connection: bool,
+
   end_point: Option<Endpoint>,
   task: Option<NodeTask>,
   handler: Option<NodeHandler<()>>,
@@ -34,6 +40,12 @@ impl ClientConnection {
       connected: false,
 
       handshake_timeout: 0.0,
+
+      ping_resend_delta: 0.0,
+      ping_waiting_receive: false,
+      ping_timeout: 0.0,
+
+      lost_connection: false,
 
       end_point: None,
       task: None,
@@ -105,12 +117,18 @@ impl ClientConnection {
           if !self.connected {
             self.connected = true;
             self.handshake_timeout = 0.0;
-            println!("minetest: Handshake received!");
+            println!("minetest: ClientConnection received handshake from ServerConnection.");
           }
 
           // ! Do not enable this unless you want the server to
           // ! shutdown as soon as you connect.
           // self.send_data(end_point, "MINETEST_SHUT_DOWN_REQUEST");
+        }
+        "MINETEST_PING_CONFIRMATION" => {
+          println!("minetest: ClientConnection ping received from ServerConnection.");
+          self.ping_timeout = 0.0;
+          self.ping_waiting_receive = false;
+          self.ping_resend_delta = 0.0;
         }
         _ => (),
       }
@@ -129,7 +147,34 @@ impl ClientConnection {
       // 3 second timeout.
       // todo: make this not a panic.
       if self.handshake_timeout >= 3.0 {
-        panic!("minetest: attempt to connect to server timed out.")
+        panic!("minetest: ClientConnection attempt to connect to server timed out.")
+      }
+    }
+  }
+
+  ///
+  /// Will automatically calculate if the server has lost connection to the client.
+  ///
+  fn do_ping_timeout_logic(&mut self, delta: f64) {
+    // If we're not connected, don't attempt to do this.
+    if self.connected {
+      if self.ping_waiting_receive {
+        // We're waiting for the server to respond.
+        self.ping_timeout += delta;
+
+        // 3 second timeout.
+        // todo: make this not a panic.
+        if self.ping_timeout >= 3.0 {
+          panic!("minetest: ClientConnection connection to server timed out.")
+        }
+      } else {
+        // Wait 3 seconds before pinging the server again.
+        self.ping_resend_delta += delta;
+
+        if self.ping_resend_delta >= 3.0 {
+          self.ping_waiting_receive = true;
+          self.send_data(self.end_point.unwrap(), "MINETEST_PING_REQUEST");
+        }
       }
     }
   }
@@ -152,6 +197,7 @@ impl ClientConnection {
     }
 
     self.check_handshake(delta);
+    self.do_ping_timeout_logic(delta);
   }
 
   ///

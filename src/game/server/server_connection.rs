@@ -103,6 +103,10 @@ impl ServerConnection {
       match receieved_string.as_str() {
         "hi" => self.send_data(end_point, "hi there!"),
         "MINETEST_HAND_SHAKE" => self.send_data(end_point, "MINETEST_HAND_SHAKE_CONFIRMED"),
+        "MINETEST_PING_REQUEST" => {
+          println!("minetest: ServerConnection got ping request, sending confirmation to ClientConnection.");
+          self.send_data(end_point, "MINETEST_PING_CONFIRMATION")
+        }
         "MINETEST_SHUT_DOWN_REQUEST" => self.shutdown_requests.push(end_point),
         _ => (),
       }
