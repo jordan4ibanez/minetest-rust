@@ -142,9 +142,14 @@ impl LuaEngine {
       let mut mod_path = mod_directory.mod_path.clone();
       mod_path.push_str("/main.lua");
 
+      println!(
+        "minetest: Server attempting to load mod file [{}]",
+        &mod_path
+      );
+
       // This simply panics for now, but in the future we can push errors to the GUI.
       match self.run_file(&mod_path) {
-        Ok(_) => println!("minetest: server loaded mod file [{}]", &mod_path),
+        Ok(_) => println!("minetest: Server loaded mod file [{}]", &mod_path),
         Err(e) => panic!("{}", e),
       }
     }
