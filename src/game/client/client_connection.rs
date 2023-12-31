@@ -16,13 +16,17 @@ pub struct ClientConnection {
   port: i32,
 
   connected: bool,
-  timeout: f64,
+
+  handshake_timeout: f64,
+
   test_remove_this: i32,
 
   end_point: Option<Endpoint>,
   task: Option<NodeTask>,
   handler: Option<NodeHandler<()>>,
   event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
+
+
 }
 
 impl ClientConnection {
@@ -32,7 +36,7 @@ impl ClientConnection {
       port,
 
       connected: false,
-      timeout: 0.0,
+      handshake_timeout: 0.0,
       test_remove_this: 0,
 
       end_point: None,
@@ -104,7 +108,7 @@ impl ClientConnection {
           // Received handshake with the server.
           if !self.connected {
             self.connected = true;
-            self.timeout = 0.0;
+            self.handshake_timeout = 0.0;
             println!("minetest: Handshake received!");
           }
 
@@ -151,11 +155,11 @@ impl ClientConnection {
 
     // Handshake timeout, aka server connection timeout
     if !self.connected {
-      self.timeout += delta;
+      self.handshake_timeout += delta;
 
       // 3 second timeout.
       // todo: make this not a panic.
-      if self.timeout >= 3.0 {
+      if self.handshake_timeout >= 3.0 {
         panic!("minetest: attempt to connect to server timed out.")
       }
     } else {
