@@ -19,14 +19,10 @@ pub struct ClientConnection {
 
   handshake_timeout: f64,
 
-  test_remove_this: i32,
-
   end_point: Option<Endpoint>,
   task: Option<NodeTask>,
   handler: Option<NodeHandler<()>>,
   event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
-
-
 }
 
 impl ClientConnection {
@@ -36,8 +32,8 @@ impl ClientConnection {
       port,
 
       connected: false,
+
       handshake_timeout: 0.0,
-      test_remove_this: 0,
 
       end_point: None,
       task: None,
@@ -122,21 +118,6 @@ impl ClientConnection {
   }
 
   ///
-  /// Test implementation is literally sending the server
-  /// the word testing followed by the counter.
-  ///
-  /// Why yes, this will cause a panic in debug mode if you
-  /// decide to run it for a few weeks stright.
-  ///
-  fn test_implementation(&mut self) {
-    self.handler.clone().unwrap().network().send(
-      self.end_point.unwrap(),
-      format!("testing: {}", self.test_remove_this).as_bytes(),
-    );
-    self.test_remove_this += 1;
-  }
-
-  ///
   /// Non-blocking event receiver for network events.
   ///
   pub fn receive(&mut self, delta: f64) {
@@ -162,9 +143,6 @@ impl ClientConnection {
       if self.handshake_timeout >= 3.0 {
         panic!("minetest: attempt to connect to server timed out.")
       }
-    } else {
-      // we're testing the implementation here.
-      self.test_implementation();
     }
   }
 
