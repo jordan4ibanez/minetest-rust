@@ -4,6 +4,9 @@ version = "0.0.1"
 edition = "2021"
 authors = ["jordan4ibanez", "for the moment"]
 
+# Always use the latest stable rust version in this project.
+rust-version = "1.75.0"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lints.rust]
