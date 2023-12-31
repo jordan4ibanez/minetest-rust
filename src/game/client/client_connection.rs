@@ -197,9 +197,10 @@ impl ClientConnection {
 
 impl Drop for ClientConnection {
   fn drop(&mut self) {
-    // Need to close client connection, maybe?
-    // Might need to send out the disconnect signal.
-    // todo: experiment with this.
+    // ClientConnection must stop the handler entity or the Client
+    // will not shut down.
+    println!("Clientconnection: Shutting down network handler.");
+    NodeHandler::stop(self.handler.as_ref().unwrap());
     println!("ClientConnection dropped!")
   }
 }
