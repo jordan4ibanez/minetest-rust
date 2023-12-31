@@ -358,19 +358,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "message_to_parent"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c6dab6e404f57652f84eb2b76b00eaff8a435721cd6030a5a597d9b3e8f29844"
-
-[[package]]
 name = "minetest-rust"
 version = "0.0.1"
 dependencies = [
  "clap",
  "configparser",
  "message-io",
- "message_to_parent",
  "mlua",
  "spin_sleep",
  "traversal",

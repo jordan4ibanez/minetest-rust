@@ -15,7 +15,6 @@ unused_variables = "allow"
 clap = { version = "4.4.11", features = ["derive"] }
 configparser = "3.0.3"
 message-io = "0.18.0"
-message_to_parent = "1.0.0"
 mlua = { version = "0.9.2", features = ["luau-jit"] }
 spin_sleep = "1.1.1"
 traversal = "0.1.2"
