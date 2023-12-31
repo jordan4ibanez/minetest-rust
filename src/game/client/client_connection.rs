@@ -9,7 +9,7 @@ use message_io::{
 ///
 /// ClientConnection and Client can be considered 1 entity.
 ///
-/// This is why client_pointer is not an Option<>.
+/// This is the connection component for the Client.
 ///
 pub struct ClientConnection {
   address: String,

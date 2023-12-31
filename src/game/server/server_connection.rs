@@ -9,7 +9,7 @@ use message_io::{
 ///
 /// ServerConnection and Server can be considered 1 entity.
 ///
-/// This is why server_pointer is not an Option<>.
+/// This is the connection component for the Server.
 ///
 pub struct ServerConnection {
   address: String,
