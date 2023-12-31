@@ -20,6 +20,8 @@ pub struct ServerConnection {
   event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
   pub clients: HashMap<Endpoint, String>,
 
+  // Multiple shutdown requests from valid endpoints can be sent in the same tick.
+  // We want to process them all.
   pub shutdown_requests: Vec<Endpoint>,
 }
 
