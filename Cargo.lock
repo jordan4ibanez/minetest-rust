@@ -366,7 +366,6 @@ dependencies = [
  "message-io",
  "mlua",
  "spin_sleep",
- "traversal",
 ]
 
 [[package]]
@@ -655,12 +654,6 @@ name = "tinyvec_macros"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
-
-[[package]]
-name = "traversal"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0ec9745d7517c8b8e8c0a65cba2d84e42f95fd348a01693c5e4da1bc6d00c99"
 
 [[package]]
 name = "tungstenite"
