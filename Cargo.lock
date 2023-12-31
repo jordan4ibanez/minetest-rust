@@ -452,6 +452,8 @@ dependencies = [
  "mlua",
  "rusqlite",
  "sea-query",
+ "serde",
+ "serde_bytes",
  "spin_sleep",
 ]
 
@@ -663,6 +665,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "25dd9975e68d0cb5aa1120c288333fc98731bd1dd12f561e468ea4728c042b89"
 dependencies = [
  "serde_derive",
+]
+
+[[package]]
+name = "serde_bytes"
+version = "0.11.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8bb1879ea93538b78549031e2d54da3e901fd7e75f2e4dc758d760937b123d10"
+dependencies = [
+ "serde",
 ]
 
 [[package]]
