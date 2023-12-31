@@ -118,6 +118,23 @@ impl ClientConnection {
   }
 
   ///
+  /// Will automatically calculate if the server has failed to provide a handshake.
+  /// aka: the server is not online.
+  ///
+  fn check_handshake(&mut self, delta: f64) {
+    // Handshake timeout, aka server connection timeout
+    if !self.connected {
+      self.handshake_timeout += delta;
+
+      // 3 second timeout.
+      // todo: make this not a panic.
+      if self.handshake_timeout >= 3.0 {
+        panic!("minetest: attempt to connect to server timed out.")
+      }
+    }
+  }
+
+  ///
   /// Non-blocking event receiver for network events.
   ///
   pub fn receive(&mut self, delta: f64) {
@@ -134,16 +151,7 @@ impl ClientConnection {
       None => panic!("minetest: ClientConnection listener does not exist!"),
     }
 
-    // Handshake timeout, aka server connection timeout
-    if !self.connected {
-      self.handshake_timeout += delta;
-
-      // 3 second timeout.
-      // todo: make this not a panic.
-      if self.handshake_timeout >= 3.0 {
-        panic!("minetest: attempt to connect to server timed out.")
-      }
-    }
+    self.check_handshake(delta);
   }
 
   ///
