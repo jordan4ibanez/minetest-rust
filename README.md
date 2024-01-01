@@ -21,6 +21,11 @@ https://discord.gg/Z2wCscTB4F
 - Elegant handling of termination signal to program
 - I'm probably forgetting something
 
+## Next up
+- Opening a window with winit
+- Render a triangle with wgpu 
+- Rendering some text in the window
+
 -----
 
 (keeping this here for help)
