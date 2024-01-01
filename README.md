@@ -13,6 +13,15 @@ If you would like to help me with this herculean undertaking in real time:
 https://discord.gg/Z2wCscTB4F
 
 -----
+## Current progress
+
+- Client and Server monolithic framework
+- Basic UDP networking complete with timeout integration
+- Client and Server LuaEngine which implemente LuauJIT
+- Elegant handling of termination signal to program
+- I'm probably forgetting something
+
+-----
 
 (keeping this here for help)
 https://blessed.rs/crates
