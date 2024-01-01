@@ -17,14 +17,23 @@ https://discord.gg/Z2wCscTB4F
 
 - Client and Server monolithic framework
 - Basic UDP networking complete with timeout integration
-- Client and Server LuaEngine which implemente LuauJIT
+- Client and Server LuaEngine which implements LuauJIT
 - Elegant handling of termination signal to program
+- Elegant handling of frame/tick timing
 - I'm probably forgetting something
 
 ## Next up
 - Opening a window with winit
 - Render a triangle with wgpu 
 - Rendering some text in the window
+- A basic GUI (minetest formspec/HUD)
+- Client settings that can be modified during runtime
+- SQLite3 Server framework with rusqlite
+- Writing hello world into the SQLite3 database
+- Use sea-query to write hello world into the SQLite3 database
+- More SQLite things???
+- Serde serialization integration with minetest data structs
+- I'm probably forgetting something again
 
 -----
 
