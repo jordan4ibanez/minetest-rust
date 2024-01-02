@@ -13,6 +13,20 @@ If you would like to help me with this herculean undertaking in real time:
 https://discord.gg/Z2wCscTB4F
 
 -----
+
+## Current package usage:
+- clap - CLI parsing.
+- configparser - Parsing .conf files.
+- ctrlc - Catching termination events and elegantly exiting the program.
+- message-io - UDP networking.
+- spin_sleep - Main loop speed control.
+##### Packages to be implemented:
+- rusqlite - SQLite3 database.
+- sea-query - SQLite3 query builder.
+- serde - Serialization and deserialization of data.
+- serde_bytes - Same as serde.
+- wgpu - Graphics multiplexer. (Vulkan, OpenGL, WebGPU, metal)
+
 ## Current progress
 
 - Client and Server monolithic framework
