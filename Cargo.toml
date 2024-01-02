@@ -25,6 +25,7 @@ ctrlc = { version = "*", features = ["termination"] }
 message-io = "*"
 mlua = { version = "*", features = ["luau-jit"] }
 rusqlite = "*"
+sdl2 = { version = "*", features = ["raw-window-handle"] }
 sea-query = { version = "*", features = [
   "backend-sqlite",
   "with-time",
