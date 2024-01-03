@@ -40,7 +40,7 @@ https://discord.gg/Z2wCscTB4F
 - I'm probably forgetting something
 
 ## Next up
-- Opening a window with winit
+- Opening a window with SDL2
 - Render a triangle with wgpu 
 - Rendering some text in the window
 - A basic GUI (minetest formspec/HUD)
