@@ -26,6 +26,9 @@ https://discord.gg/Z2wCscTB4F
 - serde - Serialization and deserialization of data.
 - serde_bytes - Same as serde.
 - wgpu - Graphics multiplexer. (Vulkan, OpenGL, WebGPU, metal)
+##### Experimental packages for testing:
+- quote - Common Lisp code as data features.
+- syn - Common Lisp code as data features.
 
 ## Current progress
 

@@ -847,12 +847,14 @@ dependencies = [
  "ctrlc",
  "message-io",
  "mlua",
+ "quote",
  "rusqlite",
  "sdl2",
  "sea-query",
  "serde",
  "serde_bytes",
  "spin_sleep",
+ "syn 2.0.46",
  "wgpu",
 ]
 

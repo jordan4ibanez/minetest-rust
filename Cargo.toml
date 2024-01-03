@@ -24,6 +24,7 @@ configparser = "*"
 ctrlc = { version = "*", features = ["termination"] }
 message-io = "*"
 mlua = { version = "*", features = ["luau-jit"] }
+quote = "1.0.35"
 rusqlite = "*"
 sdl2 = { version = "*", features = ["raw-window-handle"] }
 sea-query = { version = "*", features = [
@@ -35,4 +36,5 @@ sea-query = { version = "*", features = [
 serde = { version = "*", features = ["derive"] }
 serde_bytes = "*"
 spin_sleep = "*"
+syn = "2.0.46"
 wgpu = "*"
