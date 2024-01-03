@@ -90,9 +90,8 @@ impl Client {
   pub fn on_tick(&mut self, delta: f64) {
     // Poll any incoming network traffic. (non blocking)
 
-    match &mut self.connection {
-      Some(connection) => connection.receive(delta),
-      None => (),
+    if let Some(connection) = &mut self.connection {
+      connection.receive(delta);
     }
 
     // We want this to throw a runtime panic if we make a logic error.
