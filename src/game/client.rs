@@ -1,7 +1,7 @@
 mod client_connection;
 mod window_handler;
 
-use self::client_connection::ClientConnection;
+use self::{client_connection::ClientConnection, window_handler::WindowHandler};
 
 use super::lua_engine::LuaEngine;
 
@@ -19,6 +19,7 @@ use super::lua_engine::LuaEngine;
 /// ? 5 - Marked with ? because it's still being thought out at the moment.
 ///
 pub struct Client {
+  window_handler: WindowHandler,
   client_name: String,
   connection: ClientConnection,
   lua_engine: Option<LuaEngine>,
@@ -27,6 +28,7 @@ pub struct Client {
 impl Client {
   pub fn new(client_name: String, address: String, port: i32) -> Self {
     let mut new_client = Client {
+      window_handler: WindowHandler::new(),
       client_name,
       connection: ClientConnection::new(address, port),
       lua_engine: None,
