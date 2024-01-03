@@ -118,7 +118,7 @@ impl Server {
     }
 
     // We want this to throw a runtime panic if we make a logic error.
-    // ! Never turn this into a silent bypass via: is_some()
+    // ! Never turn this into a silent bypass via: is_some() or if let
     match &self.lua_engine {
       Some(lua_engine) => lua_engine.on_tick(delta),
       None => panic!("minetest: Server LuaEngine does not exist!"),
