@@ -1,4 +1,5 @@
 mod client_connection;
+mod window_handler;
 
 use self::client_connection::ClientConnection;
 
