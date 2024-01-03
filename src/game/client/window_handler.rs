@@ -1,4 +1,8 @@
-use sdl2::{hint, video::Window, Sdl, VideoSubsystem};
+use sdl2::{
+  hint,
+  video::{FullscreenType, Window},
+  Sdl, VideoSubsystem,
+};
 
 ///
 /// SDL2 window controller.
@@ -51,13 +55,62 @@ impl WindowHandler {
     new_window_handler
   }
 
+  ///
+  /// Make the window visible.
+  ///
   pub fn show(&mut self) {
     self.visible = true;
     self.window.show();
   }
 
+  ///
+  /// Hide the window
+  ///
   pub fn hide(&mut self) {
     self.visible = true;
     self.window.show();
+  }
+
+  ///
+  /// Set the window title.
+  ///
+  pub fn set_title(&mut self, new_title: &str) {
+    // If something goes wrong, let it crash.
+    self.window.set_title(new_title).unwrap();
+  }
+
+  ///
+  /// Get the window title.
+  ///
+  pub fn get_title(&self) -> &str {
+    self.window.title()
+  }
+
+  ///
+  /// Get if the window is in real fullscreen mode.
+  ///
+  pub fn is_fullscreen_real(&mut self) -> bool {
+    self.window.fullscreen_state() == FullscreenType::True
+  }
+
+  ///
+  /// Get if th window is in fake borderless fullscreen mode.
+  ///
+  pub fn is_fullscreen_borderless(&mut self) -> bool {
+    self.window.fullscreen_state() == FullscreenType::Desktop
+  }
+
+  ///
+  /// Set the window to real fullscreen mode.
+  ///
+  pub fn set_fullscreen_real(&mut self) {
+    self.window.set_fullscreen(FullscreenType::True).unwrap()
+  }
+
+  ///
+  /// Set the window to fake borderless fullscreen mode.
+  ///
+  pub fn set_fullscreen_borderless(&mut self) {
+    self.window.set_fullscreen(FullscreenType::Desktop).unwrap()
   }
 }
