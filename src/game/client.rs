@@ -21,7 +21,7 @@ use super::lua_engine::LuaEngine;
 pub struct Client {
   window_handler: WindowHandler,
   client_name: String,
-  connection: ClientConnection,
+  connection: Option<ClientConnection>,
   lua_engine: Option<LuaEngine>,
 }
 
@@ -30,7 +30,7 @@ impl Client {
     let mut new_client = Client {
       window_handler: WindowHandler::new(),
       client_name,
-      connection: ClientConnection::new(address, port),
+      connection: None, //ClientConnection::new(address, port),
       lua_engine: None,
     };
 
@@ -90,7 +90,10 @@ impl Client {
   pub fn on_tick(&mut self, delta: f64) {
     // Poll any incoming network traffic. (non blocking)
 
-    self.connection.receive(delta);
+    match &mut self.connection {
+      Some(connection) => connection.receive(delta),
+      None => (),
+    }
 
     // We want this to throw a runtime panic if we make a logic error.
     // ! Never turn this into a silent bypass via: is_some()
