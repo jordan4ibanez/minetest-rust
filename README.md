@@ -20,6 +20,7 @@ https://discord.gg/Z2wCscTB4F
 - ctrlc - Catching termination events and elegantly exiting the program.
 - message-io - UDP networking.
 - spin_sleep - Main loop speed control.
+- glam - An incredible math library.
 ##### Packages to be implemented:
 - rusqlite - SQLite3 database.
 - sea-query - SQLite3 query builder.
