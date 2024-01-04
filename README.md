@@ -24,11 +24,14 @@ https://discord.gg/Z2wCscTB4F
 - glam - An incredible math library.
 
 ##### Packages to be implemented:
+- wgpu - Graphics multiplexer. (Vulkan, OpenGL, WebGPU, metal)
+- wgpu_sdl_linker - A micro library which allows safely linking wgpu with SDL2.
+- pollster - A micro library which allows blocking a thread while a future completes.
+
 - rusqlite - SQLite3 database.
 - sea-query - SQLite3 query builder.
 - serde - Serialization and deserialization of data.
 - serde_bytes - Same as serde.
-- wgpu - Graphics multiplexer. (Vulkan, OpenGL, WebGPU, metal)
 - env_logger - An elegant logging library.
 
 ##### Experimental packages for testing:
