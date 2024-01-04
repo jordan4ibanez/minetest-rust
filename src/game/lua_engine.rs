@@ -5,9 +5,9 @@ use core::panic;
 use configparser::ini::Ini;
 use mlua::Lua;
 
-use self::lua_file_helpers::{
-  check_game, get_game_mod_folders, get_game_path, read_file_to_string,
-};
+use crate::file_utilities::read_file_to_string;
+
+use self::lua_file_helpers::{check_game, get_game_mod_folders, get_game_path};
 
 ///
 /// LuaEngine encapsulates the LuauJIT virtual machine.
