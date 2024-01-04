@@ -94,10 +94,20 @@ impl WindowHandler {
   }
 
   ///
-  /// Get if th window is in fake borderless fullscreen mode.
+  /// Get if the window is in fake borderless fullscreen mode.
   ///
   pub fn is_fullscreen_borderless(&mut self) -> bool {
     self.window.fullscreen_state() == FullscreenType::Desktop
+  }
+
+  ///
+  /// Get if the window is in ANY fullscreen mode.
+  ///
+  pub fn is_fullscreen_any_mode(&mut self) -> bool {
+    matches!(
+      self.window.fullscreen_state(),
+      FullscreenType::True | FullscreenType::Desktop
+    )
   }
 
   ///
