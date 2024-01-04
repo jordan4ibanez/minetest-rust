@@ -22,7 +22,8 @@ unused_variables = "allow"
 clap = { version = "*", features = ["derive"] }
 configparser = "*"
 ctrlc = { version = "*", features = ["termination"] }
-glam = {version = "*", features = ["approx", "bytemuck", "rand", "serde"]}
+glam = { version = "*", features = ["approx", "bytemuck", "rand", "serde"] }
+log4rs = "*"
 message-io = "*"
 mlua = { version = "*", features = ["luau-jit"] }
 quote = "*"
