@@ -1,4 +1,5 @@
 pub mod command_line;
+pub mod file_utilities;
 pub mod game;
 
 use std::{cell::RefCell, ops::Deref, rc::Rc};
