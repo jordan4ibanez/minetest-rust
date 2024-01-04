@@ -25,9 +25,13 @@ ctrlc = { version = "*", features = ["termination"] }
 glam = "0.25.0"
 message-io = "*"
 mlua = { version = "*", features = ["luau-jit"] }
-quote = "1.0.35"
+quote = "*"
 rusqlite = "*"
-sdl2 = { version = "*", features = ["raw-window-handle", "bundled", "static-link"] }
+sdl2 = { version = "*", features = [
+  "raw-window-handle",
+  "bundled",
+  "static-link",
+] }
 sea-query = { version = "*", features = [
   "backend-sqlite",
   "with-time",
@@ -37,5 +41,5 @@ sea-query = { version = "*", features = [
 serde = { version = "*", features = ["derive"] }
 serde_bytes = "*"
 spin_sleep = "*"
-syn = "2.0.46"
+syn = "*"
 wgpu = "*"
