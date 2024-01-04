@@ -7,10 +7,9 @@
 /// This flows down in complexity until you get the the public procedures
 /// these are: check_game, get_game_mod_folders
 ///
-use std::{
-  fs::{self, read_dir, ReadDir},
-  path::Path,
-};
+use std::fs::{read_dir, ReadDir};
+
+use crate::file_utilities::{dir_exists, file_exists};
 
 ///
 /// Makes the implementation of working with mod folders easier
@@ -27,35 +26,6 @@ pub struct ModDirectory {
 struct CheckGameError {
   mod_name: String,
   conf_or_main: String,
-}
-
-///
-/// A micro helper function.
-/// Simply check if a directory exists.
-///
-fn dir_exists(path: &str) -> bool {
-  Path::new(path).exists()
-}
-
-///
-/// A mini helper function.
-/// This will first check if the file exists.
-/// Next it will automatically parse it into a string.
-///
-pub fn read_file_to_string(path: &str) -> String {
-  if !file_exists(path) {
-    panic!("minetest: tried to read [{}] which doesn't exist!", path)
-  }
-  fs::read_to_string(path).unwrap().parse().unwrap()
-}
-
-///
-/// This is the same as dir_exists.
-/// It is only separate so we know explicitly if we're looking for
-/// a file, or a dir.
-///
-pub fn file_exists(path: &str) -> bool {
-  Path::new(path).exists()
 }
 
 ///
