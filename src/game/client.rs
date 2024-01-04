@@ -3,7 +3,9 @@ mod render_engine;
 // mod virtual_reality_engine;
 mod window_handler;
 
-use self::{client_connection::ClientConnection, window_handler::WindowHandler};
+use self::{
+  client_connection::ClientConnection, render_engine::RenderEngine, window_handler::WindowHandler,
+};
 
 use super::lua_engine::LuaEngine;
 
@@ -22,6 +24,7 @@ use super::lua_engine::LuaEngine;
 ///
 pub struct Client {
   window_handler: WindowHandler,
+  render_engine: Option<RenderEngine>,
   client_name: String,
   connection: Option<ClientConnection>,
   lua_engine: Option<LuaEngine>,
@@ -31,10 +34,14 @@ impl Client {
   pub fn new(client_name: String, address: String, port: i32) -> Self {
     let mut new_client = Client {
       window_handler: WindowHandler::new(),
+      render_engine: None,
       client_name,
       connection: None, //ClientConnection::new(address, port),
       lua_engine: None,
     };
+
+    // Set up the render engine.
+    new_client.render_engine = Some(RenderEngine::new(new_client.window_handler.borrow_window()));
 
     new_client.reset_lua_vm();
 
