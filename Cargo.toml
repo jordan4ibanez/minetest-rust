@@ -26,6 +26,7 @@ env_logger = "*"
 glam = { version = "*", features = ["approx", "bytemuck", "rand", "serde"] }
 message-io = "*"
 mlua = { version = "*", features = ["luau-jit"] }
+pollster = "*"
 quote = "*"
 rusqlite = "*"
 sdl2 = { version = "*", features = [
@@ -44,3 +45,4 @@ serde_bytes = "*"
 spin_sleep = "*"
 syn = "*"
 wgpu = "*"
+wgpu_sdl_linker = "*"

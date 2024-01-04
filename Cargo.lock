@@ -946,6 +946,7 @@ dependencies = [
  "glam",
  "message-io",
  "mlua",
+ "pollster",
  "quote",
  "rusqlite",
  "sdl2",
@@ -955,6 +956,7 @@ dependencies = [
  "spin_sleep",
  "syn 2.0.47",
  "wgpu",
+ "wgpu_sdl_linker",
 ]
 
 [[package]]
@@ -1145,6 +1147,12 @@ name = "pkg-config"
 version = "0.3.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "69d3587f8a9e599cc7ec2c00e331f71c4e69a5f9a4b8a6efd5b07466b9736f9a"
+
+[[package]]
+name = "pollster"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "22686f4785f02a4fcc856d3b3bb19bf6c8160d103f7a99cc258bddd0251dc7f2"
 
 [[package]]
 name = "powerfmt"
@@ -1905,6 +1913,16 @@ dependencies = [
  "bitflags 2.4.1",
  "js-sys",
  "web-sys",
+]
+
+[[package]]
+name = "wgpu_sdl_linker"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9b1486992d389acea50b70cfcbc46bc04c696d79a9576c851e400cfbaa667c28"
+dependencies = [
+ "sdl2",
+ "wgpu",
 ]
 
 [[package]]
