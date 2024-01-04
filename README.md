@@ -29,7 +29,7 @@ https://discord.gg/Z2wCscTB4F
 - serde - Serialization and deserialization of data.
 - serde_bytes - Same as serde.
 - wgpu - Graphics multiplexer. (Vulkan, OpenGL, WebGPU, metal)
-- log4rs - A logging library.
+- env_logger - An elegant logging library.
 
 ##### Experimental packages for testing:
 - quote - Common Lisp code as data features.
