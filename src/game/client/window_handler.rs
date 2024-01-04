@@ -56,6 +56,13 @@ impl WindowHandler {
   }
 
   ///
+  /// Borrow the WindowHandler's actual window.
+  ///
+  pub fn borrow_window(&self) -> &Window {
+    &self.window
+  }
+
+  ///
   /// Make the window visible.
   ///
   pub fn show(&mut self) {
