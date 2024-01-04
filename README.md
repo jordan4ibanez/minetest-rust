@@ -41,10 +41,11 @@ https://discord.gg/Z2wCscTB4F
 - Client and Server LuaEngine which implements LuauJIT
 - Elegant handling of termination signal to program
 - Elegant handling of frame/tick timing
+- Window opened with SDL2
 - I'm probably forgetting something
 
 ## Next up
-- Opening a window with SDL2
+- Set up wgpu
 - Render a triangle with wgpu 
 - Rendering some text in the window
 - A basic GUI (minetest formspec/HUD)
