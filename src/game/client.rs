@@ -1,4 +1,5 @@
 mod client_connection;
+mod render_engine;
 // mod virtual_reality_engine;
 mod window_handler;
 
