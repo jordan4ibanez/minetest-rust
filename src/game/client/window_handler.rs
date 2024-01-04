@@ -89,14 +89,14 @@ impl WindowHandler {
   ///
   /// Get if the window is in real fullscreen mode.
   ///
-  pub fn is_fullscreen_real(&mut self) -> bool {
+  pub fn is_fullscreen_real_mode(&mut self) -> bool {
     self.window.fullscreen_state() == FullscreenType::True
   }
 
   ///
   /// Get if the window is in fake borderless fullscreen mode.
   ///
-  pub fn is_fullscreen_borderless(&mut self) -> bool {
+  pub fn is_fullscreen_borderless_mode(&mut self) -> bool {
     self.window.fullscreen_state() == FullscreenType::Desktop
   }
 
@@ -113,14 +113,21 @@ impl WindowHandler {
   ///
   /// Set the window to real fullscreen mode.
   ///
-  pub fn set_fullscreen_real(&mut self) {
+  pub fn set_fullscreen_real_mode(&mut self) {
     self.window.set_fullscreen(FullscreenType::True).unwrap()
   }
 
   ///
   /// Set the window to fake borderless fullscreen mode.
   ///
-  pub fn set_fullscreen_borderless(&mut self) {
+  pub fn set_fullscreen_borderless_mode(&mut self) {
     self.window.set_fullscreen(FullscreenType::Desktop).unwrap()
+  }
+
+  ///
+  /// Set the window to normal windowed mode. (not fullscreen)
+  ///
+  pub fn set_windowed_mode(&mut self) {
+    self.window.set_fullscreen(FullscreenType::Off).unwrap()
   }
 }
