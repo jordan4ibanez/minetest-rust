@@ -1,3 +1,5 @@
+use glam::{DVec3, Quat};
+
 ///
 /// I have no hardware to test VR so this is purely speculation.
 ///
@@ -13,7 +15,9 @@ pub struct VirtualRealityEngine {
   controllers: i32,
 
   // So this is where the vr headset's "root" position is.
-  center_pos: i32,
+  center_pos: DVec3,
   // And this is the current offset from the "root position".
-  current_offset_pos: i32,
+  current_offset_pos: DVec3,
+  // The rotation of the headset in 3D space.
+  current_rotation: Quat,
 }
