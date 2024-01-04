@@ -20,13 +20,16 @@ https://discord.gg/Z2wCscTB4F
 - ctrlc - Catching termination events and elegantly exiting the program.
 - message-io - UDP networking.
 - spin_sleep - Main loop speed control.
+- sdl2 - Windowing library. (but could be used for more things)
 - glam - An incredible math library.
+
 ##### Packages to be implemented:
 - rusqlite - SQLite3 database.
 - sea-query - SQLite3 query builder.
 - serde - Serialization and deserialization of data.
 - serde_bytes - Same as serde.
 - wgpu - Graphics multiplexer. (Vulkan, OpenGL, WebGPU, metal)
+
 ##### Experimental packages for testing:
 - quote - Common Lisp code as data features.
 - syn - Common Lisp code as data features.
