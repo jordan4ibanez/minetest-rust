@@ -77,7 +77,7 @@ impl RenderEngine {
     // Load up the default shader source code.
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
       label: Some("default_shader"),
-      source: wgpu::ShaderSource::Wgsl(read_file_to_string("shaders/default.wgsl").into()),
+      source: wgpu::ShaderSource::Wgsl(read_file_to_string("shaders/default_shader.wgsl").into()),
     });
 
     // Create bind group components.
@@ -142,7 +142,7 @@ impl RenderEngine {
       .formats
       .iter()
       .copied()
-      // This may not be thorough enough.
+      // This may not be thorough enough to get the format we want.
       .find(|f| f.is_srgb())
       .unwrap_or(surface_caps.formats[0]);
 
