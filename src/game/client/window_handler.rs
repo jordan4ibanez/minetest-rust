@@ -143,27 +143,28 @@ impl WindowHandler {
       .sdl_context
       .event_pump()
       .expect("minetest: SDL2 context has randomly dissappeared!");
+
     // poll_iter is going to keep calling poll_event until there are no more events. It's easy mode. :)
     for event in event_pump.poll_iter() {
       // I have allowed my IDE to create all possible events, so we can easily utilize them.
       match event {
-        sdl2::event::Event::Quit { timestamp } => todo!(),
-        sdl2::event::Event::AppTerminating { timestamp } => todo!(),
-        sdl2::event::Event::AppLowMemory { timestamp } => todo!(),
-        sdl2::event::Event::AppWillEnterBackground { timestamp } => todo!(),
-        sdl2::event::Event::AppDidEnterBackground { timestamp } => todo!(),
-        sdl2::event::Event::AppWillEnterForeground { timestamp } => todo!(),
-        sdl2::event::Event::AppDidEnterForeground { timestamp } => todo!(),
+        sdl2::event::Event::Quit { timestamp } => println!("sdl2: quit event | timestamp: {} |", timestamp),
+        sdl2::event::Event::AppTerminating { timestamp } => println!("sdl2: termination event | timestamp: {} |", timestamp),
+        sdl2::event::Event::AppLowMemory { timestamp } => println!("sdl2: low memory event | timestamp: {} |", timestamp),
+        sdl2::event::Event::AppWillEnterBackground { timestamp } => println!("sdl2: will enter background event | timestamp: {} |", timestamp),
+        sdl2::event::Event::AppDidEnterBackground { timestamp } => println!("sdl2: did enter background event | timestamp: {} |", timestamp),
+        sdl2::event::Event::AppWillEnterForeground { timestamp } => println!("sdl2: will enter foreground event | timestamp: {} |", timestamp),
+        sdl2::event::Event::AppDidEnterForeground { timestamp } => println!("sdl2: did enter foreground event | timestamp: {} |", timestamp),
         sdl2::event::Event::Display {
           timestamp,
           display_index,
           display_event,
-        } => todo!(),
+        } => println!("sdl2: display event | timestamp: {} | display_index: {} | display_event: {:?} |", timestamp, display_index, display_event),
         sdl2::event::Event::Window {
           timestamp,
           window_id,
           win_event,
-        } => todo!(),
+        } => println!("sdl2: window event | timestamp: {} | window_id: {} | win_event: {:?} |", timestamp, window_id, win_event),
         sdl2::event::Event::KeyDown {
           timestamp,
           window_id,
@@ -171,7 +172,7 @@ impl WindowHandler {
           scancode,
           keymod,
           repeat,
-        } => todo!(),
+        } => println!("sdl2: keydown event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat),
         sdl2::event::Event::KeyUp {
           timestamp,
           window_id,
@@ -179,19 +180,19 @@ impl WindowHandler {
           scancode,
           keymod,
           repeat,
-        } => todo!(),
+        } => println!("sdl2: keyup event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat),
         sdl2::event::Event::TextEditing {
           timestamp,
           window_id,
           text,
           start,
           length,
-        } => todo!(),
+        } => println!("sdl2: text editing event | timestamp: {} | window_id: {} | text: {} | start: {} | length: {} |", timestamp, window_id, text, start, length),
         sdl2::event::Event::TextInput {
           timestamp,
           window_id,
           text,
-        } => todo!(),
+        } => println!("sdl2: text input event | timestamp: {} | window_id: {} | text: {}", timestamp, window_id, text),
         sdl2::event::Event::MouseMotion {
           timestamp,
           window_id,
@@ -201,7 +202,7 @@ impl WindowHandler {
           y,
           xrel,
           yrel,
-        } => todo!(),
+        } => println!("sdl2: mouse motion event | timestamp: {} | window_id: {} | which: {} | mousestate: {:?} | x: {} | y: {} | xrel: {} | yrel: {} |", timestamp, window_id, which, mousestate, x, y, xrel, yrel),
         sdl2::event::Event::MouseButtonDown {
           timestamp,
           window_id,
@@ -210,7 +211,7 @@ impl WindowHandler {
           clicks,
           x,
           y,
-        } => todo!(),
+        } => println!("sdl2: mouse button down event | timestamp: {} | window_id: {} | which: {} | mouse_btn: {:?} | clicks: {} | x: {} | y: {} |", timestamp, window_id, which, mouse_btn, clicks, x, y),
         sdl2::event::Event::MouseButtonUp {
           timestamp,
           window_id,
@@ -219,7 +220,7 @@ impl WindowHandler {
           clicks,
           x,
           y,
-        } => todo!(),
+        } => println!("sdl2: mouse button up event | timestamp: {} | window_id: {} | which: {} | mouse_btn: {:?} | clicks: {} | x: {} | y: {} |", timestamp, window_id, which, mouse_btn, clicks, x, y),
         sdl2::event::Event::MouseWheel {
           timestamp,
           window_id,
@@ -229,57 +230,57 @@ impl WindowHandler {
           direction,
           precise_x,
           precise_y,
-        } => todo!(),
+        } => println!("sdl2: mouse wheel event | timestamp: {} | window_id: {} | which: {} | x: {} | y: {} | direction: {:?} | precise_x: {} | precise_y: {}", timestamp, window_id, which, x, y, direction, precise_x, precise_y),
         sdl2::event::Event::JoyAxisMotion {
           timestamp,
           which,
           axis_idx,
           value,
-        } => todo!(),
+        } => println!("sdl2: joy axis motion event | timestamp: {} | which: {} | axis_idx: {} | value: {} |", timestamp, which, axis_idx, value),
         sdl2::event::Event::JoyBallMotion {
           timestamp,
           which,
           ball_idx,
           xrel,
           yrel,
-        } => todo!(),
+        } => println!("sdl2: joy ball motion event | timestamp: {} | which: {} | ball_idx: {} | xrel: {} | yrel: {} |", timestamp, which, ball_idx, xrel, yrel),
         sdl2::event::Event::JoyHatMotion {
           timestamp,
           which,
           hat_idx,
           state,
-        } => todo!(),
+        } => println!("sdl2: joy hat motion event | timestamp: {} | which: {} | hat_idx: {} | state: {:?} |", timestamp, which, hat_idx, state),
         sdl2::event::Event::JoyButtonDown {
           timestamp,
           which,
           button_idx,
-        } => todo!(),
+        } => println!("sdl2: joy button down event | timestamp: {} | which: {} | button_idx: {} |", timestamp, which, button_idx),
         sdl2::event::Event::JoyButtonUp {
           timestamp,
           which,
           button_idx,
-        } => todo!(),
-        sdl2::event::Event::JoyDeviceAdded { timestamp, which } => todo!(),
-        sdl2::event::Event::JoyDeviceRemoved { timestamp, which } => todo!(),
+        } => println!("sdl2: joy button up event | timestamp: {} | which: {} | button_idx: {} |", timestamp, which, button_idx),
+        sdl2::event::Event::JoyDeviceAdded { timestamp, which } => println!("sdl2: joy device added event | timestamp: {} | which: {} |", timestamp, which),
+        sdl2::event::Event::JoyDeviceRemoved { timestamp, which } => println!("sdl2: joy device removed event | timestamp: {} | which: {} |", timestamp, which),
         sdl2::event::Event::ControllerAxisMotion {
           timestamp,
           which,
           axis,
           value,
-        } => todo!(),
+        } => println!("sdl2: controller axis motion event | timestamp: {} | which: {} | axis: {:?} | value: {} |", timestamp, which, axis, value),
         sdl2::event::Event::ControllerButtonDown {
           timestamp,
           which,
           button,
-        } => todo!(),
+        } => println!("sdl2: controller button down event | timestamp: {} | which: {} | button: {:?} |", timestamp, which, button),
         sdl2::event::Event::ControllerButtonUp {
           timestamp,
           which,
           button,
-        } => todo!(),
-        sdl2::event::Event::ControllerDeviceAdded { timestamp, which } => todo!(),
-        sdl2::event::Event::ControllerDeviceRemoved { timestamp, which } => todo!(),
-        sdl2::event::Event::ControllerDeviceRemapped { timestamp, which } => todo!(),
+        } => println!("sdl2: controller button up event | timestamp: {} | which: {} | button: {:?} |", timestamp, which, button),
+        sdl2::event::Event::ControllerDeviceAdded { timestamp, which } => println!("sdl2: device added event | timestamp: {} | which: {} |", timestamp, which),
+        sdl2::event::Event::ControllerDeviceRemoved { timestamp, which } => println!("sdl2: device removed event | timestamp: {} | which: {} |", timestamp, which),
+        sdl2::event::Event::ControllerDeviceRemapped { timestamp, which } => println!("sdl2: device remapped event | timestamp: {} | which: {} |", timestamp, which),
         sdl2::event::Event::ControllerTouchpadDown {
           timestamp,
           which,
@@ -288,7 +289,7 @@ impl WindowHandler {
           x,
           y,
           pressure,
-        } => todo!(),
+        } => println!("sdl2: controller touchpad down event | timestamp: {} | which: {} | touchpad: {} | finger: {} | x: {} | y: {} | pressure: {} |", timestamp, which, touchpad, finger, x, y, pressure),
         sdl2::event::Event::ControllerTouchpadMotion {
           timestamp,
           which,
@@ -297,7 +298,7 @@ impl WindowHandler {
           x,
           y,
           pressure,
-        } => todo!(),
+        } => println!("sdl2: controller touchpad motion event | timestamp: {} | which: {} | touchpad: {} | finger: {} | x: {} | y: {} | pressure: {} |", timestamp, which, touchpad, finger, x, y, pressure),
         sdl2::event::Event::ControllerTouchpadUp {
           timestamp,
           which,
@@ -306,7 +307,7 @@ impl WindowHandler {
           x,
           y,
           pressure,
-        } => todo!(),
+        } => println!("sdl2: controller touchpad up event | timestamp: {} | which: {} | touchpad: {} | finger: {} | x: {} | y: {} | pressure: {} |", timestamp, which, touchpad, finger, x, y, pressure),
         sdl2::event::Event::FingerDown {
           timestamp,
           touch_id,
@@ -316,7 +317,7 @@ impl WindowHandler {
           dx,
           dy,
           pressure,
-        } => todo!(),
+        } => println!("sdl2: finger down event | timestamp: {} | touch_id: {} | finger_id: {} | x: {} | y: {} | dx: {} | dy: {} | pressure: {} |", timestamp, touch_id, finger_id, x, y, dx, dy, pressure),
         sdl2::event::Event::FingerUp {
           timestamp,
           touch_id,
@@ -326,7 +327,7 @@ impl WindowHandler {
           dx,
           dy,
           pressure,
-        } => todo!(),
+        } => println!("sdl2: finger up event | timestamp: {} | touch_id: {} | finger_id: {} | x: {} | y: {} | dx: {} | dy: {} | pressure: {} |", timestamp, touch_id, finger_id, x, y, dx, dy, pressure),
         sdl2::event::Event::FingerMotion {
           timestamp,
           touch_id,
@@ -336,7 +337,7 @@ impl WindowHandler {
           dx,
           dy,
           pressure,
-        } => todo!(),
+        } => println!("sdl2: finger motion event | timestamp: {} | touch_id: {} | finger_id: {} | x: {} | y: {} | dx: {} | dy: {} | pressure: {} |", timestamp, touch_id, finger_id, x, y, dx, dy, pressure),
         sdl2::event::Event::DollarGesture {
           timestamp,
           touch_id,
@@ -345,7 +346,7 @@ impl WindowHandler {
           error,
           x,
           y,
-        } => todo!(),
+        } => println!("sdl2: dollar gesture event | timestamp: {} | touch_id: {} | gesture_id: {} | num_fingers: {} | error: {} | x: {} | y: {} |", timestamp, touch_id, gesture_id, num_fingers, error, x, y),
         sdl2::event::Event::DollarRecord {
           timestamp,
           touch_id,
@@ -354,7 +355,7 @@ impl WindowHandler {
           error,
           x,
           y,
-        } => todo!(),
+        } => println!("sdl2: dollar record event | timestamp: {} | touch_id: {} | gesture_id: {} | num_fingers: {} | error: {} | x: {} | y: {} |", timestamp, touch_id, gesture_id, num_fingers, error, x, y),
         sdl2::event::Event::MultiGesture {
           timestamp,
           touch_id,
@@ -363,38 +364,38 @@ impl WindowHandler {
           x,
           y,
           num_fingers,
-        } => todo!(),
-        sdl2::event::Event::ClipboardUpdate { timestamp } => todo!(),
+        } => println!("sdl2: multi gesture event | timestamp: {} | touch_id: {} | d_theta: {} | d_dist: {} | x: {} | y: {} | num_fingers: {} |", timestamp, touch_id, d_theta, d_dist, x, y, num_fingers),
+        sdl2::event::Event::ClipboardUpdate { timestamp } => println!("sdl2: clipboard update event | timestamp: {} |", timestamp),
         sdl2::event::Event::DropFile {
           timestamp,
           window_id,
           filename,
-        } => todo!(),
+        } => println!("sdl2: drop file event | timestamp: {} | window_id: {} | filename: {} |", timestamp, window_id, filename),
         sdl2::event::Event::DropText {
           timestamp,
           window_id,
           filename,
-        } => todo!(),
+        } => println!("sdl2: drop text event | timestamp: {} | window_id: {} | filename: {} |", timestamp, window_id, filename),
         sdl2::event::Event::DropBegin {
           timestamp,
           window_id,
-        } => todo!(),
+        } => println!("sdl2: drop begin event | timestamp: {} | window_id: {} |", timestamp, window_id),
         sdl2::event::Event::DropComplete {
           timestamp,
           window_id,
-        } => todo!(),
+        } => println!("sdl2: drop complete event | timestamp: {} | window_id: {} |", timestamp, window_id),
         sdl2::event::Event::AudioDeviceAdded {
           timestamp,
           which,
           iscapture,
-        } => todo!(),
+        } => println!("sdl2: audio device added event | timestamp: {} | which: {} | iscapture: {} |", timestamp, which, iscapture),
         sdl2::event::Event::AudioDeviceRemoved {
           timestamp,
           which,
           iscapture,
-        } => todo!(),
-        sdl2::event::Event::RenderTargetsReset { timestamp } => todo!(),
-        sdl2::event::Event::RenderDeviceReset { timestamp } => todo!(),
+        } => println!("sdl2: audio device removed event | timestamp: {} | which: {} | iscapture: {} |", timestamp, which, iscapture),
+        sdl2::event::Event::RenderTargetsReset { timestamp } => println!("sdl2: render target reset event | timestamp: {} |", timestamp),
+        sdl2::event::Event::RenderDeviceReset { timestamp } => println!("sdl2: render device reset event | timestamp: {} |", timestamp),
         sdl2::event::Event::User {
           timestamp,
           window_id,
@@ -402,8 +403,8 @@ impl WindowHandler {
           code,
           data1,
           data2,
-        } => todo!(),
-        sdl2::event::Event::Unknown { timestamp, type_ } => todo!(),
+        } => println!("sdl2: user event [custom] | timestamp: {} | window_id: {} | type_: {} | code: {} | data1: {:?} | data2: {:?}", timestamp, window_id, type_, code, data1, data2),
+        sdl2::event::Event::Unknown { timestamp, type_ } => println!("sdl2: unknown event [very spooky] | timestamp: {} | type_: {} |", timestamp, type_),
       }
     }
   }
