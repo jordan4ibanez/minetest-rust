@@ -138,7 +138,7 @@ impl WindowHandler {
     self.window.set_fullscreen(FullscreenType::Off).unwrap()
   }
 
-  pub fn update(&mut self) {
+  pub fn update(&mut self, delta: f64) {
     let mut event_pump = self
       .sdl_context
       .event_pump()

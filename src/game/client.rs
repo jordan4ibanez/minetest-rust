@@ -97,8 +97,10 @@ impl Client {
   /// This is referred to as on_step in C++ minetest.
   ///
   pub fn on_tick(&mut self, delta: f64) {
-    // Poll any incoming network traffic. (non blocking)
+    // Update the SDL2 context.
+    self.window_handler.update(delta);
 
+    // Poll any incoming network traffic. (non blocking)
     if let Some(connection) = &mut self.connection {
       connection.receive(delta);
     }
