@@ -11,7 +11,7 @@ pub fn dir_exists(path: &str) -> bool {
 ///
 /// This is the same as dir_exists.
 /// It is only separate so we know explicitly if we're looking for
-/// a file, or a dir.
+/// a file.
 ///
 pub fn file_exists(path: &str) -> bool {
   Path::new(path).exists()
