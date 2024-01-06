@@ -944,6 +944,7 @@ dependencies = [
  "ctrlc",
  "env_logger",
  "glam",
+ "log",
  "message-io",
  "mlua",
  "pollster",
