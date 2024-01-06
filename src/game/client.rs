@@ -118,6 +118,13 @@ impl Client {
     // Update the SDL2 context.
     self.window_handler.update(delta);
 
+    // Update the RenderEngine with the WindowHandler.
+    self
+      .render_engine
+      .as_mut()
+      .unwrap()
+      .update(&self.window_handler, delta);
+
     // Poll any incoming network traffic. (non blocking)
     if let Some(connection) = &mut self.connection {
       connection.receive(delta);
