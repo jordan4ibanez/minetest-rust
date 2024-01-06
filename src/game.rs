@@ -61,6 +61,9 @@ impl Game {
   pub fn new(cli: CommandLineInterface) -> Game {
     println!("Minetest initialized!");
 
+    // Set up the environment logger.
+    env_logger::init();
+
     // 60 FPS goal for the moment.
     let goal_frames_per_second = 60.0;
 
