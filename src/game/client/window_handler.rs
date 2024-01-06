@@ -48,8 +48,10 @@ impl WindowHandler {
 
     let video_subsystem = sdl_context.video().unwrap();
 
+    let size = UVec2::new(512, 512);
+
     let window = video_subsystem
-      .window("minetest", 512, 512)
+      .window("minetest", size.x, size.y)
       .resizable()
       .position_centered()
       .allow_highdpi()
@@ -63,7 +65,7 @@ impl WindowHandler {
 
       quit_received: false,
       visible: false,
-      size: UVec2::new(0, 0),
+      size,
     };
 
     new_window_handler.show();
@@ -210,7 +212,7 @@ impl WindowHandler {
 
   ///
   /// Borrow the window size immutably.
-  /// 
+  ///
   pub fn get_size(&self) -> &UVec2 {
     &self.size
   }
