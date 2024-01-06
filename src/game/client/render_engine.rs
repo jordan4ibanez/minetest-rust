@@ -4,6 +4,8 @@ use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
 use crate::file_utilities::read_file_to_string;
 
+use super::window_handler::WindowHandler;
+
 ///
 /// The main rendering engine for the game.
 ///
@@ -177,5 +179,9 @@ impl RenderEngine {
       config,
       size: UVec2::new(width, height),
     }
+  }
+
+  pub fn update(&mut self, window_handler: &WindowHandler, delta: f64) {
+
   }
 }
