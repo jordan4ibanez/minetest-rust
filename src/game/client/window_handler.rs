@@ -162,6 +162,13 @@ impl WindowHandler {
   }
 
   ///
+  /// Retrieve if the window wants to quit.
+  ///
+  pub fn should_quit(&self) -> bool {
+    self.quit_received
+  }
+
+  ///
   /// The key event handler.
   ///
   fn handle_key_event(
@@ -194,37 +201,57 @@ impl WindowHandler {
   }
 
   ///
+  /// Internally updates the window size, automatically.
+  ///
+  fn update_size(&mut self, width: i32, height: i32) {
+    self.size.x = width as u32;
+    self.size.y = height as u32;
+  }
+
+  ///
+  /// Borrow the window size immutably.
+  /// 
+  pub fn get_size(&self) -> &UVec2 {
+    &self.size
+  }
+
+  ///
   /// The window event handler.
   ///
   fn handle_window_event(&mut self, win_event: WindowEvent) {
     match win_event {
-      WindowEvent::None => println!("minetest: window: event _ | |"),
-      WindowEvent::Shown => println!("minetest: window: event _ | |"),
-      WindowEvent::Hidden => println!("minetest: window: event _ | |"),
-      WindowEvent::Exposed => println!("minetest: window: event _ | |"),
-      WindowEvent::Moved(_, _) => println!("minetest: window: event _ | |"),
-      WindowEvent::Resized(_, _) => println!("minetest: window: event _ | |"),
-      WindowEvent::SizeChanged(_, _) => println!("minetest: window: event _ | |"),
-      WindowEvent::Minimized => println!("minetest: window: event _ | |"),
-      WindowEvent::Maximized => println!("minetest: window: event _ | |"),
-      WindowEvent::Restored => println!("minetest: window: event _ | |"),
-      WindowEvent::Enter => println!("minetest: window: event _ | |"),
-      WindowEvent::Leave => println!("minetest: window: event _ | |"),
-      WindowEvent::FocusGained => println!("minetest: window: event _ | |"),
-      WindowEvent::FocusLost => println!("minetest: window: event _ | |"),
-      WindowEvent::Close => println!("minetest: window: event _ | |"),
-      WindowEvent::TakeFocus => println!("minetest: window: event _ | |"),
-      WindowEvent::HitTest => println!("minetest: window: event _ | |"),
-      WindowEvent::ICCProfChanged => println!("minetest: window: event _ | |"),
-      WindowEvent::DisplayChanged(_) => println!("minetest: window: event _ | |"),
+      WindowEvent::None => println!("minetest: window: event none"),
+      WindowEvent::Shown => println!("minetest: window: event shown"),
+      WindowEvent::Hidden => println!("minetest: window: event hidden"),
+      WindowEvent::Exposed => println!("minetest: window: event exposed"),
+      WindowEvent::Moved(x, y) => println!("minetest: window: event moved | x: {} | y: {} |", x, y),
+      WindowEvent::Resized(width, height) => println!(
+        "minetest: window: event resized | width: {} | height: {} |",
+        width, height
+      ),
+      WindowEvent::SizeChanged(width, height) => println!(
+        "minetest: window: event size changed | width: {} | height: {} |",
+        width, height
+      ),
+      WindowEvent::Minimized => println!("minetest: window: event minimized"),
+      WindowEvent::Maximized => println!("minetest: window: event maximized"),
+      WindowEvent::Restored => println!("minetest: window: event restored"),
+      WindowEvent::Enter => println!("minetest: window: event enter"),
+      WindowEvent::Leave => println!("minetest: window: event leave"),
+      WindowEvent::FocusGained => println!("minetest: window: event focus gained"),
+      WindowEvent::FocusLost => println!("minetest: window: event focus lost"),
+      WindowEvent::Close => {
+        println!("minetest: window: event close");
+        self.quit();
+      }
+      WindowEvent::TakeFocus => println!("minetest: window: event take focus"),
+      WindowEvent::HitTest => println!("minetest: window: event hit test"),
+      WindowEvent::ICCProfChanged => println!("minetest: window: event icc prof changed"),
+      WindowEvent::DisplayChanged(display_id) => println!(
+        "minetest: window: event display changed | display_id: {} |",
+        display_id
+      ),
     }
-  }
-
-  ///
-  /// Retrieve if the window wants to quit.
-  ///
-  pub fn should_quit(&self) -> bool {
-    self.quit_received
   }
 
   pub fn update(&mut self, delta: f64) {
@@ -257,7 +284,7 @@ impl WindowHandler {
           window_id,
           win_event,
         } => {
-          println!("sdl2: window event | timestamp: {} | window_id: {} | win_event: {:?} |", timestamp, window_id, win_event);
+          // println!("sdl2: window event | timestamp: {} | window_id: {} | win_event: {:?} |", timestamp, window_id, win_event);
           self.handle_window_event(win_event);
         },
         sdl2::event::Event::KeyDown {
@@ -268,7 +295,7 @@ impl WindowHandler {
           keymod,
           repeat,
         } => {
-          println!("sdl2: keydown event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat);
+          // println!("sdl2: keydown event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat);
           self.handle_key_event(scancode, keymod, KeyEvent::PressingDown);
         },
         sdl2::event::Event::KeyUp {
@@ -279,7 +306,7 @@ impl WindowHandler {
           keymod,
           repeat,
         } => {
-          println!("sdl2: keyup event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat);
+          // println!("sdl2: keyup event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat);
           self.handle_key_event(scancode, keymod, KeyEvent::LiftedOff);
         },
         sdl2::event::Event::TextEditing {
