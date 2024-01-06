@@ -28,6 +28,8 @@ pub struct Client {
   client_name: String,
   connection: Option<ClientConnection>,
   lua_engine: Option<LuaEngine>,
+
+  quit_received: bool,
 }
 
 impl Client {
@@ -38,6 +40,8 @@ impl Client {
       client_name,
       connection: None, //ClientConnection::new(address, port),
       lua_engine: None,
+
+      quit_received: false,
     };
 
     // Set up the render engine.
@@ -89,6 +93,20 @@ impl Client {
   }
 
   ///
+  /// Send client quit event.
+  ///
+  pub fn quit(&mut self) {
+    self.quit_received = true;
+  }
+
+  ///
+  /// Retrieve if the client wants to quit.
+  ///
+  pub fn should_quit(&self) -> bool {
+    self.quit_received
+  }
+
+  ///
   /// Tick tock.
   ///
   /// Every time the game goes into the next main loop iteration
@@ -110,6 +128,11 @@ impl Client {
     match &self.lua_engine {
       Some(lua_engine) => lua_engine.on_tick(delta),
       None => panic!("minetest: Client LuaEngine does not exist!"),
+    }
+
+    // This will need to run a close event for the client engine and send out a close event to the internal server.
+    if self.window_handler.should_quit() {
+      self.quit();
     }
   }
 }
