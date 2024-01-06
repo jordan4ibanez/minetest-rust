@@ -183,7 +183,29 @@ impl RenderEngine {
     }
   }
 
-  pub fn update(&mut self, window_handler: &WindowHandler, delta: f64) {
+  ///
+  /// Automatically resizes the surface from the passed through UVec2.
+  ///
+  /// We simply check if the size is different, then update the surface
+  /// config and update the surface with it.
+  ///
+  fn update_size(&mut self, new_size: &UVec2) {
+    if self.size != *new_size {
+      // Update internal size
+      self.size = *new_size;
 
+      println!("RenderEngine: SURFACE UPDATE! {:?}", self.size);
+
+      // Now update the config.
+      self.config.width = self.size.x;
+      self.config.height = self.size.y;
+
+      // Finally, reconfigure the surface with the config.
+      self.surface.configure(&self.device, &self.config);
+    }
+  }
+
+  pub fn update(&mut self, window_handler: &WindowHandler, delta: f64) {
+    self.update_size(window_handler.get_size());
   }
 }
