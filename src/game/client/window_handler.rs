@@ -3,7 +3,6 @@ mod key_event_enum;
 use sdl2::{
   hint,
   keyboard::{Mod, Scancode},
-  sys::KeyCode,
   video::{FullscreenType, Window},
   Sdl, VideoSubsystem,
 };
