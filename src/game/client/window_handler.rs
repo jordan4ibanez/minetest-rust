@@ -20,6 +20,7 @@ pub struct WindowHandler {
   video_subsystem: VideoSubsystem,
   window: Window,
 
+  quit_received: bool,
   visible: bool,
 }
 
@@ -46,8 +47,10 @@ impl WindowHandler {
     let mut new_window_handler = WindowHandler {
       sdl_context,
       video_subsystem,
-      visible: false,
       window,
+
+      quit_received: false,
+      visible: false,
     };
 
     new_window_handler.show();
@@ -138,6 +141,20 @@ impl WindowHandler {
     self.window.set_fullscreen(FullscreenType::Off).unwrap()
   }
 
+  ///
+  /// Send window quit event.
+  ///
+  pub fn quit(&mut self) {
+    self.quit_received = true;
+  }
+
+  ///
+  /// Retrieve if the window wants to quit.
+  ///
+  pub fn should_quit(&self) -> bool {
+    self.quit_received
+  }
+
   pub fn update(&mut self, delta: f64) {
     let mut event_pump = self
       .sdl_context
@@ -148,7 +165,10 @@ impl WindowHandler {
     for event in event_pump.poll_iter() {
       // I have allowed my IDE to create all possible events, so we can easily utilize them.
       match event {
-        sdl2::event::Event::Quit { timestamp } => println!("sdl2: quit event | timestamp: {} |", timestamp),
+        sdl2::event::Event::Quit { timestamp } => {
+          println!("sdl2: quit event | timestamp: {} |", timestamp);
+          self.quit();
+        },
         sdl2::event::Event::AppTerminating { timestamp } => println!("sdl2: termination event | timestamp: {} |", timestamp),
         sdl2::event::Event::AppLowMemory { timestamp } => println!("sdl2: low memory event | timestamp: {} |", timestamp),
         sdl2::event::Event::AppWillEnterBackground { timestamp } => println!("sdl2: will enter background event | timestamp: {} |", timestamp),
