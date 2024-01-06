@@ -1,6 +1,8 @@
 mod key_event_enum;
 
+use glam::UVec2;
 use sdl2::{
+  event::WindowEvent,
   hint,
   keyboard::{Mod, Scancode},
   video::{FullscreenType, Window},
@@ -22,6 +24,8 @@ use self::key_event_enum::KeyEvent;
 /// This can be renamed to SdlWrapper if we find ourselves
 /// using more components of it than originally intended.
 ///
+/// Minetest consists of 1 window, so we will ignore any window IDs.
+///
 pub struct WindowHandler {
   sdl_context: Sdl,
   video_subsystem: VideoSubsystem,
@@ -29,6 +33,7 @@ pub struct WindowHandler {
 
   quit_received: bool,
   visible: bool,
+  size: UVec2,
 }
 
 impl WindowHandler {
@@ -58,6 +63,7 @@ impl WindowHandler {
 
       quit_received: false,
       visible: false,
+      size: UVec2::new(0, 0),
     };
 
     new_window_handler.show();
@@ -188,6 +194,33 @@ impl WindowHandler {
   }
 
   ///
+  /// The window event handler.
+  ///
+  fn handle_window_event(&mut self, win_event: WindowEvent) {
+    match win_event {
+      WindowEvent::None => println!("minetest: window: event _ | |"),
+      WindowEvent::Shown => println!("minetest: window: event _ | |"),
+      WindowEvent::Hidden => println!("minetest: window: event _ | |"),
+      WindowEvent::Exposed => println!("minetest: window: event _ | |"),
+      WindowEvent::Moved(_, _) => println!("minetest: window: event _ | |"),
+      WindowEvent::Resized(_, _) => println!("minetest: window: event _ | |"),
+      WindowEvent::SizeChanged(_, _) => println!("minetest: window: event _ | |"),
+      WindowEvent::Minimized => println!("minetest: window: event _ | |"),
+      WindowEvent::Maximized => println!("minetest: window: event _ | |"),
+      WindowEvent::Restored => println!("minetest: window: event _ | |"),
+      WindowEvent::Enter => println!("minetest: window: event _ | |"),
+      WindowEvent::Leave => println!("minetest: window: event _ | |"),
+      WindowEvent::FocusGained => println!("minetest: window: event _ | |"),
+      WindowEvent::FocusLost => println!("minetest: window: event _ | |"),
+      WindowEvent::Close => println!("minetest: window: event _ | |"),
+      WindowEvent::TakeFocus => println!("minetest: window: event _ | |"),
+      WindowEvent::HitTest => println!("minetest: window: event _ | |"),
+      WindowEvent::ICCProfChanged => println!("minetest: window: event _ | |"),
+      WindowEvent::DisplayChanged(_) => println!("minetest: window: event _ | |"),
+    }
+  }
+
+  ///
   /// Retrieve if the window wants to quit.
   ///
   pub fn should_quit(&self) -> bool {
@@ -223,7 +256,10 @@ impl WindowHandler {
           timestamp,
           window_id,
           win_event,
-        } => println!("sdl2: window event | timestamp: {} | window_id: {} | win_event: {:?} |", timestamp, window_id, win_event),
+        } => {
+          println!("sdl2: window event | timestamp: {} | window_id: {} | win_event: {:?} |", timestamp, window_id, win_event);
+          self.handle_window_event(win_event);
+        },
         sdl2::event::Event::KeyDown {
           timestamp,
           window_id,
