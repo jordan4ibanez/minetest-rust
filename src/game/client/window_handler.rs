@@ -1,8 +1,14 @@
+mod key_event_enum;
+
 use sdl2::{
   hint,
+  keyboard::{Mod, Scancode},
+  sys::KeyCode,
   video::{FullscreenType, Window},
   Sdl, VideoSubsystem,
 };
+
+use self::key_event_enum::KeyEvent;
 
 ///
 /// SDL2 window controller.
@@ -149,6 +155,13 @@ impl WindowHandler {
   }
 
   ///
+  /// The key down handler.
+  ///
+  fn handle_key_event(&mut self, scan_code: Option<Scancode>, key_mod: Mod, key_event: KeyEvent) {
+    println!("TESTING: {}", scan_code.unwrap());
+  }
+
+  ///
   /// Retrieve if the window wants to quit.
   ///
   pub fn should_quit(&self) -> bool {
@@ -192,7 +205,10 @@ impl WindowHandler {
           scancode,
           keymod,
           repeat,
-        } => println!("sdl2: keydown event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat),
+        } => {
+          println!("sdl2: keydown event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat);
+          self.handle_key_event(scancode, keymod, KeyEvent::PressingDown);
+        },
         sdl2::event::Event::KeyUp {
           timestamp,
           window_id,
@@ -200,7 +216,10 @@ impl WindowHandler {
           scancode,
           keymod,
           repeat,
-        } => println!("sdl2: keyup event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat),
+        } => {
+          println!("sdl2: keyup event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat);
+          self.handle_key_event(scancode, keymod, KeyEvent::LiftedOff);
+        },
         sdl2::event::Event::TextEditing {
           timestamp,
           window_id,
