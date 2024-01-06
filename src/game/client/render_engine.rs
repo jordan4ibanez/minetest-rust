@@ -51,6 +51,7 @@ impl RenderEngine {
     // We must block the main thread while this completes or things can go crazy.
     // This is waiting for a future.
     let adapter_option =
+      // ! Block on might cause a crash in WASM !
       pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
         power_preference: wgpu::PowerPreference::HighPerformance,
         force_fallback_adapter: false,
@@ -64,6 +65,7 @@ impl RenderEngine {
 
     // We must block the main thread while this completes or things can go crazy.
     // This is waiting for a future.
+    // ! Block on might cause a crash in WASM !
     let (device, queue) = match pollster::block_on(adapter.request_device(
       &wgpu::DeviceDescriptor {
         limits: wgpu::Limits::default(),
