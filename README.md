@@ -22,11 +22,10 @@ https://discord.gg/Z2wCscTB4F
 - spin_sleep - Main loop speed control.
 - sdl2 - Windowing library. (but could be used for more things)
 - glam - An incredible math library.
-
-##### Packages to be implemented:
 - env_logger - An elegant logging library.
 - log - Used in conjunction with env_logger.
 
+##### Packages to be implemented:
 - wgpu - Graphics multiplexer. (Vulkan, OpenGL, WebGPU, metal)
 - wgpu_sdl_linker - A micro library which allows safely linking wgpu with SDL2.
 - pollster - A micro library which allows blocking a thread while a future completes.
