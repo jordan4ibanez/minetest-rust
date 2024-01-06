@@ -7,6 +7,8 @@ use sdl2::{
   Sdl, VideoSubsystem,
 };
 
+use log::error;
+
 use self::key_event_enum::KeyEvent;
 
 ///
@@ -156,18 +158,33 @@ impl WindowHandler {
   ///
   /// The key event handler.
   ///
-  fn handle_key_event(&mut self, scancode: Option<Scancode>, keymod: Mod, keyevent: KeyEvent) {
+  fn handle_key_event(
+    &mut self,
+    scancode_option: Option<Scancode>,
+    keymod: Mod,
+    keyevent: KeyEvent,
+  ) {
     // Since SDL2 can poll anything, we need to ensure that we can actually utilize the sent scancode.
-    let keycode_success = match scancode {
+    let scancode_result = match scancode_option {
       Some(e) => Ok(e),
       None => Err("minetest: severe error! User sent unknown scancode!"),
     };
 
-    if keycode_success.is_err() {
-      println!("oops")
+    // If we can't use it, oops. Bail out.
+    if scancode_result.is_err() {
+      error!("{}", scancode_result.err().unwrap());
+      return;
     }
 
-    println!("TESTING: {}", scancode.unwrap());
+    // Now we know we can use it, hooray!
+    let scancode = scancode_result.unwrap();
+
+    println!("TESTING: {}", scancode);
+
+    // And for now, when you press escape, the game simply exits.
+    if scancode == Scancode::Escape {
+      self.quit();
+    }
   }
 
   ///
