@@ -208,7 +208,12 @@ impl Game {
 
     if self.is_client {
       match &mut self.client {
-        Some(client) => client.on_tick(self.delta),
+        Some(client) => {
+          client.on_tick(self.delta);
+          if client.should_quit() {
+            self.shutdown_game();
+          }
+        }
         None => panic!("minetest: attempted to run a client that does not exist."),
       }
     }
