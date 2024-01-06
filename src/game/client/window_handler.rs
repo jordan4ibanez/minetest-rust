@@ -154,10 +154,20 @@ impl WindowHandler {
   }
 
   ///
-  /// The key down handler.
+  /// The key event handler.
   ///
-  fn handle_key_event(&mut self, scan_code: Option<Scancode>, key_mod: Mod, key_event: KeyEvent) {
-    println!("TESTING: {}", scan_code.unwrap());
+  fn handle_key_event(&mut self, scancode: Option<Scancode>, keymod: Mod, keyevent: KeyEvent) {
+    // Since SDL2 can poll anything, we need to ensure that we can actually utilize the sent scancode.
+    let keycode_success = match scancode {
+      Some(e) => Ok(e),
+      None => Err("minetest: severe error! User sent unknown scancode!"),
+    };
+
+    if keycode_success.is_err() {
+      println!("oops")
+    }
+
+    println!("TESTING: {}", scancode.unwrap());
   }
 
   ///
