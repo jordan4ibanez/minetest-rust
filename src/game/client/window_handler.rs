@@ -5,6 +5,7 @@ use sdl2::{
   event::WindowEvent,
   hint,
   keyboard::{Mod, Scancode},
+  mouse::MouseState,
   video::{FullscreenType, Window},
   Sdl, VideoSubsystem,
 };
@@ -34,6 +35,7 @@ pub struct WindowHandler {
   quit_received: bool,
   visible: bool,
   size: UVec2,
+  mouse_pos: UVec2,
 }
 
 impl WindowHandler {
@@ -66,6 +68,7 @@ impl WindowHandler {
       quit_received: false,
       visible: false,
       size,
+      mouse_pos: UVec2::new(0, 0),
     };
 
     new_window_handler.show();
@@ -218,6 +221,35 @@ impl WindowHandler {
   }
 
   ///
+  /// Internally updates the mouse position, automatically.
+  ///
+  fn update_mouse_position(&mut self, x: i32, y: i32) {
+    self.mouse_pos.x = x as u32;
+    self.mouse_pos.y = y as u32;
+  }
+
+  ///
+  /// Borrow the mouse position immutably.
+  ///
+  pub fn get_mouse_position(&self) -> &UVec2 {
+    &self.mouse_pos
+  }
+
+  ///
+  /// The mouse motion handler.
+  ///
+  fn handle_mouse_motion_event(
+    &mut self,
+    mousestate: MouseState,
+    x: i32,
+    y: i32,
+    xrel: i32,
+    yrel: i32,
+  ) {
+    self.update_mouse_position(x, y);
+  }
+
+  ///
   /// The window event handler.
   ///
   fn handle_window_event(&mut self, win_event: WindowEvent) {
@@ -339,7 +371,10 @@ impl WindowHandler {
           y,
           xrel,
           yrel,
-        } => println!("sdl2: mouse motion event | timestamp: {} | window_id: {} | which: {} | mousestate: {:?} | x: {} | y: {} | xrel: {} | yrel: {} |", timestamp, window_id, which, mousestate, x, y, xrel, yrel),
+        } => {
+          // println!("sdl2: mouse motion event | timestamp: {} | window_id: {} | which: {} | mousestate: {:?} | x: {} | y: {} | xrel: {} | yrel: {} |", timestamp, window_id, which, mousestate, x, y, xrel, yrel);
+          self.handle_mouse_motion_event(mousestate, x, y, xrel, yrel);
+        },
         sdl2::event::Event::MouseButtonDown {
           timestamp,
           window_id,
