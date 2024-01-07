@@ -227,14 +227,21 @@ impl WindowHandler {
       WindowEvent::Hidden => println!("minetest: window: event hidden"),
       WindowEvent::Exposed => println!("minetest: window: event exposed"),
       WindowEvent::Moved(x, y) => println!("minetest: window: event moved | x: {} | y: {} |", x, y),
-      WindowEvent::Resized(width, height) => println!(
-        "minetest: window: event resized | width: {} | height: {} |",
-        width, height
-      ),
-      WindowEvent::SizeChanged(width, height) => println!(
-        "minetest: window: event size changed | width: {} | height: {} |",
-        width, height
-      ),
+      WindowEvent::Resized(width, height) => {
+        println!(
+          "minetest: window: event resized | width: {} | height: {} |",
+          width, height
+        );
+
+        self.update_size(width, height);
+      }
+      WindowEvent::SizeChanged(width, height) => {
+        println!(
+          "minetest: window: event size changed | width: {} | height: {} |",
+          width, height
+        );
+        self.update_size(width, height);
+      }
       WindowEvent::Minimized => println!("minetest: window: event minimized"),
       WindowEvent::Maximized => println!("minetest: window: event maximized"),
       WindowEvent::Restored => println!("minetest: window: event restored"),
