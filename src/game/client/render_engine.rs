@@ -171,7 +171,7 @@ impl RenderEngine {
 
     let clear_color = wgpu::Color {
       r: 0.5,
-      g: 0.5,
+      g: 0.0,
       b: 0.5,
       a: 1.0,
     };
@@ -216,6 +216,9 @@ impl RenderEngine {
     }
   }
 
+  ///
+  /// Run the render procedure on the RenderEngine.
+  ///
   pub fn render(&mut self) {
     let output = self
       .surface
@@ -257,8 +260,46 @@ impl RenderEngine {
     output.present();
   }
 
+  /// !remove me!
+  ///
+  /// A test of combining the window handler with the clear color
+  ///
+  /// Simply changes the clear color based on the x and y of the mouse.
+  ///
+  /// !remove me!
+  fn test_implementation(&mut self, window_handler: &WindowHandler) {
+    let width = window_handler.get_size().x as f64;
+    let progress_x = window_handler.get_mouse_position().x as f64;
+
+    let height = window_handler.get_size().y as f64;
+    let progress_y = window_handler.get_mouse_position().y as f64;
+
+    let mut red_color = progress_x / width;
+    if red_color.is_infinite() {
+      red_color = 0.0;
+    }
+
+    let mut blue_color = progress_y / height;
+    if blue_color.is_infinite() {
+      blue_color = 0.0;
+    }
+
+    let old_clear = self.clear_color;
+
+    self.clear_color.r = red_color;
+    self.clear_color.b = blue_color;
+
+    if old_clear != self.clear_color {
+      println!("clear color updated! {:?}", self.clear_color);
+    }
+  }
+
+  ///
+  /// Run all required update procedures on the RenderEngine.
+  ///
   pub fn update(&mut self, window_handler: &WindowHandler, delta: f64) {
     self.update_size(window_handler.get_size());
-    
+
+    self.test_implementation(window_handler);
   }
 }
