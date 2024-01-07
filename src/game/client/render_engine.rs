@@ -1,3 +1,5 @@
+use std::iter;
+
 use glam::UVec2;
 use sdl2::video::Window;
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
@@ -30,6 +32,7 @@ pub struct RenderEngine {
 
   config: wgpu::SurfaceConfiguration,
   size: UVec2,
+  clear_color: wgpu::Color,
 }
 
 impl RenderEngine {
@@ -69,7 +72,7 @@ impl RenderEngine {
     let (device, queue) = match pollster::block_on(adapter.request_device(
       &wgpu::DeviceDescriptor {
         limits: wgpu::Limits::default(),
-        label: Some("gpu"),
+        label: Some("minetest_gpu"),
         features: wgpu::Features::default(),
       },
       None,
@@ -166,6 +169,13 @@ impl RenderEngine {
     // Then actually configure the surface with the config.
     surface.configure(&device, &config);
 
+    let clear_color = wgpu::Color {
+      r: 0.5,
+      g: 0.5,
+      b: 0.5,
+      a: 1.0,
+    };
+
     RenderEngine {
       instance,
       surface,
@@ -180,6 +190,7 @@ impl RenderEngine {
       surface_format,
       config,
       size: UVec2::new(width, height),
+      clear_color,
     }
   }
 
@@ -203,6 +214,46 @@ impl RenderEngine {
       // Finally, reconfigure the surface with the config.
       self.surface.configure(&self.device, &self.config);
     }
+  }
+
+  pub fn render(&mut self) {
+    let output = self
+      .surface
+      .get_current_texture()
+      .expect("minetest: wgpu surface texture does not exist!");
+
+    let view = output
+      .texture
+      .create_view(&wgpu::TextureViewDescriptor::default());
+
+    let mut encoder = self
+      .device
+      .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+        label: Some("minetest_renderer"),
+      });
+
+    // Begin a wgpu render pass
+    encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+      // The label of this render pass.
+      label: Some("minetest_render_pass"),
+
+      color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+        view: &view,
+        resolve_target: None,
+        ops: wgpu::Operations {
+          load: wgpu::LoadOp::Clear(self.clear_color),
+          store: wgpu::StoreOp::Store,
+        },
+      })],
+
+      depth_stencil_attachment: None,
+      occlusion_query_set: None,
+      timestamp_writes: None,
+    });
+
+    self.queue.submit(iter::once(encoder.finish()));
+
+    output.present();
   }
 
   pub fn update(&mut self, window_handler: &WindowHandler, delta: f64) {
