@@ -118,17 +118,12 @@ impl Client {
     // Update the SDL2 context.
     self.window_handler.update(delta);
 
-    // Update the RenderEngine with the WindowHandler.
-    self
-      .render_engine
-      .as_mut()
-      .unwrap()
-      .update(&self.window_handler, delta);
-
     // Poll any incoming network traffic. (non blocking)
     if let Some(connection) = &mut self.connection {
       connection.receive(delta);
     }
+
+    //todo: probably should do user input here
 
     // We want this to throw a runtime panic if we make a logic error.
     // ! Never turn this into a silent bypass via: is_some() or if let
@@ -136,6 +131,18 @@ impl Client {
       Some(lua_engine) => lua_engine.on_tick(delta),
       None => panic!("minetest: Client LuaEngine does not exist!"),
     }
+
+    //todo: should probably do side effects from lua here
+
+    // Update the RenderEngine with the WindowHandler.
+    self
+      .render_engine
+      .as_mut()
+      .unwrap()
+      .update(&self.window_handler, delta);
+
+    // Now render everything.
+    self.render_engine.as_mut().unwrap().render();
 
     // This will need to run a close event for the client engine and send out a close event to the internal server.
     if self.window_handler.should_quit() {
