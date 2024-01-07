@@ -237,6 +237,7 @@ impl RenderEngine {
       // The label of this render pass.
       label: Some("minetest_render_pass"),
 
+      // Sparse array of pipeline color attachments.
       color_attachments: &[Some(wgpu::RenderPassColorAttachment {
         view: &view,
         resolve_target: None,
@@ -258,5 +259,6 @@ impl RenderEngine {
 
   pub fn update(&mut self, window_handler: &WindowHandler, delta: f64) {
     self.update_size(window_handler.get_size());
+    
   }
 }
