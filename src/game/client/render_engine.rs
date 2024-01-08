@@ -176,6 +176,16 @@ impl RenderEngine {
       a: 1.0,
     };
 
+    // Print out device and backend.
+    println!(
+      "RenderEngine: Chosen device name: {}",
+      adapter.get_info().name
+    );
+    println!(
+      "RenderEngine: Running on {} backend.",
+      adapter.get_info().backend.to_str()
+    );
+
     RenderEngine {
       instance,
       surface,
