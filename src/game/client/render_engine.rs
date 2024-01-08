@@ -1,7 +1,8 @@
-use std::iter;
+use std::{iter, mem::swap};
 
 use glam::UVec2;
 use sdl2::video::Window;
+use wgpu::{CommandEncoder, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
 use crate::file_utilities::read_file_to_string;
@@ -29,6 +30,10 @@ pub struct RenderEngine {
   pipeline_layout: wgpu::PipelineLayout,
   render_pipeline: wgpu::RenderPipeline,
   surface_format: wgpu::TextureFormat,
+
+  output: Option<SurfaceTexture>,
+  command_encoder: Option<CommandEncoder>,
+  texture_view: Option<TextureView>,
 
   config: wgpu::SurfaceConfiguration,
   size: UVec2,
@@ -187,6 +192,7 @@ impl RenderEngine {
     );
 
     RenderEngine {
+      // General implementation.
       instance,
       surface,
       adapter,
@@ -198,6 +204,13 @@ impl RenderEngine {
       pipeline_layout,
       render_pipeline,
       surface_format,
+
+      // Render state memory.
+      output: None,
+      command_encoder: None,
+      texture_view: None,
+
+      // General variables.
       config,
       size: UVec2::new(width, height),
       clear_color,
@@ -227,47 +240,89 @@ impl RenderEngine {
   }
 
   ///
+  /// Initialize the render state.
+  ///
+  pub fn initialize_render(&mut self) {
+    self.output = Some(
+      self
+        .surface
+        .get_current_texture()
+        .expect("minetest: wgpu surface texture does not exist!"),
+    );
+
+    self.texture_view = Some(
+      self
+        .output
+        .as_mut()
+        .unwrap()
+        .texture
+        .create_view(&wgpu::TextureViewDescriptor::default()),
+    );
+
+    self.command_encoder = Some(self.device.create_command_encoder(
+      &wgpu::CommandEncoderDescriptor {
+        label: Some("minetest_renderer"),
+      },
+    ));
+  }
+
+  ///
   /// Run the render procedure on the RenderEngine.
   ///
   pub fn render(&mut self) {
-    let output = self
-      .surface
-      .get_current_texture()
-      .expect("minetest: wgpu surface texture does not exist!");
+    // Do 3 very basic checks before attempting to render.
+    if self.output.is_none() {
+      panic!("RenderEngine: attempted to render with no output!");
+    }
 
-    let view = output
-      .texture
-      .create_view(&wgpu::TextureViewDescriptor::default());
+    if self.command_encoder.is_none() {
+      panic!("RenderEngine: attempted render with no command encoder!");
+    }
 
-    let mut encoder = self
-      .device
-      .create_command_encoder(&wgpu::CommandEncoderDescriptor {
-        label: Some("minetest_renderer"),
-      });
+    if self.texture_view.is_none() {
+      panic!("RenderEngine: attempted to render with no texture view!");
+    }
 
     // Begin a wgpu render pass
-    encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-      // The label of this render pass.
-      label: Some("minetest_render_pass"),
+    self
+      .command_encoder
+      .as_mut()
+      .unwrap()
+      .begin_render_pass(&wgpu::RenderPassDescriptor {
+        // The label of this render pass.
+        label: Some("minetest_render_pass"),
 
-      // Sparse array of pipeline color attachments.
-      color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-        view: &view,
-        resolve_target: None,
-        ops: wgpu::Operations {
-          load: wgpu::LoadOp::Clear(self.clear_color),
-          store: wgpu::StoreOp::Store,
-        },
-      })],
+        // Sparse array of pipeline color attachments.
+        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+          view: self.texture_view.as_ref().unwrap(),
+          resolve_target: None,
+          ops: wgpu::Operations {
+            load: wgpu::LoadOp::Clear(self.clear_color),
+            store: wgpu::StoreOp::Store,
+          },
+        })],
 
-      depth_stencil_attachment: None,
-      occlusion_query_set: None,
-      timestamp_writes: None,
-    });
+        depth_stencil_attachment: None,
+        occlusion_query_set: None,
+        timestamp_writes: None,
+      });
 
-    self.queue.submit(iter::once(encoder.finish()));
+    // Next let's swap the command encoder out into a local variable. That's now flushed into None.
 
-    output.present();
+    let mut final_encoder: Option<CommandEncoder> = None;
+
+    swap(&mut final_encoder, &mut self.command_encoder);
+
+    self
+      .queue
+      .submit(iter::once(final_encoder.unwrap().finish()));
+
+    // Finally we simply swap the surface out into a local variable. We've just flushed the surface out into None.
+    let mut final_output: Option<SurfaceTexture> = None;
+
+    swap(&mut final_output, &mut self.output);
+
+    final_output.unwrap().present();
   }
 
   /// !remove me!

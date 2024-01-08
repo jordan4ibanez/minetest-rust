@@ -142,6 +142,7 @@ impl Client {
       .update(&self.window_handler, delta);
 
     // Now render everything.
+    self.render_engine.as_mut().unwrap().initialize_render();
     self.render_engine.as_mut().unwrap().render();
 
     // This will need to run a close event for the client engine and send out a close event to the internal server.
