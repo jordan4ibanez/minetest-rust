@@ -345,7 +345,7 @@ impl RenderEngine {
 
   /// !remove me!
   ///
-  /// A test of combining the window handler with the clear color
+  /// A test of combining the window handler with the clear color.
   ///
   /// Simply changes the clear color based on the x and y of the mouse.
   ///
