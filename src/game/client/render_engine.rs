@@ -242,6 +242,8 @@ impl RenderEngine {
   ///
   /// Initialize the render state.
   ///
+  /// This simply sets everything up.
+  ///
   pub fn initialize_render(&mut self) {
     self.output = Some(
       self
@@ -268,6 +270,8 @@ impl RenderEngine {
 
   ///
   /// Run the render procedure on the RenderEngine.
+  ///
+  /// todo: this will draw things in the future, probably automatically.
   ///
   pub fn render(&mut self) {
     // Do 3 very basic checks before attempting to render.
@@ -308,8 +312,11 @@ impl RenderEngine {
       });
   }
 
+  ///
+  /// Submits all commands and flushes the texture buffer into the SDL2 window.
+  ///
   pub fn finalize_render(&mut self) {
-    // Next let's swap the command encoder out into a local variable. That's now flushed into None.
+    // First let's swap the command encoder out into a local variable. That's now flushed into None.
 
     let mut final_encoder: Option<CommandEncoder> = None;
 
@@ -319,7 +326,7 @@ impl RenderEngine {
       .queue
       .submit(iter::once(final_encoder.unwrap().finish()));
 
-    // Finally we simply swap the surface out into a local variable. We've just flushed the surface out into None.
+    // Next we simply swap the surface out into a local variable. We've just flushed the surface out into None.
 
     let mut final_output: Option<SurfaceTexture> = None;
 
@@ -327,7 +334,11 @@ impl RenderEngine {
 
     final_output.unwrap().present();
 
-    // For now, we'll ensure that this is unchanged.
+    // Finally, the texture view is outdated, destroy it.
+
+    self.texture_view = None;
+
+    // For now, we'll ensure that this is unchanged. [ validation ]
     assert!(self.command_encoder.is_none());
     assert!(self.output.is_none());
   }
