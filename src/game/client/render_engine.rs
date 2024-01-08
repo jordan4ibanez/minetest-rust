@@ -306,7 +306,9 @@ impl RenderEngine {
         occlusion_query_set: None,
         timestamp_writes: None,
       });
+  }
 
+  pub fn finalize_render(&mut self) {
     // Next let's swap the command encoder out into a local variable. That's now flushed into None.
 
     let mut final_encoder: Option<CommandEncoder> = None;
@@ -318,11 +320,16 @@ impl RenderEngine {
       .submit(iter::once(final_encoder.unwrap().finish()));
 
     // Finally we simply swap the surface out into a local variable. We've just flushed the surface out into None.
+
     let mut final_output: Option<SurfaceTexture> = None;
 
     swap(&mut final_output, &mut self.output);
 
     final_output.unwrap().present();
+
+    // For now, we'll ensure that this is unchanged.
+    assert!(self.command_encoder.is_none());
+    assert!(self.output.is_none());
   }
 
   /// !remove me!
