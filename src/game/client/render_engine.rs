@@ -341,6 +341,7 @@ impl RenderEngine {
     // For now, we'll ensure that this is unchanged. [ validation ]
     assert!(self.command_encoder.is_none());
     assert!(self.output.is_none());
+    assert!(self.texture_view.is_none());
   }
 
   /// !remove me!
