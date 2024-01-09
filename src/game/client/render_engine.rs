@@ -296,7 +296,7 @@ impl RenderEngine {
         // The label of this render pass.
         label: Some("minetest_render_pass"),
 
-        // Sparse array of pipeline color attachments.
+        // color attachments is a array of pipeline render pass color attachments.
         color_attachments: &[Some(wgpu::RenderPassColorAttachment {
           view: self.texture_view.as_ref().unwrap(),
           resolve_target: None,
