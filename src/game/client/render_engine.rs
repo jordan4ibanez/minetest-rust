@@ -292,28 +292,32 @@ impl RenderEngine {
     }
 
     // Begin a wgpu render pass
-    self
-      .command_encoder
-      .as_mut()
-      .unwrap()
-      .begin_render_pass(&wgpu::RenderPassDescriptor {
-        // The label of this render pass.
-        label: Some("minetest_render_pass"),
+    let mut render_pass =
+      self
+        .command_encoder
+        .as_mut()
+        .unwrap()
+        .begin_render_pass(&wgpu::RenderPassDescriptor {
+          // The label of this render pass.
+          label: Some("minetest_render_pass"),
 
-        // color attachments is a array of pipeline render pass color attachments.
-        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-          view: self.texture_view.as_ref().unwrap(),
-          resolve_target: None,
-          ops: wgpu::Operations {
-            load: wgpu::LoadOp::Clear(self.clear_color),
-            store: wgpu::StoreOp::Store,
-          },
-        })],
+          // color attachments is a array of pipeline render pass color attachments.
+          color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+            view: self.texture_view.as_ref().unwrap(),
+            resolve_target: None,
+            ops: wgpu::Operations {
+              load: wgpu::LoadOp::Clear(self.clear_color),
+              store: wgpu::StoreOp::Store,
+            },
+          })],
 
-        depth_stencil_attachment: None,
-        occlusion_query_set: None,
-        timestamp_writes: None,
-      });
+          depth_stencil_attachment: None,
+          occlusion_query_set: None,
+          timestamp_writes: None,
+        });
+
+    render_pass.set_pipeline(&self.render_pipeline);
+    render_pass.draw(0..3, 0..1);
   }
 
   ///
