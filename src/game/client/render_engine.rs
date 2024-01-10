@@ -112,6 +112,31 @@ impl RenderEngine {
       push_constant_ranges: &[],
     });
 
+    // Surface capabilities.
+    let surface_caps = surface.get_capabilities(&adapter);
+
+    // And the surface format.
+    let surface_format = surface_caps
+      .formats
+      .iter()
+      .copied()
+      // This may not be thorough enough to get the format we want.
+      .find(|f| f.is_srgb())
+      .unwrap_or(surface_caps.formats[0]);
+
+    // Need to get the window size to configure the surface.
+    let (width, height) = window.size();
+
+    let config = wgpu::SurfaceConfiguration {
+      usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+      format: surface_format,
+      width,
+      height,
+      present_mode: wgpu::PresentMode::Fifo,
+      alpha_mode: wgpu::CompositeAlphaMode::Auto,
+      view_formats: Vec::default(),
+    };
+
     // And the pipeline, very important!.
     let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
       layout: Some(&pipeline_layout),
@@ -147,31 +172,6 @@ impl RenderEngine {
       },
       multiview: None,
     });
-
-    // Surface capabilities.
-    let surface_caps = surface.get_capabilities(&adapter);
-
-    // And the surface format.
-    let surface_format = surface_caps
-      .formats
-      .iter()
-      .copied()
-      // This may not be thorough enough to get the format we want.
-      .find(|f| f.is_srgb())
-      .unwrap_or(surface_caps.formats[0]);
-
-    // Need to get the window size to configure the surface.
-    let (width, height) = window.size();
-
-    let config = wgpu::SurfaceConfiguration {
-      usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-      format: surface_format,
-      width,
-      height,
-      present_mode: wgpu::PresentMode::Fifo,
-      alpha_mode: wgpu::CompositeAlphaMode::Auto,
-      view_formats: Vec::default(),
-    };
 
     // Then actually configure the surface with the config.
     surface.configure(&device, &config);
