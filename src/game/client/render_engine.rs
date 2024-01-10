@@ -86,6 +86,8 @@ impl RenderEngine {
       Err(e) => panic!("{}", e),
     };
 
+    let x = "hi there".to_string();
+
     // Load up the default shader source code.
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
       label: Some("default_shader"),
@@ -94,19 +96,19 @@ impl RenderEngine {
 
     // Create bind group components.
     let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-      entries: &[],
       label: Some("bind_group_layout"),
+      entries: &[],
     });
     let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+      label: Some("bind_group"),
       layout: &bind_group_layout,
       entries: &[],
-      label: Some("bind_group"),
     });
 
     // Create the pipeline layout.
     let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+      label: Some("render_pipeline_layout"),
       bind_group_layouts: &[&bind_group_layout],
-      label: None,
       push_constant_ranges: &[],
     });
 
