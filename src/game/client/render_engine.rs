@@ -147,7 +147,7 @@ impl RenderEngine {
       },
       fragment: Some(wgpu::FragmentState {
         targets: &[Some(wgpu::ColorTargetState {
-          format: wgpu::TextureFormat::Bgra8UnormSrgb,
+          format: config.format,
           blend: None,
           write_mask: wgpu::ColorWrites::ALL,
         })],
