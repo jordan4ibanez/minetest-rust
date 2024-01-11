@@ -1,3 +1,5 @@
+mod mesh;
+
 use std::{iter, mem::swap};
 
 use glam::UVec2;
