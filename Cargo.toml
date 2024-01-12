@@ -45,6 +45,7 @@ sea-query = { version = "*", features = [
 serde = { version = "*", features = ["derive"] }
 serde_bytes = "*"
 spin_sleep = "*"
+spin_sleep_util = "*"
 syn = "*"
 wgpu = "*"
 wgpu_sdl_linker = "*"

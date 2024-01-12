@@ -20,6 +20,7 @@ https://discord.gg/Z2wCscTB4F
 - ctrlc - Catching termination events and elegantly exiting the program.
 - message-io - UDP networking.
 - spin_sleep - Main loop speed control.
+- spin_sleep_util - Assistant to spin_sleep.
 - sdl2 - Windowing library. (but could be used for more things)
 - glam - An incredible math library.
 - env_logger - An elegant logging library.
