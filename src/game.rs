@@ -6,9 +6,10 @@ use core::panic;
 use std::{
   ops::Deref,
   sync::{Arc, RwLock},
+  time::Duration,
 };
 
-use spin_sleep::LoopHelper;
+use spin_sleep_util::{interval, Interval, RateReporter};
 
 use crate::command_line::CommandLineInterface;
 
@@ -45,7 +46,9 @@ pub struct Game {
   is_server: bool,
   is_client: bool,
 
-  loop_helper: LoopHelper,
+  interval: Interval,
+  rate_reporter: RateReporter,
+
   delta: f64,
   current_fps: f64,
 
@@ -75,9 +78,8 @@ impl Game {
       false => goal_frames_per_second,
     };
 
-    let loop_helper = LoopHelper::builder()
-      .report_interval_s(1.0)
-      .build_with_target_rate(loop_helper_goal);
+    let interval = interval(Duration::from_secs_f64(1.0 / loop_helper_goal));
+    let rate_reporter = RateReporter::new(Duration::from_secs(1));
 
     //todo: make this happen!
     println!("we need a minetest.conf parser for vsync!");
@@ -98,7 +100,8 @@ impl Game {
       // If this is a server we don't do any client things.
       is_server: cli.server,
 
-      loop_helper,
+      interval,
+      rate_reporter,
 
       delta: 0.0,
       current_fps: 0.0,
@@ -140,10 +143,9 @@ impl Game {
       false => self.goal_ticks_per_second,
     };
 
-    // Now create a new struct with the desired goal.
-    self.loop_helper = LoopHelper::builder()
-      .report_interval_s(1.0)
-      .build_with_target_rate(new_goal);
+    self
+      .interval
+      .set_period(Duration::from_secs_f64(1.0 / new_goal));
   }
 
   ///
@@ -190,8 +192,6 @@ impl Game {
   /// The main loop of the game engine.
   ///
   fn main(&mut self) {
-    self.delta = self.loop_helper.loop_start_s();
-
     //? Here is where the logic loop goes.
 
     //* Begin server/client on_tick()
@@ -226,7 +226,8 @@ impl Game {
     //todo: make this a configuration for debugging.
     //todo: this can also be linked into the client struct to report
     //todo: the current framerate.
-    if let Some(fps) = self.loop_helper.report_rate() {
+
+    if let Some(fps) = self.rate_reporter.increment_and_report() {
       self.current_fps = fps;
       let time_measurement = match self.is_client {
         true => "FPS",
@@ -236,7 +237,7 @@ impl Game {
     }
 
     if self.vsync_mode == 0 || self.is_server {
-      self.loop_helper.loop_sleep();
+      self.interval.tick();
     }
   }
 
