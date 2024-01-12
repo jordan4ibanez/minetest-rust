@@ -17,6 +17,7 @@ unsafe_code = "forbid"
 # These can be turned on and off for active development.
 dead_code = "allow"
 unused_variables = "allow"
+# unwrap_used = "forbid"
 
 [dependencies]
 clap = { version = "*", features = ["derive"] }
