@@ -31,6 +31,7 @@ impl Vertex {
 ///
 /// A Mesh is the container that holds the data which makes up a model.
 ///
+#[derive(Debug)]
 pub struct Mesh {
   data: Vec<Vertex>,
 }
@@ -95,8 +96,7 @@ pub fn generate_mesh(positions: &Vec<f64>, colors: &Vec<f64>) -> Result<Mesh, St
 
   // Can use one range iterator, they are all supposed to be equal.
   for i in 0..positions_components {
-    // Instead of unwrapping this in the future, we should match.
-    println!("{}", i);
+    // todo Instead of unwrapping this in the future, we should match.
 
     let position_base_offset = i * POSITION_COMPONENTS;
 
@@ -118,4 +118,82 @@ pub fn generate_mesh(positions: &Vec<f64>, colors: &Vec<f64>) -> Result<Mesh, St
   }
 
   Ok(mesh)
+}
+
+#[cfg(test)]
+mod tests {
+  use crate::game::client::render_engine::mesh::generate_mesh;
+
+  #[test]
+  fn test_procedural_mesh_creation() {
+    println!("--- BEGIN PROCEDURAL MESH TEST ---");
+    {
+      let positions = vec![1.0, 2.0, 3.0];
+      let colors = vec![3.0, 4.0, 5.0];
+      let test_mesh = generate_mesh(&positions, &colors);
+      assert!(test_mesh.is_ok());
+      println!("{:?}", test_mesh.unwrap());
+    }
+
+    {
+      let positions = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+      let colors = vec![7.0, 8.0, 9.0, 10.0, 11.0, 12.0];
+      let test_mesh = generate_mesh(&positions, &colors);
+      assert!(test_mesh.is_ok());
+      println!("{:?}", test_mesh.unwrap());
+    }
+  }
+
+  #[test]
+  fn test_procedural_mesh_creation_failure() {
+    println!("--- BEGIN PROCEDURAL MESH FAILURE TEST ---");
+
+    // Missing components.
+    {
+      let positions = vec![];
+      let colors = vec![3.0, 4.0, 5.0];
+      let failed_result = generate_mesh(&positions, &colors);
+      assert!(failed_result.is_err());
+      println!("{:?}", failed_result);
+    }
+    {
+      let positions = vec![1.0, 2.0, 3.0];
+      let colors = vec![];
+      let failed_result = generate_mesh(&positions, &colors);
+      assert!(failed_result.is_err());
+      println!("{:?}", failed_result);
+    }
+
+    // Wrong size.
+    {
+      let positions = vec![1.0, 2.0, 3.0, 4.0];
+      let colors = vec![4.0, 5.0, 6.0];
+      let failed_result = generate_mesh(&positions, &colors);
+      assert!(failed_result.is_err());
+      println!("{:?}", failed_result);
+    }
+    {
+      let positions = vec![1.0, 2.0, 3.0];
+      let colors = vec![4.0, 5.0, 6.0, 7.0];
+      let failed_result = generate_mesh(&positions, &colors);
+      assert!(failed_result.is_err());
+      println!("{:?}", failed_result);
+    }
+
+    // Unequal size.
+    {
+      let positions = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+      let colors = vec![4.0, 5.0, 6.0];
+      let failed_result = generate_mesh(&positions, &colors);
+      assert!(failed_result.is_err());
+      println!("{:?}", failed_result);
+    }
+    {
+      let positions = vec![1.0, 2.0, 3.0];
+      let colors = vec![4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+      let failed_result = generate_mesh(&positions, &colors);
+      assert!(failed_result.is_err());
+      println!("{:?}", failed_result);
+    }
+  }
 }
