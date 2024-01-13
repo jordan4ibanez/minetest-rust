@@ -38,4 +38,12 @@ run-release:
 	cargo run --release
 
 
+########## TESTING ##########
+
+
+# Useful for seeing println output during unit tests.
+test:
+	cargo test -- --nocapture
+
+
 #############################
