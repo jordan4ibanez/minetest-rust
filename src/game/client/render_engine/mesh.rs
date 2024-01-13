@@ -91,7 +91,7 @@ pub fn generate_mesh(positions: &Vec<f64>, colors: &Vec<f64>) -> Result<(), Stri
 
   // ! this is just a test, there is probably a much better way to to this!
   // ! What you're seeing is a raw prototype.
-  let mut vertices_vector: Vec<Vertex> = vec![];
+  let mut mesh = Mesh::new();
 
   // Can use one range iterator, they are all supposed to be equal.
   for i in 0..positions_components {
@@ -111,10 +111,10 @@ pub fn generate_mesh(positions: &Vec<f64>, colors: &Vec<f64>) -> Result<(), Stri
       .try_into()
       .unwrap();
 
-    vertices_vector.push(Vertex {
+    mesh.push_vertex(Vertex {
       position: position_slice,
       color: color_slice,
-    })
+    });
   }
 
   Ok(())
