@@ -29,6 +29,19 @@ impl Vertex {
 }
 
 ///
+/// A Mesh is the container that holds the data which makes up a model.
+///
+pub struct Mesh {
+  data: Vec<Vertex>,
+}
+
+impl Mesh {
+  pub fn new() -> Self {
+    Mesh { data: vec![] }
+  }
+}
+
+///
 /// !This is a highly experimental function. This might get replaced with something
 ///
 /// Generate an array of Vertex data from raw lists.
