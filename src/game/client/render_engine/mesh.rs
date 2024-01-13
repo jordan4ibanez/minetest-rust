@@ -57,7 +57,7 @@ impl Mesh {
 ///
 /// This is primarily aimed at procedurally generated meshes, like map visual data.
 ///
-pub fn generate_mesh(positions: &Vec<f64>, colors: &Vec<f64>) -> Result<(), String> {
+pub fn generate_mesh(positions: &Vec<f64>, colors: &Vec<f64>) -> Result<Mesh, String> {
   // We want to check all the data to ensure the logic is sound.
 
   // First, check positions sizing.
@@ -117,5 +117,5 @@ pub fn generate_mesh(positions: &Vec<f64>, colors: &Vec<f64>) -> Result<(), Stri
     });
   }
 
-  Ok(())
+  Ok(mesh)
 }
