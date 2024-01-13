@@ -11,6 +11,11 @@ default:
 server:
 	RUST_BACKTRACE=1 cargo run -- -s
 
+server-debug:
+	RUST_BACKTRACE=1 cargo run -- -s
+
+server-release:
+	cargo run --release -- -s
 
 ########### BUILD ###########
 
