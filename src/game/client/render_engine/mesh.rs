@@ -22,12 +22,20 @@ pub struct Vertex {
   color: [f64; COLOR_COMPONENTS],
 }
 
+impl Vertex {
+  pub fn new(position: [f64; POSITION_COMPONENTS], color: [f64; COLOR_COMPONENTS]) -> Self {
+    Vertex { position, color }
+  }
+}
+
 ///
 /// !This is a highly experimental function. This might get replaced with something
 ///
 /// Generate an array of Vertex data from raw lists.
 ///
 /// todo: Instead of a () this needs to return the Mesh container when it's made on Ok(())!
+///
+/// This is primarily aimed at procedurally generated meshes, like map visual data.
 ///
 pub fn generate_mesh(positions: &Vec<f64>, colors: &Vec<f64>) -> Result<(), String> {
   // We want to check all the data to ensure the logic is sound.
@@ -42,7 +50,7 @@ pub fn generate_mesh(positions: &Vec<f64>, colors: &Vec<f64>) -> Result<(), Stri
 
   // Then check colors sizing.
   if colors.is_empty() {
-    return Err("generate_mesh: send a blank colors vector!".to_string());
+    return Err("generate_mesh: sent a blank colors vector!".to_string());
   }
   if colors.len() % COLOR_COMPONENTS != 0 {
     return Err("generate_mesh: sent a wrongly sized colors vector!".to_string());
@@ -60,6 +68,34 @@ pub fn generate_mesh(positions: &Vec<f64>, colors: &Vec<f64>) -> Result<(), Stri
   }
 
   //todo: here we will iterate through the data with a mutable vector then dump it into a format. The format needs to be made.
+
+  // ! this is just a test, there is probably a much better way to to this!
+  // ! What you're seeing is a raw prototype.
+  let mut vertices_vector: Vec<Vertex> = vec![];
+
+  // Can use one range iterator, they are all supposed to be equal.
+  for i in 0..positions_components {
+    // Instead of unwrapping this in the future, we should match.
+    println!("{}", i);
+
+    let position_base_offset = i * POSITION_COMPONENTS;
+
+    let position_slice: [f64; 3] = positions
+      [position_base_offset..position_base_offset + POSITION_COMPONENTS]
+      .try_into()
+      .unwrap();
+
+    let color_base_offset = i * COLOR_COMPONENTS;
+
+    let color_slice: [f64; 3] = colors[color_base_offset..color_base_offset + COLOR_COMPONENTS]
+      .try_into()
+      .unwrap();
+
+    vertices_vector.push(Vertex {
+      position: position_slice,
+      color: color_slice,
+    })
+  }
 
   Ok(())
 }
