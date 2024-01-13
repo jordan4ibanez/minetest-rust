@@ -39,6 +39,13 @@ impl Mesh {
   pub fn new() -> Self {
     Mesh { data: vec![] }
   }
+
+  ///
+  /// Push raw vertex data into the Mesh.
+  ///
+  pub fn push_vertex(&mut self, vertex: Vertex) {
+    self.data.push(vertex);
+  }
 }
 
 ///
