@@ -20,6 +20,7 @@ unused_variables = "allow"
 # unwrap_used = "forbid"
 
 [dependencies]
+bytemuck = { version = "*", features = ["derive"] }
 clap = { version = "*", features = ["derive"] }
 configparser = "*"
 ctrlc = { version = "*", features = ["termination"] }
