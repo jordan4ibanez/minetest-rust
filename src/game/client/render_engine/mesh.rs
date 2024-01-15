@@ -20,8 +20,8 @@ const COLOR_COMPONENTS: usize = 3;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct Vertex {
-  position: [f32; POSITION_COMPONENTS],
-  color: [f32; COLOR_COMPONENTS],
+  pub position: [f32; POSITION_COMPONENTS],
+  pub color: [f32; COLOR_COMPONENTS],
 }
 
 impl Vertex {
