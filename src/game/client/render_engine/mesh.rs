@@ -1,3 +1,5 @@
+use std::mem;
+
 ///
 /// The root sizes of the Vertex components.
 ///
@@ -16,14 +18,14 @@ const COLOR_COMPONENTS: usize = 3;
 /// Meshes are constructed out of an array of Vertex data.
 ///
 #[repr(C)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct Vertex {
-  position: [f64; POSITION_COMPONENTS],
-  color: [f64; COLOR_COMPONENTS],
+  position: [f32; POSITION_COMPONENTS],
+  color: [f32; COLOR_COMPONENTS],
 }
 
 impl Vertex {
-  pub fn new(position: [f64; POSITION_COMPONENTS], color: [f64; COLOR_COMPONENTS]) -> Self {
+  pub fn new(position: [f32; POSITION_COMPONENTS], color: [f32; COLOR_COMPONENTS]) -> Self {
     Vertex { position, color }
   }
 }
@@ -47,6 +49,36 @@ impl Mesh {
   pub fn push_vertex(&mut self, vertex: Vertex) {
     self.data.push(vertex);
   }
+
+  ///
+  /// Grab the raw vertex data from the mesh to pass to wgpu.
+  ///
+  pub fn into_wgpu_data(&self) -> &[u8] {
+    bytemuck::cast_slice(self.data.as_slice())
+  }
+
+  ///
+  /// Get the layout descriptor of Vertex for wgpu.
+  ///
+  pub fn get_wgpu_descriptor() -> wgpu::VertexBufferLayout<'static> {
+    wgpu::VertexBufferLayout {
+      array_stride: mem::size_of::<Vertex>() as wgpu::BufferAddress,
+      step_mode: wgpu::VertexStepMode::Vertex,
+      attributes: &[
+        // If we need to add new components, we do it here. Hooray!
+        wgpu::VertexAttribute {
+          offset: 0,
+          shader_location: 0,
+          format: wgpu::VertexFormat::Float32x3,
+        },
+        wgpu::VertexAttribute {
+          offset: mem::size_of::<[f32; 3]>() as wgpu::BufferAddress,
+          shader_location: 1,
+          format: wgpu::VertexFormat::Float32x3,
+        },
+      ],
+    }
+  }
 }
 
 ///
@@ -58,7 +90,7 @@ impl Mesh {
 ///
 /// This is primarily aimed at procedurally generated meshes, like map visual data.
 ///
-pub fn generate_mesh(positions: &Vec<f64>, colors: &Vec<f64>) -> Result<Mesh, String> {
+pub fn generate_mesh(positions: &Vec<f32>, colors: &Vec<f32>) -> Result<Mesh, String> {
   // We want to check all the data to ensure the logic is sound.
 
   // First, check positions sizing.
@@ -100,14 +132,14 @@ pub fn generate_mesh(positions: &Vec<f64>, colors: &Vec<f64>) -> Result<Mesh, St
 
     let position_base_offset = i * POSITION_COMPONENTS;
 
-    let position_slice: [f64; 3] = positions
+    let position_slice: [f32; 3] = positions
       [position_base_offset..position_base_offset + POSITION_COMPONENTS]
       .try_into()
       .unwrap();
 
     let color_base_offset = i * COLOR_COMPONENTS;
 
-    let color_slice: [f64; 3] = colors[color_base_offset..color_base_offset + COLOR_COMPONENTS]
+    let color_slice: [f32; 3] = colors[color_base_offset..color_base_offset + COLOR_COMPONENTS]
       .try_into()
       .unwrap();
 
