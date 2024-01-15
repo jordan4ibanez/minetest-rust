@@ -4,10 +4,13 @@ use std::{iter, mem::swap};
 
 use glam::UVec2;
 use sdl2::video::Window;
-use wgpu::{CommandEncoder, SurfaceTexture, TextureView};
+use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
-use crate::file_utilities::read_file_to_string;
+use crate::{
+  file_utilities::read_file_to_string,
+  game::client::render_engine::mesh::{Mesh, Vertex},
+};
 
 use super::window_handler::WindowHandler;
 
@@ -36,10 +39,13 @@ pub struct RenderEngine {
   output: Option<SurfaceTexture>,
   command_encoder: Option<CommandEncoder>,
   texture_view: Option<TextureView>,
+  render_command_count: u32,
 
   config: wgpu::SurfaceConfiguration,
   size: UVec2,
   clear_color: wgpu::Color,
+
+  temporary_vertex_buffer: Option<wgpu::Buffer>,
 }
 
 impl RenderEngine {
@@ -110,9 +116,15 @@ impl RenderEngine {
     // Create the pipeline layout.
     let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
       label: Some("render_pipeline_layout"),
-      bind_group_layouts: &[],//&bind_group_layout],
+      bind_group_layouts: &[], //&bind_group_layout],
       push_constant_ranges: &[],
     });
+
+    // let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+    //   label: Some("Vertex Buffer"),
+    //   contents: bytemuck::cast_slice(VERTICES),
+    //   usage: wgpu::BufferUsages::VERTEX,
+    // });
 
     // Surface capabilities.
     let surface_caps = surface.get_capabilities(&adapter);
@@ -143,7 +155,7 @@ impl RenderEngine {
     let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
       layout: Some(&pipeline_layout),
       vertex: wgpu::VertexState {
-        buffers: &[],
+        buffers: &[Mesh::get_wgpu_descriptor()],
         module: &shader,
         entry_point: "vs_main",
       },
@@ -213,11 +225,14 @@ impl RenderEngine {
       output: None,
       command_encoder: None,
       texture_view: None,
+      render_command_count: 0,
 
       // General variables.
       config,
       size: UVec2::new(width, height),
       clear_color,
+
+      temporary_vertex_buffer: None,
     }
   }
 
@@ -275,6 +290,38 @@ impl RenderEngine {
   }
 
   ///
+  /// !TESTING!
+  ///
+  /// CREATING THE RAW VERTEX DATA AS A PROTOTYPE.
+  ///
+  /// !TESTING!
+  fn temporary_create_raw_vertex_test(&mut self) {
+    //todo: emulate this with the procedural generation api.
+    const VERTICES: &[Vertex] = &[
+      Vertex {
+        position: [0.0, 0.5, 0.0],
+        color: [1.0, 0.0, 0.0],
+      },
+      Vertex {
+        position: [-0.5, -0.5, 0.0],
+        color: [0.0, 1.0, 0.0],
+      },
+      Vertex {
+        position: [0.5, -0.5, 0.0],
+        color: [0.0, 0.0, 1.0],
+      },
+    ];
+
+    self.temporary_vertex_buffer = Some(self.device.create_buffer_init(
+      &wgpu::util::BufferInitDescriptor {
+        label: Some("debug_vertex_buffer"),
+        contents: bytemuck::cast_slice(VERTICES),
+        usage: wgpu::BufferUsages::VERTEX,
+      },
+    ))
+  }
+
+  ///
   /// Run the render procedure on the RenderEngine.
   ///
   /// todo: this will draw things in the future, probably automatically.
@@ -291,6 +338,12 @@ impl RenderEngine {
 
     if self.texture_view.is_none() {
       panic!("RenderEngine: attempted to render with no texture view!");
+    }
+
+    {
+      if self.temporary_vertex_buffer.is_none() {
+        self.temporary_create_raw_vertex_test();
+      }
     }
 
     // Begin a wgpu render pass
@@ -319,7 +372,11 @@ impl RenderEngine {
         });
 
     render_pass.set_pipeline(&self.render_pipeline);
-    render_pass.draw(0..3, 0..1);
+
+    if self.temporary_vertex_buffer.is_some() {
+      render_pass.set_vertex_buffer(0, self.temporary_vertex_buffer.as_ref().unwrap().slice(..));
+      render_pass.draw(0..3, 0..1);
+    }
   }
 
   ///
