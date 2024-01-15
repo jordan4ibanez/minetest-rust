@@ -25,12 +25,13 @@ https://discord.gg/Z2wCscTB4F
 - glam - An incredible math library.
 - env_logger - An elegant logging library.
 - log - Used in conjunction with env_logger.
-
-##### Packages to be implemented:
-- wgpu - Graphics multiplexer. (Vulkan, OpenGL, WebGPU, metal)
-- wgpu_sdl_linker - A micro library which allows safely linking wgpu with SDL2.
 - pollster - A micro library which allows blocking a thread while a future completes.
 
+- wgpu - Graphics multiplexer. (Vulkan, OpenGL, WebGPU, metal)
+- wgpu_sdl_linker - A micro library which allows safely linking wgpu with SDL2.
+- bytemuck - Used in conjunction with wgpu to cash vertex data.
+
+##### Packages to be implemented:
 - rusqlite - SQLite3 database.
 - sea-query - SQLite3 query builder.
 - serde - Serialization and deserialization of data.
