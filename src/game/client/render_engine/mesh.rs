@@ -92,6 +92,13 @@ impl Mesh {
   }
 
   ///
+  /// Add the wgpu rendering buffer for rendering.
+  ///
+  pub fn attach_wgpu_buffer(&mut self, buffer: wgpu::Buffer) {
+    self.buffer = Some(buffer);
+  }
+
+  ///
   /// Get the layout descriptor of Vertex for wgpu.
   ///
   pub fn get_wgpu_descriptor() -> wgpu::VertexBufferLayout<'static> {
