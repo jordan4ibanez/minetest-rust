@@ -57,6 +57,34 @@ impl Mesh {
   }
 
   ///
+  /// Push an array of raw vertex data into the Mesh.
+  ///
+  pub fn push_vertex_array(&mut self, vertex: &[Vertex]) {
+    for vert in vertex {
+      self.data.push(*vert);
+    }
+  }
+
+  ///
+  /// Grab the wgpu buffer for rendering.
+  ///
+  pub fn get_wgpu_buffer(&self) -> &wgpu::Buffer {
+    self.buffer.as_ref().unwrap_or_else(|| {
+      panic!(
+        "Mesh: Buffer was never attached for {} in RenderEngine.",
+        self.name
+      )
+    })
+  }
+
+  ///
+  /// Grab the raw vertex data from the mesh to create the GPU memory.
+  ///
+  pub fn as_raw_array(&self) -> &[Vertex] {
+    &self.data
+  }
+
+  ///
   /// Grab the raw vertex data from the mesh to pass to wgpu.
   ///
   pub fn into_wgpu_data(&self) -> &[u8] {
