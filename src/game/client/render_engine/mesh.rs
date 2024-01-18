@@ -165,7 +165,7 @@ pub fn generate_mesh(positions: &Vec<f32>, colors: &Vec<f32>) -> Result<Mesh, St
 
   // ! this is just a test, there is probably a much better way to to this!
   // ! What you're seeing is a raw prototype.
-  let mut mesh = Mesh::new();
+  let mut mesh = Mesh::new(&"testing".to_string());
 
   // Can use one range iterator, they are all supposed to be equal.
   for i in 0..positions_components {
