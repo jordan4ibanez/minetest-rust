@@ -1,6 +1,6 @@
 mod mesh;
 
-use std::{iter, mem::swap};
+use std::{collections::HashMap, iter, mem::swap};
 
 use glam::UVec2;
 use sdl2::video::Window;
@@ -46,6 +46,8 @@ pub struct RenderEngine {
   clear_color: wgpu::Color,
 
   temporary_vertex_buffer: Option<wgpu::Buffer>,
+
+  meshes: HashMap<String, Mesh>,
 }
 
 impl RenderEngine {
@@ -233,6 +235,8 @@ impl RenderEngine {
       clear_color,
 
       temporary_vertex_buffer: None,
+
+      meshes: HashMap::new(),
     }
   }
 
