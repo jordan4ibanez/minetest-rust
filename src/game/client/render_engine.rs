@@ -3,8 +3,9 @@ mod mesh;
 use std::{collections::HashMap, iter, mem::swap};
 
 use glam::UVec2;
+use log::error;
 use sdl2::video::Window;
-use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
+use wgpu::{util::DeviceExt, CommandEncoder, RenderPass, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
 use crate::{
@@ -23,6 +24,7 @@ use super::window_handler::WindowHandler;
 /// Utilizes wgpu as the main driving force to render.
 ///
 pub struct RenderEngine {
+  // General implementation.
   instance: wgpu::Instance,
   surface: wgpu::Surface,
   adapter: wgpu::Adapter,
@@ -36,16 +38,16 @@ pub struct RenderEngine {
   render_pipeline: wgpu::RenderPipeline,
   surface_format: wgpu::TextureFormat,
 
+  // Render state memory.
   output: Option<SurfaceTexture>,
   command_encoder: Option<CommandEncoder>,
   texture_view: Option<TextureView>,
   render_command_count: u32,
 
+  // General variables.
   config: wgpu::SurfaceConfiguration,
   size: UVec2,
   clear_color: wgpu::Color,
-
-  temporary_vertex_buffer: Option<wgpu::Buffer>,
 
   meshes: HashMap<String, Mesh>,
 }
@@ -209,7 +211,7 @@ impl RenderEngine {
       adapter.get_info().backend.to_str()
     );
 
-    RenderEngine {
+    let mut new_render_engine = RenderEngine {
       // General implementation.
       instance,
       surface,
@@ -234,10 +236,36 @@ impl RenderEngine {
       size: UVec2::new(width, height),
       clear_color,
 
-      temporary_vertex_buffer: None,
-
       meshes: HashMap::new(),
+    };
+
+    // ! THIS IS WHERE THE TEMPORARY DEBUG VERTEX IS CREATED!
+    {
+      let name = "debug".to_string();
+      let mut new_mesh = Mesh::new(&name);
+      // new_mesh.push_vertex();
+      new_mesh.push_vertex_array(&[
+        Vertex {
+          position: [0.0, 0.5, 0.0],
+          color: [1.0, 0.0, 0.0],
+        },
+        Vertex {
+          position: [-0.5, -0.5, 0.0],
+          color: [0.0, 1.0, 0.0],
+        },
+        Vertex {
+          position: [0.5, -0.5, 0.0],
+          color: [0.0, 0.0, 1.0],
+        },
+      ]);
+
+      new_mesh
+        .attach_wgpu_buffer(new_render_engine.generate_wgpu_buffer(&name, new_mesh.as_raw_array()));
+
+      new_render_engine.store_mesh(&name, new_mesh);
     }
+
+    new_render_engine
   }
 
   ///
@@ -299,30 +327,14 @@ impl RenderEngine {
   /// CREATING THE RAW VERTEX DATA AS A PROTOTYPE.
   ///
   /// !TESTING!
-  fn temporary_create_raw_vertex_test(&mut self) {
-    //todo: emulate this with the procedural generation api.
-    const VERTICES: &[Vertex] = &[
-      Vertex {
-        position: [0.0, 0.5, 0.0],
-        color: [1.0, 0.0, 0.0],
-      },
-      Vertex {
-        position: [-0.5, -0.5, 0.0],
-        color: [0.0, 1.0, 0.0],
-      },
-      Vertex {
-        position: [0.5, -0.5, 0.0],
-        color: [0.0, 0.0, 1.0],
-      },
-    ];
-
-    self.temporary_vertex_buffer = Some(self.device.create_buffer_init(
-      &wgpu::util::BufferInitDescriptor {
-        label: Some("debug_vertex_buffer"),
-        contents: bytemuck::cast_slice(VERTICES),
+  fn generate_wgpu_buffer(&mut self, name: &String, vertices: &[Vertex]) -> wgpu::Buffer {
+    self
+      .device
+      .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        label: Some(name),
+        contents: bytemuck::cast_slice(vertices),
         usage: wgpu::BufferUsages::VERTEX,
-      },
-    ))
+      })
   }
 
   ///
@@ -330,7 +342,7 @@ impl RenderEngine {
   ///
   /// todo: this will draw things in the future, probably automatically.
   ///
-  pub fn render(&mut self) {
+  pub fn render(&mut self, name: String) {
     // Do 3 very basic checks before attempting to render.
     if self.output.is_none() {
       panic!("RenderEngine: attempted to render with no output!");
@@ -342,12 +354,6 @@ impl RenderEngine {
 
     if self.texture_view.is_none() {
       panic!("RenderEngine: attempted to render with no texture view!");
-    }
-
-    {
-      if self.temporary_vertex_buffer.is_none() {
-        self.temporary_create_raw_vertex_test();
-      }
     }
 
     // Begin a wgpu render pass
@@ -377,9 +383,13 @@ impl RenderEngine {
 
     render_pass.set_pipeline(&self.render_pipeline);
 
-    if self.temporary_vertex_buffer.is_some() {
-      render_pass.set_vertex_buffer(0, self.temporary_vertex_buffer.as_ref().unwrap().slice(..));
-      render_pass.draw(0..3, 0..1);
+    match self.meshes.get(&name) {
+      Some(mesh) => {
+        render_pass.set_vertex_buffer(0, mesh.get_wgpu_buffer().slice(..));
+
+        render_pass.draw(0..3, 0..1);
+      }
+      None => error!("render_engine: {} is not a stored mesh.", name),
     }
   }
 
@@ -448,6 +458,17 @@ impl RenderEngine {
       println!("clear color updated! {:?}", self.clear_color);
     }
   }
+
+  ///
+  /// Store a Mesh into the render engine for usage.
+  ///
+  /// ! I don't think strings are a very good way to store this but it's prototyping!
+  ///
+  pub fn store_mesh(&mut self, name: &String, mesh: Mesh) {
+    self.meshes.insert(name.clone(), mesh);
+  }
+
+  pub fn draw_mesh(&self, name: String) {}
 
   ///
   /// Run all required update procedures on the RenderEngine.
