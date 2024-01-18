@@ -35,12 +35,18 @@ impl Vertex {
 ///
 #[derive(Debug)]
 pub struct Mesh {
+  name: String,
   data: Vec<Vertex>,
+  buffer: Option<wgpu::Buffer>,
 }
 
 impl Mesh {
-  pub fn new() -> Self {
-    Mesh { data: vec![] }
+  pub fn new(name: &String) -> Self {
+    Mesh {
+      name: name.clone(),
+      data: vec![],
+      buffer: None,
+    }
   }
 
   ///
