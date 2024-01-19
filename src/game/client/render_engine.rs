@@ -340,9 +340,11 @@ impl RenderEngine {
   ///
   /// Run the render procedure on the RenderEngine.
   ///
-  /// todo: this will draw things in the future, probably automatically.
+  /// This flushes out all unbatched draw calls.
   ///
-  pub fn render(&mut self, name: String) {
+  /// ! This is still a prototype !
+  ///
+  pub fn process_render_calls(&mut self, name: String) {
     // Do 3 very basic checks before attempting to render.
     if self.output.is_none() {
       panic!("RenderEngine: attempted to render with no output!");

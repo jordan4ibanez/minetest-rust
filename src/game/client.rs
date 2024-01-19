@@ -147,7 +147,7 @@ impl Client {
       .render_engine
       .as_mut()
       .unwrap()
-      .render("debug".to_string());
+      .process_render_calls("debug".to_string());
     self.render_engine.as_mut().unwrap().finalize_render();
 
     // This will need to run a close event for the client engine and send out a close event to the internal server.
