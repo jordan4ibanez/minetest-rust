@@ -398,13 +398,19 @@ impl RenderEngine {
 
     render_pass.set_pipeline(&self.render_pipeline);
 
-    match self.meshes.get(&name) {
-      Some(mesh) => {
-        render_pass.set_vertex_buffer(0, mesh.get_wgpu_buffer().slice(..));
+    while !self.unbatched_queue.is_empty() {
+      let unbatched_render_call = self.unbatched_queue.pop_front().unwrap();
 
-        render_pass.draw(0..3, 0..1);
+      let model_name = unbatched_render_call.get_model_name();
+
+      match self.meshes.get(model_name) {
+        Some(mesh) => {
+          render_pass.set_vertex_buffer(0, mesh.get_wgpu_buffer().slice(..));
+
+          render_pass.draw(0..3, 0..1);
+        }
+        None => error!("render_engine: {} is not a stored mesh.", model_name),
       }
-      None => error!("render_engine: {} is not a stored mesh.", name),
     }
   }
 
