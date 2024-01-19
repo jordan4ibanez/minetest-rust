@@ -3,6 +3,8 @@ mod render_engine;
 // mod virtual_reality_engine;
 mod window_handler;
 
+use glam::DVec3;
+
 use self::{
   client_connection::ClientConnection, render_engine::RenderEngine, window_handler::WindowHandler,
 };
@@ -143,11 +145,13 @@ impl Client {
 
     // Now render everything. 3 steps for now.
     self.render_engine.as_mut().unwrap().initialize_render();
-    self
-      .render_engine
-      .as_mut()
-      .unwrap()
-      .process_render_calls("debug".to_string());
+    self.render_engine.as_mut().unwrap().render_mesh_unbatched(
+      "debug",
+      DVec3::new(0.0, 0.0, 0.0),
+      DVec3::new(0.0, 0.0, 0.0),
+      DVec3::new(0.0, 0.0, 0.0),
+    );
+    self.render_engine.as_mut().unwrap().process_render_calls();
     self.render_engine.as_mut().unwrap().finalize_render();
 
     // This will need to run a close event for the client engine and send out a close event to the internal server.
