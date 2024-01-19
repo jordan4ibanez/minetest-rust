@@ -357,7 +357,7 @@ impl RenderEngine {
   ///
   /// ! This is still a prototype !
   ///
-  pub fn process_render_calls(&mut self, name: String) {
+  pub fn process_render_calls(&mut self) {
     // Do 3 very basic checks before attempting to render.
     if self.output.is_none() {
       panic!("RenderEngine: attempted to render with no output!");
