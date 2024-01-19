@@ -1,17 +1,24 @@
 mod mesh;
+mod render_containers;
 
-use std::{collections::HashMap, iter, mem::swap};
+use std::{
+  collections::{HashMap, VecDeque},
+  iter,
+  mem::swap,
+};
 
-use glam::UVec2;
+use glam::{DVec3, UVec2};
 use log::error;
 use sdl2::video::Window;
-use wgpu::{util::DeviceExt, CommandEncoder, RenderPass, SurfaceTexture, TextureView};
+use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
 use crate::{
   file_utilities::read_file_to_string,
   game::client::render_engine::mesh::{Mesh, Vertex},
 };
+
+use self::render_containers::RenderCall;
 
 use super::window_handler::WindowHandler;
 
