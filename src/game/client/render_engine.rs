@@ -304,6 +304,22 @@ impl RenderEngine {
   }
 
   ///
+  /// !TESTING!
+  ///
+  /// CREATING THE RAW VERTEX DATA AS A PROTOTYPE.
+  ///
+  /// !TESTING!
+  fn generate_wgpu_buffer(&mut self, name: &String, vertices: &[Vertex]) -> wgpu::Buffer {
+    self
+      .device
+      .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        label: Some(name),
+        contents: bytemuck::cast_slice(vertices),
+        usage: wgpu::BufferUsages::VERTEX,
+      })
+  }
+
+  ///
   /// Initialize the render state.
   ///
   /// This simply sets everything up.
@@ -332,22 +348,6 @@ impl RenderEngine {
         label: Some("minetest_renderer"),
       },
     ));
-  }
-
-  ///
-  /// !TESTING!
-  ///
-  /// CREATING THE RAW VERTEX DATA AS A PROTOTYPE.
-  ///
-  /// !TESTING!
-  fn generate_wgpu_buffer(&mut self, name: &String, vertices: &[Vertex]) -> wgpu::Buffer {
-    self
-      .device
-      .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-        label: Some(name),
-        contents: bytemuck::cast_slice(vertices),
-        usage: wgpu::BufferUsages::VERTEX,
-      })
   }
 
   ///
