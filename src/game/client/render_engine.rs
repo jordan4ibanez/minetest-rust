@@ -56,6 +56,9 @@ pub struct RenderEngine {
   size: UVec2,
   clear_color: wgpu::Color,
 
+  // Unbatched render queue.
+  unbatched_queue: VecDeque<RenderCall>,
+
   meshes: HashMap<String, Mesh>,
 }
 
@@ -242,6 +245,9 @@ impl RenderEngine {
       config,
       size: UVec2::new(width, height),
       clear_color,
+
+      // Unbatched render queue.
+      unbatched_queue: VecDeque::new(),
 
       meshes: HashMap::new(),
     };
