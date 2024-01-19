@@ -489,7 +489,21 @@ impl RenderEngine {
     self.meshes.insert(name.to_owned(), mesh);
   }
 
-  pub fn draw_mesh(&self, name: String) {}
+  ///
+  /// Render a mesh unbatched.
+  ///
+  /// !PROTOTYPING!
+  pub fn render_mesh_unbatched(
+    &mut self,
+    model_name: &str,
+    translation: DVec3,
+    rotation: DVec3,
+    scale: DVec3,
+  ) {
+    self
+      .unbatched_queue
+      .push_back(RenderCall::new(model_name, translation, rotation, scale))
+  }
 
   ///
   /// Run all required update procedures on the RenderEngine.
