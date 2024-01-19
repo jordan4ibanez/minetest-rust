@@ -485,8 +485,8 @@ impl RenderEngine {
   ///
   /// ! I don't think strings are a very good way to store this but it's prototyping!
   ///
-  pub fn store_mesh(&mut self, name: &String, mesh: Mesh) {
-    self.meshes.insert(name.clone(), mesh);
+  pub fn store_mesh(&mut self, name: &str, mesh: Mesh) {
+    self.meshes.insert(name.to_owned(), mesh);
   }
 
   pub fn draw_mesh(&self, name: String) {}
