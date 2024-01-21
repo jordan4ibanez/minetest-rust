@@ -53,6 +53,19 @@ impl Mesh {
   }
 
   ///
+  /// Automatically generates the required wgpu data and sets it.
+  ///
+  pub fn generate_wgpu_buffer(&mut self, device: &mut wgpu::Device) {
+    self.vertex_buffer = Some(
+      device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        label: Some(&self.name),
+        contents: self.as_wgpu_vertex_data(),
+        usage: wgpu::BufferUsages::VERTEX,
+      }),
+    );
+  }
+
+  ///
   /// Push raw vertex data into the Mesh.
   ///
   pub fn push_vertex(&mut self, vertex: Vertex) {
