@@ -40,6 +40,7 @@ pub struct Mesh {
   vertex_data: Vec<Vertex>,
   index_data: Vec<u32>,
   vertex_buffer: Option<wgpu::Buffer>,
+  index_buffer: Option<wgpu::Buffer>,
   number_of_indices: u32,
 }
 
@@ -50,6 +51,7 @@ impl Mesh {
       vertex_data: vec![],
       index_data: vec![],
       vertex_buffer: None,
+      index_buffer: None,
       number_of_indices: 0,
     }
   }
@@ -94,11 +96,13 @@ impl Mesh {
     let mut index_name = self.name.clone();
     index_name.push_str("_index");
 
-    let index_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-      label: Some(&index_name),
-      contents: self.get_wgpu_index_data(),
-      usage: wgpu::BufferUsages::INDEX,
-    });
+    self.index_buffer = Some(
+      device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        label: Some(&index_name),
+        contents: self.get_wgpu_index_data(),
+        usage: wgpu::BufferUsages::INDEX,
+      }),
+    );
   }
 
   ///
