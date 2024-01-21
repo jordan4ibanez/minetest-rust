@@ -28,5 +28,23 @@ fn panic_if_no_path(path: &str, read_to_type: &str) {
     )
   }
 }
+
+///
+/// This will first check if the file exists.
+///
+/// Next it will automatically parse the file into a String.
+///
+pub fn read_file_to_string(path: &str) -> String {
+  panic_if_no_path(path, "String");
   fs::read_to_string(path).unwrap().parse().unwrap()
+}
+
+///
+/// This will first check if the file exists.
+///
+/// Next it will automatically parse the file into a byte Vec.
+///
+pub fn read_file_to_byte_vec(path: &str) -> Vec<u8> {
+  panic_if_no_path(path, "bytes");
+  fs::read(path).unwrap()
 }
