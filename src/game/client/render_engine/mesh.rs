@@ -36,15 +36,15 @@ impl Vertex {
 #[derive(Debug)]
 pub struct Mesh {
   name: String,
-  data: Vec<Vertex>,
+  vertex_data: Vec<Vertex>,
   buffer: Option<wgpu::Buffer>,
 }
 
 impl Mesh {
-  pub fn new(name: &String) -> Self {
+  pub fn new(name: &str) -> Self {
     Mesh {
-      name: name.clone(),
-      data: vec![],
+      name: name.to_owned(),
+      vertex_data: vec![],
       buffer: None,
     }
   }
@@ -53,7 +53,7 @@ impl Mesh {
   /// Push raw vertex data into the Mesh.
   ///
   pub fn push_vertex(&mut self, vertex: Vertex) {
-    self.data.push(vertex);
+    self.vertex_data.push(vertex);
   }
 
   ///
@@ -61,7 +61,7 @@ impl Mesh {
   ///
   pub fn push_vertex_array(&mut self, vertex: &[Vertex]) {
     for vert in vertex {
-      self.data.push(*vert);
+      self.vertex_data.push(*vert);
     }
   }
 
@@ -80,15 +80,15 @@ impl Mesh {
   ///
   /// Grab the raw vertex data from the mesh to create the GPU memory.
   ///
-  pub fn as_raw_array(&self) -> &[Vertex] {
-    &self.data
+  pub fn as_raw_vertex_array(&self) -> &[Vertex] {
+    &self.vertex_data
   }
 
   ///
   /// Grab the raw vertex data from the mesh to pass to wgpu.
   ///
-  pub fn as_wgpu_data(&self) -> &[u8] {
-    bytemuck::cast_slice(self.data.as_slice())
+  pub fn as_wgpu_vertex_data(&self) -> &[u8] {
+    bytemuck::cast_slice(self.vertex_data.as_slice())
   }
 
   ///
