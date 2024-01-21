@@ -144,6 +144,14 @@ impl Mesh {
       )
     })
   }
+
+  ///
+  /// Grab the wgpu index buffer for rendering.
+  ///
+  pub fn get_wgpu_index_buffer(&self) -> &wgpu::Buffer {
+    self.index_buffer.as_ref().unwrap_or_else(|| {
+      panic!(
+        "Mesh: index buffer was never attached for Mesh [{}].",
         self.name
       )
     })
