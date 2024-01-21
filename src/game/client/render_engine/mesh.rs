@@ -1,4 +1,5 @@
 use std::mem;
+use wgpu::{util::DeviceExt, Device};
 
 ///
 /// The root sizes of the Vertex components.
@@ -38,7 +39,7 @@ pub struct Mesh {
   name: String,
   vertex_data: Vec<Vertex>,
   index_data: Vec<u32>,
-  buffer: Option<wgpu::Buffer>,
+  vertex_buffer: Option<wgpu::Buffer>,
 }
 
 impl Mesh {
@@ -47,7 +48,7 @@ impl Mesh {
       name: name.to_owned(),
       vertex_data: vec![],
       index_data: vec![],
-      buffer: None,
+      vertex_buffer: None,
     }
   }
 
