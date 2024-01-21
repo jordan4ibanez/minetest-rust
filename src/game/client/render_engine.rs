@@ -10,7 +10,7 @@ use std::{
 use glam::{DVec3, UVec2};
 use log::error;
 use sdl2::video::Window;
-use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
+use wgpu::{CommandEncoder, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
 use crate::{
