@@ -40,6 +40,7 @@ pub struct Mesh {
   vertex_data: Vec<Vertex>,
   index_data: Vec<u32>,
   vertex_buffer: Option<wgpu::Buffer>,
+  number_of_indices: u32,
 }
 
 impl Mesh {
