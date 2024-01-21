@@ -40,7 +40,7 @@ impl Texture {
       depth_or_array_layers: 1,
     };
 
-    let diffuse_texture = device.create_texture(&wgpu::TextureDescriptor {
+    self.diffuse_texture = Some(device.create_texture(&wgpu::TextureDescriptor {
       // All textures are stored as 3D, we represent our 2D texture
       // by setting depth to 1.
       size: texture_size,
@@ -61,6 +61,6 @@ impl Texture {
       // texture format is not supported on the WebGL2
       // backend.
       view_formats: &[],
-    });
+    }));
   }
 }
