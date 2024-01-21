@@ -253,6 +253,7 @@ impl RenderEngine {
     };
 
     // ! THIS IS WHERE THE TEMPORARY DEBUG VERTEX IS CREATED!
+    // ! WHY IS THIS RANDOMLY IN THE MIDDLE OF THE INITIALIZER ?
     {
       let name = "debug".to_string();
       let mut new_mesh = Mesh::new(&name);
