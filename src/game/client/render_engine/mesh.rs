@@ -58,13 +58,36 @@ impl Mesh {
   /// Consider this a "finalize" of the Mesh.
   ///
   pub fn generate_wgpu_buffers(&mut self, device: &mut wgpu::Device) {
+    // Final check of the data.
+    if self.vertex_data.is_empty() {
+      panic!("Mesh: attempted to generate wgpu buffers with no vertex data.");
+    }
+
+    if self.index_data.is_empty() {
+      panic!("Mesh: attempted to generate wgpu buffers with no index data.");
+    }
+
+    // Now, it turns into wgpu data.
+
+    let mut vertex_name = self.name.clone();
+    vertex_name.push_str("_vertex");
+
     self.vertex_buffer = Some(
       device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-        label: Some(&self.name),
-        contents: self.as_wgpu_vertex_data(),
+        label: Some(&vertex_name),
+        contents: self.get_wgpu_vertex_data(),
         usage: wgpu::BufferUsages::VERTEX,
       }),
     );
+
+    let mut index_name = self.name.clone();
+    index_name.push_str("_index");
+
+    let index_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+      label: Some(&index_name),
+      contents: self.get_wgpu_index_data(),
+      usage: wgpu::BufferUsages::INDEX,
+    });
   }
 
   ///
