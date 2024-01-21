@@ -62,11 +62,17 @@ impl Mesh {
   pub fn generate_wgpu_buffers(&mut self, device: &mut wgpu::Device) {
     // Final check of the data.
     if self.vertex_data.is_empty() {
-      panic!("Mesh: attempted to generate wgpu buffers with no vertex data.");
+      panic!(
+        "Mesh: attempted to generate wgpu buffers with no vertex data in mesh [{}].",
+        self.name
+      );
     }
 
     if self.index_data.is_empty() {
-      panic!("Mesh: attempted to generate wgpu buffers with no index data.");
+      panic!(
+        "Mesh: attempted to generate wgpu buffers with no index data in mesh [{}].",
+        self.name
+      );
     }
 
     // Finalize the length of the indices.
