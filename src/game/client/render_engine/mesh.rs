@@ -59,12 +59,24 @@ impl Mesh {
   }
 
   ///
-  /// Push an array of raw vertex data into the Mesh.
+  /// Push a Vector of raw vertex data into the Mesh.
   ///
-  pub fn push_vertex_array(&mut self, vertex: &[Vertex]) {
-    for vert in vertex {
-      self.vertex_data.push(*vert);
-    }
+  pub fn push_vertex_array(&mut self, vertex_vec: &mut Vec<Vertex>) {
+    self.vertex_data.append(vertex_vec);
+  }
+
+  ///
+  /// Push raw index data into the Mesh.
+  ///
+  pub fn push_index(&mut self, index: u32) {
+    self.index_data.push(index);
+  }
+
+  ///
+  /// Push a vector of raw vertex data into the Mesh.
+  ///
+  pub fn push_index_array(&mut self, index_array: &mut Vec<u32>) {
+    self.index_data.append(index_array);
   }
 
   ///
