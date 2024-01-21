@@ -1,5 +1,5 @@
 use std::mem;
-use wgpu::{util::DeviceExt, Device};
+use wgpu::util::DeviceExt;
 
 ///
 /// The root sizes of the Vertex components.
