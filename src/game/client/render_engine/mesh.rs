@@ -134,9 +134,9 @@ impl Mesh {
   }
 
   ///
-  /// Grab the wgpu buffer for rendering.
+  /// Grab the wgpu vertex buffer for rendering.
   ///
-  pub fn get_wgpu_buffer(&self) -> &wgpu::Buffer {
+  pub fn get_wgpu_vertex_buffer(&self) -> &wgpu::Buffer {
     self.vertex_buffer.as_ref().unwrap_or_else(|| {
       panic!(
         "Mesh: Buffer was never attached for {} in RenderEngine.",
