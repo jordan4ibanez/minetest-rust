@@ -158,13 +158,6 @@ impl Mesh {
   }
 
   ///
-  /// Grab the raw vertex data from the mesh to create the GPU memory.
-  ///
-  pub fn as_raw_vertex_array(&self) -> &[Vertex] {
-    &self.vertex_data
-  }
-
-  ///
   /// Grab the raw vertex data from the mesh to pass to wgpu.
   ///
   fn get_wgpu_vertex_data(&self) -> &[u8] {
