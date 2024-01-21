@@ -267,9 +267,7 @@ impl RenderEngine {
         },
       ]);
 
-      new_mesh.attach_wgpu_buffer(
-        new_render_engine.generate_wgpu_buffer(&name, new_mesh.as_raw_vertex_array()),
-      );
+      new_mesh.generate_wgpu_buffer(&mut new_render_engine.device);
 
       new_render_engine.store_mesh(&name, new_mesh);
     }
