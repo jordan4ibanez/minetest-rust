@@ -30,6 +30,19 @@ fn panic_if_no_path(path: &str, read_to_type: &str) {
 }
 
 ///
+/// Get the file name from the path provided.
+///
+pub fn file_name_from_path(path: &str) -> String {
+  panic_if_no_path(path, "file name String");
+  Path::new(path)
+    .file_name()
+    .unwrap()
+    .to_str()
+    .unwrap()
+    .to_owned()
+}
+
+///
 /// This will first check if the file exists.
 ///
 /// Next it will automatically parse the file into a String.
