@@ -140,7 +140,7 @@ impl Mesh {
   ///
   /// Grab the raw vertex data from the mesh to pass to wgpu.
   ///
-  pub fn as_wgpu_vertex_data(&self) -> &[u8] {
+  fn get_wgpu_vertex_data(&self) -> &[u8] {
     bytemuck::cast_slice(self.vertex_data.as_slice())
   }
 
