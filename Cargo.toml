@@ -26,6 +26,7 @@ configparser = "*"
 ctrlc = { version = "*", features = ["termination"] }
 env_logger = "*"
 glam = { version = "*", features = ["approx", "bytemuck", "rand", "serde"] }
+image = { version = "*", default-features = false, features = ["png", "jpeg"] }
 log = "*"
 message-io = "*"
 mlua = { version = "*", features = ["luau-jit"] }
