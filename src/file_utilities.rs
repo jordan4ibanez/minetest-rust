@@ -18,13 +18,15 @@ pub fn file_exists(path: &str) -> bool {
 }
 
 ///
-/// A mini helper function.
-/// This will first check if the file exists.
-/// Next it will automatically parse it into a string.
+/// This is a very lazy function but it cleans up implementation.
 ///
-pub fn read_file_to_string(path: &str) -> String {
+fn panic_if_no_path(path: &str, read_to_type: &str) {
   if !file_exists(path) {
-    panic!("minetest: tried to read [{}] which doesn't exist!", path)
+    panic!(
+      "minetest: tried to read file [{}] into [{}] which doesn't exist!",
+      path, read_to_type
+    )
   }
+}
   fs::read_to_string(path).unwrap().parse().unwrap()
 }
