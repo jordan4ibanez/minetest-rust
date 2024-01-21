@@ -84,7 +84,7 @@ impl Mesh {
   /// Grab the wgpu buffer for rendering.
   ///
   pub fn get_wgpu_buffer(&self) -> &wgpu::Buffer {
-    self.buffer.as_ref().unwrap_or_else(|| {
+    self.vertex_buffer.as_ref().unwrap_or_else(|| {
       panic!(
         "Mesh: Buffer was never attached for {} in RenderEngine.",
         self.name
