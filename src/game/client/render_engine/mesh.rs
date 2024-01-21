@@ -172,6 +172,13 @@ impl Mesh {
   }
 
   ///
+  /// Get the number of indices in the Mesh's index buffer.
+  ///
+  pub fn get_number_of_indices(&self) -> u32 {
+    self.number_of_indices
+  }
+
+  ///
   /// Get the layout descriptor of Vertex for wgpu.
   ///
   pub fn get_wgpu_descriptor() -> wgpu::VertexBufferLayout<'static> {
