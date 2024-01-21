@@ -37,6 +37,7 @@ impl Vertex {
 pub struct Mesh {
   name: String,
   vertex_data: Vec<Vertex>,
+  index_data: Vec<u32>,
   buffer: Option<wgpu::Buffer>,
 }
 
@@ -45,6 +46,7 @@ impl Mesh {
     Mesh {
       name: name.to_owned(),
       vertex_data: vec![],
+      index_data: vec![],
       buffer: None,
     }
   }
