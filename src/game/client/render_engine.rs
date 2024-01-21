@@ -268,7 +268,7 @@ impl RenderEngine {
       ]);
 
       // * Passes in the entire device as a mutable ref to finalize the Mesh.
-      new_mesh.generate_wgpu_buffer(&mut new_render_engine.device);
+      new_mesh.generate_wgpu_buffers(&mut new_render_engine.device);
 
       // * Then we store the newly generated Mesh into our render engine.
       // * It's now owned by the render engine.

@@ -53,9 +53,11 @@ impl Mesh {
   }
 
   ///
-  /// Automatically generates the required wgpu data and sets it.
+  /// Automatically generates the required wgpu data buffers and makes it part of the Mesh.
   ///
-  pub fn generate_wgpu_buffer(&mut self, device: &mut wgpu::Device) {
+  /// Consider this a "finalize" of the Mesh.
+  ///
+  pub fn generate_wgpu_buffers(&mut self, device: &mut wgpu::Device) {
     self.vertex_buffer = Some(
       device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: Some(&self.name),
