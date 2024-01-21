@@ -50,6 +50,7 @@ impl Mesh {
       vertex_data: vec![],
       index_data: vec![],
       vertex_buffer: None,
+      number_of_indices: 0,
     }
   }
 
