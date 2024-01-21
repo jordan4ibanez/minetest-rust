@@ -134,12 +134,6 @@ impl RenderEngine {
       push_constant_ranges: &[],
     });
 
-    // let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-    //   label: Some("Vertex Buffer"),
-    //   contents: bytemuck::cast_slice(VERTICES),
-    //   usage: wgpu::BufferUsages::VERTEX,
-    // });
-
     // Surface capabilities.
     let surface_caps = surface.get_capabilities(&adapter);
 
