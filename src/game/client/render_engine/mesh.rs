@@ -69,6 +69,9 @@ impl Mesh {
       panic!("Mesh: attempted to generate wgpu buffers with no index data.");
     }
 
+    // Finalize the length of the indices.
+    self.number_of_indices = self.index_data.len() as u32;
+
     // Now, it turns into wgpu data.
 
     let mut vertex_name = self.name.clone();
