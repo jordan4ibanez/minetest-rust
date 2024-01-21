@@ -257,7 +257,7 @@ impl RenderEngine {
       let name = "debug".to_string();
       let mut new_mesh = Mesh::new(&name);
       // new_mesh.push_vertex();
-      new_mesh.push_vertex_array(&[
+      new_mesh.push_vertex_array(&mut vec![
         Vertex {
           position: [0.0, 0.5, 0.0],
           color: [1.0, 0.0, 0.0],
