@@ -139,7 +139,11 @@ impl Mesh {
   pub fn get_wgpu_vertex_buffer(&self) -> &wgpu::Buffer {
     self.vertex_buffer.as_ref().unwrap_or_else(|| {
       panic!(
-        "Mesh: Buffer was never attached for {} in RenderEngine.",
+        "Mesh: vertex buffer was never attached for Mesh [{}].",
+        self.name
+      )
+    })
+  }
         self.name
       )
     })
