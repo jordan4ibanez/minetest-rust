@@ -1,5 +1,6 @@
 mod mesh;
 mod render_containers;
+mod texture;
 
 use std::{
   collections::{HashMap, VecDeque},
