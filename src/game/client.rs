@@ -6,7 +6,8 @@ mod window_handler;
 use glam::DVec3;
 
 use self::{
-  client_connection::ClientConnection, render_engine::RenderEngine, window_handler::WindowHandler,
+  client_connection::ClientConnection, keyboard::KeyboardController, render_engine::RenderEngine,
+  window_handler::WindowHandler,
 };
 
 use super::lua_engine::LuaEngine;
@@ -30,6 +31,7 @@ pub struct Client {
   client_name: String,
   connection: Option<ClientConnection>,
   lua_engine: Option<LuaEngine>,
+  keyboard: KeyboardController,
 
   quit_received: bool,
 }
@@ -42,6 +44,7 @@ impl Client {
       client_name,
       connection: None, //ClientConnection::new(address, port),
       lua_engine: None,
+      keyboard: KeyboardController::new(),
 
       quit_received: false,
     };

@@ -1,3 +1,13 @@
-pub struct KeyboardController {}
+use std::collections::HashMap;
 
-impl KeyboardController {}
+pub struct KeyboardController {
+  keys: HashMap<String, bool>,
+}
+
+impl KeyboardController {
+  pub fn new() -> Self {
+    KeyboardController {
+      keys: HashMap::new(),
+    }
+  }
+}
