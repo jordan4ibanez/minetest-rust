@@ -158,7 +158,7 @@ impl Client {
 
     camera_pos.y += delta as f32;
 
-    println!("camera pos {:?}", camera_pos);
+    // println!("camera pos {:?}", camera_pos);
 
     self
       .render_engine

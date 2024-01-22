@@ -202,6 +202,7 @@ impl WindowHandler {
     keymod: Mod,
     keyevent: KeyEvent,
     mouse: &mut MouseController,
+    keyboard: &mut KeyboardController,
   ) {
     // Since SDL2 can poll anything, we need to ensure that we can actually utilize the sent scancode.
     let scancode_result = match scancode_option {
@@ -224,11 +225,12 @@ impl WindowHandler {
     if scancode == Scancode::Escape {
       self.quit();
     }
-
     // ! TEMPORARY TESTING !
     if scancode == Scancode::F5 && keyevent.is_down() {
       self.toggle_mouse_capture(mouse)
     }
+
+    keyboard.set_key(&scancode.to_string(), keyevent.is_down());
   }
 
   ///
@@ -382,7 +384,7 @@ impl WindowHandler {
           repeat,
         } => {
           // println!("sdl2: keydown event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat);
-          self.handle_key_event(scancode, keymod, KeyEvent::PressingDown, mouse);
+          self.handle_key_event(scancode, keymod, KeyEvent::PressingDown, mouse, keyboard);
         },
         sdl2::event::Event::KeyUp {
           timestamp,
@@ -393,7 +395,7 @@ impl WindowHandler {
           repeat,
         } => {
           // println!("sdl2: keyup event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat);
-          self.handle_key_event(scancode, keymod, KeyEvent::LiftedOff, mouse);
+          self.handle_key_event(scancode, keymod, KeyEvent::LiftedOff, mouse, keyboard);
         },
         sdl2::event::Event::TextEditing {
           timestamp,
@@ -406,7 +408,9 @@ impl WindowHandler {
           timestamp,
           window_id,
           text,
-        } => println!("sdl2: text input event | timestamp: {} | window_id: {} | text: {}", timestamp, window_id, text),
+        } => {
+          // println!("sdl2: text input event | timestamp: {} | window_id: {} | text: {}", timestamp, window_id, text)
+        },
         sdl2::event::Event::MouseMotion {
           timestamp,
           window_id,
