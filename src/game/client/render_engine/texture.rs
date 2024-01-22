@@ -7,7 +7,7 @@ pub struct Texture {
   name: String,
   dimensions: UVec2,
 
-  bind_group: wgpu::BindGroup,
+  defuse_bind_group: wgpu::BindGroup,
 
   texture: wgpu::Texture,
   view: wgpu::TextureView,
@@ -89,10 +89,10 @@ impl Texture {
       ..Default::default()
     });
 
-    let mut bind_group_name = name.clone();
-    bind_group_name.push_str("_bind_group");
+    let mut defuse_bind_group_name = name.clone();
+    defuse_bind_group_name.push_str("_defuse_bind_group");
 
-    let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+    let defuse_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
       layout: &Texture::get_wgpu_bind_group_layout(device),
       entries: &[
         wgpu::BindGroupEntry {
@@ -104,14 +104,14 @@ impl Texture {
           resource: wgpu::BindingResource::Sampler(&sampler),
         },
       ],
-      label: Some(&bind_group_name),
+      label: Some(&defuse_bind_group_name),
     });
 
     Texture {
       name,
       dimensions: UVec2::new(dimensions.0, dimensions.1),
 
-      bind_group,
+      defuse_bind_group,
 
       texture,
       view,
@@ -130,7 +130,7 @@ impl Texture {
   /// Get the wgpu diffuse bind group for rendering.
   ///
   pub fn get_wgpu_diffuse_bind_group(&self) -> &wgpu::BindGroup {
-    &self.bind_group
+    &self.defuse_bind_group
   }
 
   ///
