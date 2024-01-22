@@ -18,6 +18,7 @@ pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
 pub struct Camera {
   eye: Vec3A,
   target: Vec3A,
+  rotation: Vec3A,
   up: Vec3A,
   aspect_ratio: f32,
   fov_y: f32,
@@ -60,6 +61,7 @@ impl Camera {
     Camera {
       eye: position,
       target: Vec3A::new(0.0, 0.0, 0.0),
+      rotation: Vec3A::new(0.0, 0.0, 0.0),
       up: glam::Vec3A::Y,
       aspect_ratio: window_handler.get_width() as f32 / window_handler.get_height() as f32,
       fov_y: 45.0,
