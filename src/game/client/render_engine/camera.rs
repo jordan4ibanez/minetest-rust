@@ -55,6 +55,10 @@ impl Camera {
     self.eye = *new_position;
   }
 
+  pub fn get_position(&self) -> &Vec3A {
+    &self.eye
+  }
+
   ///
   /// Rebuild the projection matrix.
   ///
