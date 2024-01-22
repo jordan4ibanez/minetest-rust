@@ -38,6 +38,7 @@ use super::window_handler::WindowHandler;
 pub struct RenderEngine {
   camera: Camera,
   camera_buffer: wgpu::Buffer,
+  camera_bind_group: wgpu::BindGroup,
 
   // General implementation.
   instance: wgpu::Instance,
@@ -238,6 +239,7 @@ impl RenderEngine {
     let mut new_render_engine = RenderEngine {
       camera,
       camera_buffer,
+      camera_bind_group,
 
       // General implementation.
       instance,
@@ -349,7 +351,11 @@ impl RenderEngine {
   ///
   /// This simply sets everything up.
   ///
-  pub fn initialize_render(&mut self) {
+  /// Also, the Camera's uniform is updated here.
+  ///
+  pub fn initialize_render(&mut self, window_handler: &WindowHandler) {
+    self.camera.build_view_projection_matrix(window_handler);
+
     self.output = Some(
       self
         .surface
@@ -422,6 +428,7 @@ impl RenderEngine {
         });
 
     render_pass.set_pipeline(&self.render_pipeline);
+    render_pass.set_bind_group(1, &self.camera_bind_group, &[]);
 
     while !self.unbatched_queue.is_empty() {
       let unbatched_render_call = self.unbatched_queue.pop_front().unwrap();
