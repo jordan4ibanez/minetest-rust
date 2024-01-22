@@ -1,4 +1,5 @@
 mod client;
+mod delta_reporter;
 mod lua_engine;
 mod server;
 
@@ -9,13 +10,11 @@ use std::{
   time::Duration,
 };
 
-use delta::Timer;
-
 use spin_sleep_util::{interval, Interval, RateReporter};
 
 use crate::command_line::CommandLineInterface;
 
-use self::{client::Client, server::Server};
+use self::{client::Client, delta_reporter::DeltaReporter, server::Server};
 
 ///
 /// The master container for the game.
@@ -50,7 +49,7 @@ pub struct Game {
 
   interval: Interval,
   fps_reporter: RateReporter,
-  delta_reporter: Timer,
+  delta_reporter: DeltaReporter,
 
   delta: f64,
   current_fps: f64,
@@ -83,7 +82,7 @@ impl Game {
 
     let interval = interval(Duration::from_secs_f64(1.0 / loop_helper_goal));
     let fps_reporter = RateReporter::new(Duration::from_secs(1));
-    let delta_reporter = Timer::new();
+    let delta_reporter = DeltaReporter::new();
 
     //todo: make this happen!
     println!("we need a minetest.conf parser for vsync!");
@@ -199,9 +198,10 @@ impl Game {
   fn main(&mut self) {
     //? Here is where the logic loop goes.
 
-    self.delta = self.delta_reporter.mark_secs();
+    self.delta = self.delta_reporter.report();
+
     // * Uncomment this to see the exact delta time.
-    // println!("delta: {:.32}", self.delta);
+    println!("delta: {:.32}", self.delta);
 
     //* Begin server/client on_tick()
 
