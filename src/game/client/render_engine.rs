@@ -495,8 +495,6 @@ impl RenderEngine {
   ///
   /// Store a Mesh into the render engine for usage.
   ///
-  /// ! I don't think strings are a very good way to store this but it's prototyping!
-  ///
   pub fn store_mesh(&mut self, name: &str, mesh: Mesh) {
     self.meshes.insert(name.to_owned(), mesh);
   }
