@@ -232,7 +232,7 @@ impl RenderEngine {
     camera.build_view_projection_matrix(&device, window_handler);
 
     // ! TESTING
-    let color_uniform = ColorUniform::new(0.0, 0.0, 0.0);
+    let color_uniform = ColorUniform::new(1.0, 1.0, 1.0);
 
     // Now we create the Color buffer.
     let color_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
