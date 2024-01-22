@@ -284,7 +284,7 @@ impl RenderEngine {
 
       // * Then we store the newly generated Mesh into our render engine.
       // * It's now owned by the render engine.
-      new_render_engine.store_mesh(&name, new_mesh);
+      new_render_engine.store_mesh(&new_mesh.get_name().clone(), new_mesh);
     }
     // ! END TEMPORARY MESH DEBUGGING !
 
