@@ -32,6 +32,7 @@ https://discord.gg/Z2wCscTB4F
 - bytemuck - Used in conjunction with wgpu to cash vertex data.
 
 - delta - Used to calculate the time between frames.
+- rand - For doing random things.
 
 ##### Packages to be implemented:
 - rusqlite - SQLite3 database.

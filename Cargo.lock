@@ -1045,6 +1045,7 @@ dependencies = [
  "mlua",
  "pollster",
  "quote",
+ "rand",
  "rusqlite",
  "sdl2",
  "sea-query",
