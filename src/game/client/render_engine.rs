@@ -12,7 +12,7 @@ use std::{
 use glam::{DVec3, UVec2, Vec3A};
 use log::error;
 
-use wgpu::{CommandEncoder, SurfaceTexture, TextureView};
+use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
 use crate::{
@@ -23,10 +23,7 @@ use crate::{
   },
 };
 
-use self::{
-  camera::Camera,
-  render_containers::RenderCall,
-};
+use self::{camera::Camera, render_containers::RenderCall};
 
 use super::window_handler::WindowHandler;
 
@@ -40,6 +37,7 @@ use super::window_handler::WindowHandler;
 ///
 pub struct RenderEngine {
   camera: Camera,
+  camera_buffer: wgpu::Buffer,
 
   // General implementation.
   instance: wgpu::Instance,
@@ -214,8 +212,20 @@ impl RenderEngine {
       adapter.get_info().backend.to_str()
     );
 
+    // Initial creation and updating of the Camera.
+    let mut camera = Camera::new(Vec3A::new(0.0, 1.0, 2.0), 45.0, window_handler);
+    camera.build_view_projection_matrix(window_handler);
+
+    // Now we create the camera's buffer.
+    let camera_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+      label: Some("Camera Buffer"),
+      contents: camera.get_wgpu_uniform(),
+      usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+    });
+
     let mut new_render_engine = RenderEngine {
-      camera: Camera::new(Vec3A::new(0.0, 1.0, 2.0), 45.0, window_handler),
+      camera,
+      camera_buffer,
 
       // General implementation.
       instance,
