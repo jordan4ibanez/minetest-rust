@@ -185,8 +185,15 @@ impl Client {
     let mouse_relative = self.mouse.get_relative_position();
     if mouse_relative.length_squared() != 0 {
       println!("Mouse is moved!");
-      let mut camera = self.render_engine.as_mut().unwrap().get_camera();
-      camera.get_position();
+      let camera = self.render_engine.as_mut().unwrap().get_camera();
+      let mut camera_rotation = *camera.get_rotation();
+
+      camera_rotation.y += mouse_relative.x as f32 * self.mouse.get_sensitivity();
+      camera_rotation.x += mouse_relative.y as f32 * self.mouse.get_sensitivity();
+
+      camera.set_rotation(&camera_rotation);
+
+      println!("{:?}", camera.get_rotation());
     }
 
     self
