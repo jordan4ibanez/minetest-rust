@@ -13,7 +13,7 @@ impl MouseController {
       position: IVec2::new(0, 0),
       relative_position: IVec2::new(0, 0),
       relative_mode: false,
-      sensitivity: 0.001,
+      sensitivity: 0.01,
     }
   }
 
@@ -79,6 +79,9 @@ impl MouseController {
   /// * This should only be used in WindowHandler!
   ///
   pub fn set_relative_position(&mut self, xrel: i32, yrel: i32) {
+    if !self.relative_mode {
+      return;
+    }
     self.relative_position.x = xrel;
     self.relative_position.y = yrel;
   }
