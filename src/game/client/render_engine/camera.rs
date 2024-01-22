@@ -1,6 +1,6 @@
 mod camera_uniform;
 
-use glam::{Mat4, Vec3A, Vec4};
+use glam::{Mat4, Quat, Vec3, Vec3A, Vec4};
 use wgpu::util::DeviceExt;
 
 use crate::game::client::window_handler::WindowHandler;
@@ -132,19 +132,22 @@ impl Camera {
   ) {
     self.aspect_ratio = window_handler.get_width() as f32 / window_handler.get_height() as f32;
 
-    let view = Mat4::from_euler(
+    let mut view_rot = Mat4::from_euler(
       glam::EulerRot::XYZ,
       self.rotation.x,
       self.rotation.y,
       self.rotation.z,
     );
+
+    let view_translation = Mat4::from_translation(Vec3::from(self.eye));
+
     // let view = Mat4::look_at_rh(self.eye.into(), self.target.into(), self.up.into());
 
     let projection = Mat4::perspective_rh(self.fov_y, self.aspect_ratio, self.z_near, self.z_far);
 
     self
       .camera_uniform
-      .update_view_projection(OPENGL_TO_WGPU_MATRIX * projection * view);
+      .update_view_projection(OPENGL_TO_WGPU_MATRIX * projection * view_rot * view_translation);
 
     self.update_buffer(device);
   }
