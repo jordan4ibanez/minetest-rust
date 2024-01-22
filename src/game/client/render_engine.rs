@@ -195,9 +195,9 @@ impl RenderEngine {
     surface.configure(&device, &config);
 
     let clear_color = wgpu::Color {
-      r: 0.5,
-      g: 0.0,
-      b: 0.5,
+      r: 0.1,
+      g: 0.1,
+      b: 0.1,
       a: 1.0,
     };
 
@@ -534,6 +534,6 @@ impl RenderEngine {
   pub fn update(&mut self, window_handler: &WindowHandler, delta: f64) {
     self.update_size(window_handler.get_size());
 
-    self.test_implementation(window_handler);
+    // self.test_implementation(window_handler);
   }
 }
