@@ -21,12 +21,12 @@ pub struct Camera {
 }
 
 impl Camera {
-  pub fn new(position: Vec3A, fov_y: f32, window: WindowHandler) -> Self {
+  pub fn new(position: Vec3A, fov_y: f32, window_handler: &WindowHandler) -> Self {
     Camera {
       eye: position,
       target: Vec3A::new(0.0, 0.0, 0.0),
       up: glam::Vec3A::Y,
-      aspect_ratio: window.get_width() as f32 / window.get_height() as f32,
+      aspect_ratio: window_handler.get_width() as f32 / window_handler.get_height() as f32,
       fov_y: 45.0,
       z_near: 0.1,
       z_far: 100.0,
