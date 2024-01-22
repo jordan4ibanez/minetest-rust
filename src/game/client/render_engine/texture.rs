@@ -38,7 +38,7 @@ impl Texture {
   }
 
   ///
-  /// Get the texture's name.
+  /// Get the Texture's name.
   ///
   pub fn get_name(&self) -> &String {
     &self.name
