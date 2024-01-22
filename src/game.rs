@@ -47,7 +47,7 @@ pub struct Game {
   is_client: bool,
 
   interval: Interval,
-  rate_reporter: RateReporter,
+  fps_reporter: RateReporter,
 
   delta: f64,
   current_fps: f64,
@@ -101,7 +101,7 @@ impl Game {
       is_server: cli.server,
 
       interval,
-      rate_reporter,
+      fps_reporter: rate_reporter,
 
       delta: 0.0,
       current_fps: 0.0,
@@ -227,7 +227,7 @@ impl Game {
     //todo: this can also be linked into the client struct to report
     //todo: the current framerate.
 
-    if let Some(fps) = self.rate_reporter.increment_and_report() {
+    if let Some(fps) = self.fps_reporter.increment_and_report() {
       self.current_fps = fps;
       let time_measurement = match self.is_client {
         true => "FPS",
@@ -239,6 +239,9 @@ impl Game {
     if self.vsync_mode == 0 || self.is_server {
       self.interval.tick();
     }
+
+    let x = self.interval.period().as_secs_f64();
+    println!("delta: {}", x);
   }
 
   ///
