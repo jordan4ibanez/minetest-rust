@@ -218,9 +218,18 @@ impl RenderEngine {
 
     // Now we create the camera's buffer.
     let camera_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-      label: Some("Camera Buffer"),
+      label: Some("camera_buffer"),
       contents: camera.get_wgpu_uniform(),
       usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+    });
+
+    let camera_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+      layout: &Camera::get_wgpu_bind_group_layout(&device),
+      entries: &[wgpu::BindGroupEntry {
+        binding: 0,
+        resource: camera_buffer.as_entire_binding(),
+      }],
+      label: Some("camera_bind_group"),
     });
 
     let mut new_render_engine = RenderEngine {

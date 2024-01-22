@@ -80,4 +80,23 @@ impl Camera {
   pub fn get_wgpu_uniform(&self) -> &[u8] {
     bytemuck::cast_slice(self.camera_uniform.get_view_projection())
   }
+
+  ///
+  /// Get the wgpu bind group layout to tell wgpu how to use the buffer.
+  ///
+  pub fn get_wgpu_bind_group_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
+    device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+      entries: &[wgpu::BindGroupLayoutEntry {
+        binding: 0,
+        visibility: wgpu::ShaderStages::VERTEX,
+        ty: wgpu::BindingType::Buffer {
+          ty: wgpu::BufferBindingType::Uniform,
+          has_dynamic_offset: false,
+          min_binding_size: None,
+        },
+        count: None,
+      }],
+      label: Some("camera_bind_group_layout"),
+    })
+  }
 }
