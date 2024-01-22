@@ -57,6 +57,13 @@ impl Mesh {
   }
 
   ///
+  /// Get the Mesh's name.
+  ///
+  pub fn get_name(&self) -> &String {
+    &self.name
+  }
+
+  ///
   /// Automatically generates the required wgpu data buffers and makes it part of the Mesh.
   ///
   /// Consider this the "finalize" of the Mesh.
