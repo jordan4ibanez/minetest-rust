@@ -122,7 +122,7 @@ impl Mesh {
   ///
   /// Push a Vector of raw vertex data into the Mesh.
   ///
-  pub fn push_vertex_array(&mut self, vertex_vec: &mut Vec<Vertex>) {
+  pub fn push_vertex_vec(&mut self, vertex_vec: &mut Vec<Vertex>) {
     self.vertex_data.append(vertex_vec);
   }
 

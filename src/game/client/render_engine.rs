@@ -253,8 +253,7 @@ impl RenderEngine {
     // ! THIS IS TEMPORARY MESH DEBUGGING !
     {
       let mut new_mesh = Mesh::new("debug");
-      // new_mesh.push_vertex();
-      new_mesh.push_vertex_array(&mut vec![
+      new_mesh.push_vertex_vec(&mut vec![
         Vertex {
           position: [-0.0868241, 0.49240386, 0.0],
           color: [0.5, 0.0, 0.5],
