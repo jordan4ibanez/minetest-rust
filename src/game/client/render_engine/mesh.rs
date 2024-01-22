@@ -1,4 +1,4 @@
-use std::mem;
+use std::mem::size_of;
 use wgpu::util::DeviceExt;
 
 ///
@@ -202,18 +202,27 @@ impl Mesh {
   ///
   pub fn get_wgpu_descriptor() -> wgpu::VertexBufferLayout<'static> {
     wgpu::VertexBufferLayout {
-      array_stride: mem::size_of::<Vertex>() as wgpu::BufferAddress,
+      array_stride: size_of::<Vertex>() as wgpu::BufferAddress,
       step_mode: wgpu::VertexStepMode::Vertex,
       attributes: &[
         // If we need to add new components, we do it here. Hooray!
+
+        // Positions.
         wgpu::VertexAttribute {
           offset: 0,
           shader_location: 0,
           format: wgpu::VertexFormat::Float32x3,
         },
+        // Texture coordinates.
         wgpu::VertexAttribute {
-          offset: mem::size_of::<[f32; 3]>() as wgpu::BufferAddress,
+          offset: size_of::<[f32; 2]>() as wgpu::BufferAddress,
           shader_location: 1,
+          format: wgpu::VertexFormat::Float32x2,
+        },
+        // Colors.
+        wgpu::VertexAttribute {
+          offset: (size_of::<[f32; 3]>() + size_of::<[f32; 2]>()) as wgpu::BufferAddress,
+          shader_location: 2,
           format: wgpu::VertexFormat::Float32x3,
         },
       ],
