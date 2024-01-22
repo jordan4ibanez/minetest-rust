@@ -14,6 +14,8 @@ use log::error;
 
 use self::key_event_enum::KeyEvent;
 
+use super::mouse::MouseController;
+
 ///
 /// SDL2 window controller.
 ///
@@ -35,7 +37,6 @@ pub struct WindowHandler {
   quit_received: bool,
   visible: bool,
   size: UVec2,
-  mouse_pos: UVec2,
 }
 
 impl WindowHandler {
@@ -68,7 +69,6 @@ impl WindowHandler {
       quit_received: false,
       visible: false,
       size,
-      mouse_pos: UVec2::new(0, 0),
     };
 
     new_window_handler.show();
@@ -235,18 +235,17 @@ impl WindowHandler {
   }
 
   ///
-  /// Internally updates the mouse position, automatically.
+  /// Automatically updates the Mouse' position.
   ///
-  fn update_mouse_position(&mut self, x: i32, y: i32) {
-    self.mouse_pos.x = x as u32;
-    self.mouse_pos.y = y as u32;
+  fn update_mouse_position(&self, x: i32, y: i32, mouse: &mut MouseController) {
+    mouse.set_position(x as u32, y as u32);
   }
 
   ///
-  /// Borrow the mouse position immutably.
+  /// Automatically updates the Mouse' relative position.
   ///
-  pub fn get_mouse_position(&self) -> &UVec2 {
-    &self.mouse_pos
+  fn update_mouse_relative_position(&self, xrel: i32, yrel: i32, mouse: &mut MouseController) {
+    mouse.set_relative_position(xrel as u32, yrel as u32);
   }
 
   ///
@@ -259,8 +258,9 @@ impl WindowHandler {
     y: i32,
     xrel: i32,
     yrel: i32,
+    mouse: &mut MouseController,
   ) {
-    self.update_mouse_position(x, y);
+    self.update_mouse_position(x, y, mouse);
   }
 
   ///
@@ -309,7 +309,7 @@ impl WindowHandler {
     }
   }
 
-  pub fn update(&mut self, delta: f64) {
+  pub fn update(&mut self, delta: f64, mouse: &mut MouseController) {
     let mut event_pump = self
       .sdl_context
       .event_pump()
@@ -387,7 +387,7 @@ impl WindowHandler {
           yrel,
         } => {
           // println!("sdl2: mouse motion event | timestamp: {} | window_id: {} | which: {} | mousestate: {:?} | x: {} | y: {} | xrel: {} | yrel: {} |", timestamp, window_id, which, mousestate, x, y, xrel, yrel);
-          self.handle_mouse_motion_event(mousestate, x, y, xrel, yrel);
+          self.handle_mouse_motion_event(mousestate, x, y, xrel, yrel, mouse);
         },
         sdl2::event::Event::MouseButtonDown {
           timestamp,
