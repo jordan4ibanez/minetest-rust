@@ -4,7 +4,7 @@ use image::{DynamicImage, GenericImageView, ImageBuffer, Rgba};
 use crate::file_utilities::{file_name_from_path, read_file_to_byte_vec};
 
 pub struct Texture {
-  texture_name: String,
+  name: String,
 
   diffuse_bytes: Vec<u8>,
   diffuse_image: DynamicImage,
@@ -24,7 +24,7 @@ impl Texture {
     let dimensions = diffuse_image.dimensions();
 
     Texture {
-      texture_name: file_name_from_path(path),
+      name: file_name_from_path(path),
 
       diffuse_bytes,
       diffuse_image,
@@ -40,8 +40,8 @@ impl Texture {
   ///
   /// Get the texture's name.
   ///
-  pub fn get_texture_name(&self) -> &String {
-    &self.texture_name
+  pub fn get_name(&self) -> &String {
+    &self.name
   }
 
   ///
@@ -71,7 +71,7 @@ impl Texture {
       // TEXTURE_BINDING tells wgpu that we want to use this texture in shaders
       // COPY_DST means that we want to copy data to this texture
       usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-      label: Some(&self.texture_name),
+      label: Some(&self.name),
       // This is the same as with the SurfaceConfig. It
       // specifies what texture formats can be used to
       // create TextureViews for this texture. The base
