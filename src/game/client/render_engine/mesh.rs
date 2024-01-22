@@ -11,6 +11,7 @@ use wgpu::util::DeviceExt;
 /// etc
 ///
 const POSITION_COMPONENTS: usize = 3;
+const TEXTURE_COORDINATE_COMPONENTS: usize = 2;
 const COLOR_COMPONENTS: usize = 3;
 
 ///
@@ -18,16 +19,27 @@ const COLOR_COMPONENTS: usize = 3;
 ///
 /// Meshes are constructed out of an array of Vertex data.
 ///
+/// Vertex is simply a data container, this is why everything is public.
+///
 #[repr(C)]
 #[derive(Clone, Copy, Debug, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct Vertex {
   pub position: [f32; POSITION_COMPONENTS],
+  pub texture_coordinates: [f32; TEXTURE_COORDINATE_COMPONENTS],
   pub color: [f32; COLOR_COMPONENTS],
 }
 
 impl Vertex {
-  pub fn new(position: [f32; POSITION_COMPONENTS], color: [f32; COLOR_COMPONENTS]) -> Self {
-    Vertex { position, color }
+  pub fn new(
+    position: [f32; POSITION_COMPONENTS],
+    texture_coordinates: [f32; TEXTURE_COORDINATE_COMPONENTS],
+    color: [f32; COLOR_COMPONENTS],
+  ) -> Self {
+    Vertex {
+      position,
+      texture_coordinates,
+      color,
+    }
   }
 }
 
@@ -218,7 +230,11 @@ impl Mesh {
 ///
 /// This is primarily aimed at procedurally generated meshes, like map visual data.
 ///
-pub fn generate_mesh(positions: &Vec<f32>, colors: &Vec<f32>) -> Result<Mesh, String> {
+pub fn generate_mesh(
+  positions: &Vec<f32>,
+  texture_coordinates: &Vec<f32>,
+  colors: &Vec<f32>,
+) -> Result<Mesh, String> {
   // We want to check all the data to ensure the logic is sound.
 
   // First, check positions sizing.
@@ -227,6 +243,14 @@ pub fn generate_mesh(positions: &Vec<f32>, colors: &Vec<f32>) -> Result<Mesh, St
   }
   if positions.len() % POSITION_COMPONENTS != 0 {
     return Err("generate_mesh: sent a wrongly sized positions vector!".to_string());
+  }
+
+  // Next check texture coordinates sizing.
+  if texture_coordinates.is_empty() {
+    return Err("generate_mesh: sent a blank texture coordinates vector!".to_string());
+  }
+  if texture_coordinates.len() % TEXTURE_COORDINATE_COMPONENTS != 0 {
+    return Err("generate_mesh: sent a wrongly sized texture coordinates vector!".to_string());
   }
 
   // Then check colors sizing.
@@ -239,12 +263,14 @@ pub fn generate_mesh(positions: &Vec<f32>, colors: &Vec<f32>) -> Result<Mesh, St
 
   // Now we need to ensure that these are equally sized.
   let positions_components = positions.len() / POSITION_COMPONENTS;
+  let texture_coordinates_components = texture_coordinates.len() / TEXTURE_COORDINATE_COMPONENTS;
   let colors_components = colors.len() / COLOR_COMPONENTS;
 
-  if positions_components != colors_components {
+  if positions_components != colors_components || positions.len() != texture_coordinates_components
+  {
     return Err(format!(
-      "generate_mesh: sent uneven mesh data! positions: {} | colors: {}",
-      positions_components, colors_components
+      "generate_mesh: sent uneven mesh data! positions: {} | texture_coordinates: {} | colors: {}",
+      positions_components, texture_coordinates_components, colors_components
     ));
   }
 
@@ -260,19 +286,29 @@ pub fn generate_mesh(positions: &Vec<f32>, colors: &Vec<f32>) -> Result<Mesh, St
 
     let position_base_offset = i * POSITION_COMPONENTS;
 
-    let position_slice: [f32; 3] = positions
+    let position_slice: [f32; POSITION_COMPONENTS] = positions
       [position_base_offset..position_base_offset + POSITION_COMPONENTS]
+      .try_into()
+      .unwrap();
+
+    let texture_coordinates_base_offset = i * TEXTURE_COORDINATE_COMPONENTS;
+
+    let texture_coordinates_slice: [f32; TEXTURE_COORDINATE_COMPONENTS] = texture_coordinates
+      [texture_coordinates_base_offset
+        ..texture_coordinates_base_offset + TEXTURE_COORDINATE_COMPONENTS]
       .try_into()
       .unwrap();
 
     let color_base_offset = i * COLOR_COMPONENTS;
 
-    let color_slice: [f32; 3] = colors[color_base_offset..color_base_offset + COLOR_COMPONENTS]
+    let color_slice: [f32; COLOR_COMPONENTS] = colors
+      [color_base_offset..color_base_offset + COLOR_COMPONENTS]
       .try_into()
       .unwrap();
 
     mesh.push_vertex(Vertex {
       position: position_slice,
+      texture_coordinates: texture_coordinates_slice,
       color: color_slice,
     });
   }
@@ -284,74 +320,121 @@ pub fn generate_mesh(positions: &Vec<f32>, colors: &Vec<f32>) -> Result<Mesh, St
 mod tests {
   use crate::game::client::render_engine::mesh::generate_mesh;
 
+  // Mesh does not test indices. This is basically untestable.
+  // There can be variable number of indices per mesh.
+
+  // Each test is one or two vertex positions.
+  // They simply ensure that the required data will not cause issues.
+
   #[test]
   fn test_procedural_mesh_creation() {
+    // Good Meshes.
     println!("--- BEGIN PROCEDURAL MESH TEST ---");
     {
       let positions = vec![1.0, 2.0, 3.0];
+      let texture_coordinates = vec![0.0, 0.0, 1.0, 0.0, 0.0, 1.0];
       let colors = vec![3.0, 4.0, 5.0];
-      let test_mesh = generate_mesh(&positions, &colors);
+      let test_mesh = generate_mesh(&positions, &texture_coordinates, &colors);
       assert!(test_mesh.is_ok());
       println!("{:?}", test_mesh.unwrap());
     }
 
     {
       let positions = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+      let texture_coordinates = vec![0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0];
       let colors = vec![7.0, 8.0, 9.0, 10.0, 11.0, 12.0];
-      let test_mesh = generate_mesh(&positions, &colors);
+      let test_mesh = generate_mesh(&positions, &texture_coordinates, &colors);
       assert!(test_mesh.is_ok());
       println!("{:?}", test_mesh.unwrap());
     }
   }
 
   #[test]
-  fn test_procedural_mesh_creation_failure() {
-    println!("--- BEGIN PROCEDURAL MESH FAILURE TEST ---");
+  fn test_procedural_mesh_creation_failure_missing() {
+    println!("--- BEGIN PROCEDURAL MESH MISSING FAILURE TEST ---");
 
     // Missing components.
     {
       let positions = vec![];
+      let texture_coordinates = vec![0.0, 0.0, 1.0, 0.0, 0.0, 1.0];
       let colors = vec![3.0, 4.0, 5.0];
-      let failed_result = generate_mesh(&positions, &colors);
+      let failed_result = generate_mesh(&positions, &texture_coordinates, &colors);
       assert!(failed_result.is_err());
       println!("{:?}", failed_result);
     }
     {
       let positions = vec![1.0, 2.0, 3.0];
+      let texture_coordinates = vec![0.0, 0.0, 1.0, 0.0, 0.0, 1.0];
       let colors = vec![];
-      let failed_result = generate_mesh(&positions, &colors);
+      let failed_result = generate_mesh(&positions, &texture_coordinates, &colors);
       assert!(failed_result.is_err());
       println!("{:?}", failed_result);
     }
+    {
+      let positions = vec![1.0, 2.0, 3.0];
+      let texture_coordinates = vec![];
+      let colors = vec![3.0, 4.0, 5.0];
+      let failed_result = generate_mesh(&positions, &texture_coordinates, &colors);
+      assert!(failed_result.is_err());
+      println!("{:?}", failed_result);
+    }
+  }
 
+  #[test]
+  fn test_procedural_mesh_creation_failure_wrong_size() {
+    println!("--- BEGIN PROCEDURAL MESH WRONG SIZE FAILURE TEST ---");
     // Wrong size.
     {
       let positions = vec![1.0, 2.0, 3.0, 4.0];
+      let texture_coordinates = vec![0.0, 0.0, 1.0, 0.0, 0.0, 1.0];
       let colors = vec![4.0, 5.0, 6.0];
-      let failed_result = generate_mesh(&positions, &colors);
+      let failed_result = generate_mesh(&positions, &texture_coordinates, &colors);
       assert!(failed_result.is_err());
       println!("{:?}", failed_result);
     }
     {
       let positions = vec![1.0, 2.0, 3.0];
+      let texture_coordinates = vec![0.0, 0.0, 1.0, 0.0, 0.0, 1.0];
       let colors = vec![4.0, 5.0, 6.0, 7.0];
-      let failed_result = generate_mesh(&positions, &colors);
+      let failed_result = generate_mesh(&positions, &texture_coordinates, &colors);
       assert!(failed_result.is_err());
       println!("{:?}", failed_result);
     }
+    {
+      let positions = vec![1.0, 2.0, 3.0];
+      let texture_coordinates = vec![0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0];
+      let colors = vec![4.0, 5.0, 6.0];
+      let failed_result = generate_mesh(&positions, &texture_coordinates, &colors);
+      assert!(failed_result.is_err());
+      println!("{:?}", failed_result);
+    }
+  }
 
+  #[test]
+  fn test_procedural_mesh_creation_failure_unequal_size() {
+    println!("--- BEGIN PROCEDURAL MESH UNEQUAL SIZE FAILURE TEST ---");
     // Unequal size.
     {
       let positions = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+      let texture_coordinates = vec![0.0, 0.0, 1.0, 0.0, 0.0, 1.0];
       let colors = vec![4.0, 5.0, 6.0];
-      let failed_result = generate_mesh(&positions, &colors);
+      let failed_result = generate_mesh(&positions, &texture_coordinates, &colors);
       assert!(failed_result.is_err());
       println!("{:?}", failed_result);
     }
     {
       let positions = vec![1.0, 2.0, 3.0];
+      let texture_coordinates = vec![0.0, 0.0, 1.0, 0.0, 0.0, 1.0];
       let colors = vec![4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
-      let failed_result = generate_mesh(&positions, &colors);
+      let failed_result = generate_mesh(&positions, &texture_coordinates, &colors);
+      assert!(failed_result.is_err());
+      println!("{:?}", failed_result);
+    }
+    {
+      let positions = vec![1.0, 2.0, 3.0];
+      let texture_coordinates = vec![0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.5];
+      let colors = vec![3.0, 4.0, 5.0];
+      let failed_result = generate_mesh(&positions, &texture_coordinates, &colors);
       assert!(failed_result.is_err());
       println!("{:?}", failed_result);
     }
