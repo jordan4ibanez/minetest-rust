@@ -3,6 +3,7 @@ use glam::UVec2;
 pub struct MouseController {
   position: UVec2,
   relative_position: UVec2,
+  relative_mode: bool,
 }
 
 impl MouseController {
@@ -10,7 +11,24 @@ impl MouseController {
     MouseController {
       position: UVec2::new(0, 0),
       relative_position: UVec2::new(0, 0),
+      relative_mode: false,
     }
+  }
+
+  ///
+  /// Toggle Mouse' relative mode.
+  ///
+  /// * This should only be used in WindowHandler!
+  ///
+  pub fn toggle_relative_mode(&mut self) {
+    self.relative_mode = !self.relative_mode
+  }
+
+  ///
+  /// Get if the Mouse is in relative mode.
+  ///
+  pub fn is_relative_mode(&self) -> bool {
+    self.relative_mode
   }
 
   ///
