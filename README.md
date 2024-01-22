@@ -31,6 +31,8 @@ https://discord.gg/Z2wCscTB4F
 - wgpu_sdl_linker - A micro library which allows safely linking wgpu with SDL2.
 - bytemuck - Used in conjunction with wgpu to cash vertex data.
 
+- delta - Used to calculate the time between frames.
+
 ##### Packages to be implemented:
 - rusqlite - SQLite3 database.
 - sea-query - SQLite3 query builder.
