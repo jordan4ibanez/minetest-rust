@@ -182,11 +182,9 @@ impl WindowHandler {
     self.quit_received
   }
 
-  ///! TEMPORARY TESTING !
   ///
-  /// Capture/release the mouse on F5 keypress.
+  /// Capture/release the mouse, updating it's internal state.
   ///
-  ///! TEMPORARY TESTING !
   fn toggle_mouse_capture(&self, mouse: &mut MouseController) {
     mouse.toggle_relative_mode();
     self
@@ -203,6 +201,7 @@ impl WindowHandler {
     scancode_option: Option<Scancode>,
     keymod: Mod,
     keyevent: KeyEvent,
+    mouse: &mut MouseController,
   ) {
     // Since SDL2 can poll anything, we need to ensure that we can actually utilize the sent scancode.
     let scancode_result = match scancode_option {
@@ -224,6 +223,11 @@ impl WindowHandler {
     // And for now, when you press escape, the game simply exits.
     if scancode == Scancode::Escape {
       self.quit();
+    }
+
+    // ! TEMPORARY TESTING !
+    if scancode == Scancode::F5 && keyevent.is_down() {
+      self.toggle_mouse_capture(mouse)
     }
   }
 
@@ -373,7 +377,7 @@ impl WindowHandler {
           repeat,
         } => {
           // println!("sdl2: keydown event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat);
-          self.handle_key_event(scancode, keymod, KeyEvent::PressingDown);
+          self.handle_key_event(scancode, keymod, KeyEvent::PressingDown, mouse);
         },
         sdl2::event::Event::KeyUp {
           timestamp,
@@ -384,7 +388,7 @@ impl WindowHandler {
           repeat,
         } => {
           // println!("sdl2: keyup event | timestamp: {} | window_id: {} | keycode: {:?} | scancode: {:?} | keymod: {} | repeat: {} |", timestamp, window_id, keycode, scancode, keymod, repeat);
-          self.handle_key_event(scancode, keymod, KeyEvent::LiftedOff);
+          self.handle_key_event(scancode, keymod, KeyEvent::LiftedOff, mouse);
         },
         sdl2::event::Event::TextEditing {
           timestamp,
