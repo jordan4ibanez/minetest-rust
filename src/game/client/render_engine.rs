@@ -404,15 +404,24 @@ impl RenderEngine {
 
       match self.meshes.get(model_name) {
         Some(mesh) => {
-          render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
-          render_pass.set_index_buffer(
-            mesh.get_wgpu_index_buffer().slice(..),
-            wgpu::IndexFormat::Uint32,
-          );
+          let texture_name = unbatched_render_call.get_texture_name();
 
-          render_pass.draw_indexed(0..mesh.get_number_of_indices(), 0, 0..1);
+          match self.textures.get(texture_name) {
+            Some(texture) => {
+              render_pass.set_bind_group(0, texture.get_wgpu_bind_group(), &[]);
+
+              render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
+              render_pass.set_index_buffer(
+                mesh.get_wgpu_index_buffer().slice(..),
+                wgpu::IndexFormat::Uint32,
+              );
+
+              render_pass.draw_indexed(0..mesh.get_number_of_indices(), 0, 0..1);
+            }
+            None => error!("render_engine: {} is not a stored Texture.", texture_name),
+          }
         }
-        None => error!("render_engine: {} is not a stored mesh.", model_name),
+        None => error!("render_engine: {} is not a stored Mesh.", model_name),
       }
     }
   }
