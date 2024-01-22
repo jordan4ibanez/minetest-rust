@@ -4,7 +4,7 @@ mod mouse;
 mod render_engine;
 mod window_handler;
 
-use glam::DVec3;
+use glam::Vec3A;
 
 use self::{
   client_connection::ClientConnection, keyboard::KeyboardController, mouse::MouseController,
@@ -219,9 +219,9 @@ impl Client {
     self.render_engine.as_mut().unwrap().render_mesh_unbatched(
       "debug",
       "tf.jpg",
-      DVec3::new(0.0, 0.0, 0.0),
-      DVec3::new(0.0, 0.0, 0.0),
-      DVec3::new(0.0, 0.0, 0.0),
+      Vec3A::new(0.0, 0.0, 0.0),
+      Vec3A::new(0.0, 0.0, 0.0),
+      Vec3A::new(0.0, 0.0, 0.0),
     );
     self.render_engine.as_mut().unwrap().process_render_calls();
     self.render_engine.as_mut().unwrap().finalize_render();
