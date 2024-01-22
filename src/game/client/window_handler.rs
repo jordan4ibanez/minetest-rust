@@ -37,6 +37,8 @@ pub struct WindowHandler {
   quit_received: bool,
   visible: bool,
   size: UVec2,
+
+  maximized: bool,
 }
 
 impl WindowHandler {
@@ -69,6 +71,8 @@ impl WindowHandler {
       quit_received: false,
       visible: false,
       size,
+
+      maximized: false,
     };
 
     new_window_handler.show();
@@ -169,6 +173,18 @@ impl WindowHandler {
   }
 
   ///
+  /// Toggle the Window's maximized state.
+  ///
+  pub fn toggle_maximize(&mut self) {
+    self.maximized = !self.maximized;
+    if self.maximized {
+      self.window.maximize();
+    } else {
+      self.window.restore();
+    }
+  }
+
+  ///
   /// Send window quit event.
   ///
   pub fn quit(&mut self) {
@@ -228,6 +244,11 @@ impl WindowHandler {
     // ! TEMPORARY TESTING !
     if scancode == Scancode::F5 && keyevent.is_down() {
       self.toggle_mouse_capture(mouse)
+    }
+
+    // ! MAXIMIZE TESTING
+    if scancode == Scancode::F11 && keyevent.is_down() {
+      self.toggle_maximize();
     }
 
     keyboard.set_key(&scancode.to_string(), keyevent.is_down());
