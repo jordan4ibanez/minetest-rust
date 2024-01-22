@@ -36,15 +36,17 @@ impl Camera {
     device: &wgpu::Device,
     window_handler: &WindowHandler,
   ) -> Self {
+    // First up is the Camera's uniform.
     let camera_uniform = CameraUniform::new();
 
-    // Now we create the camera's buffer.
+    // Now we create the Camera's buffer.
     let camera_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
       label: Some("camera_buffer"),
       contents: bytemuck::cast_slice(camera_uniform.get_view_projection()),
       usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
     });
 
+    // Then the bind group.
     let camera_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
       layout: &Camera::get_wgpu_bind_group_layout(device),
       entries: &[wgpu::BindGroupEntry {
@@ -54,6 +56,7 @@ impl Camera {
       label: Some("camera_bind_group"),
     });
 
+    // Now you have a new camera.
     Camera {
       eye: position,
       target: Vec3A::new(0.0, 0.0, 0.0),
