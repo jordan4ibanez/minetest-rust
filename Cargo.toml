@@ -33,7 +33,7 @@ message-io = "*"
 mlua = { version = "*", features = ["luau-jit"] }
 pollster = "*"
 quote = "*"
-rand = { version = "*" }
+rand = "*"
 rusqlite = "*"
 sdl2 = { version = "*", features = [
   "raw-window-handle",
