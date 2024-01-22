@@ -115,7 +115,8 @@ impl RenderEngine {
       &wgpu::DeviceDescriptor {
         limits: wgpu::Limits::default(),
         label: Some("minetest_gpu"),
-        features: wgpu::Features::default(),
+        // * this was: wgpu::Features::default()
+        features: wgpu::Features::POLYGON_MODE_LINE | wgpu::Features::DEPTH_CLIP_CONTROL,
       },
       None,
     )) {
