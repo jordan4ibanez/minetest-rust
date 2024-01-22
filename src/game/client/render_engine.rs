@@ -431,7 +431,7 @@ impl RenderEngine {
           match self.textures.get(texture_name) {
             Some(texture) => {
               render_pass.set_bind_group(0, texture.get_wgpu_diffuse_bind_group(), &[]);
-              render_pass.set_bind_group(1, &self.camera.get_bind_group(), &[]);
+              render_pass.set_bind_group(1, self.camera.get_bind_group(), &[]);
 
               render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
               render_pass.set_index_buffer(
