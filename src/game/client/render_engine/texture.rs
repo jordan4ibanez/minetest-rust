@@ -38,6 +38,13 @@ impl Texture {
   }
 
   ///
+  /// Get the texture's name.
+  ///
+  pub fn get_texture_name(&self) -> &String {
+    &self.texture_name
+  }
+
+  ///
   /// Automatically generates the required wgpu data buffers and makes it part of the Mesh.
   ///
   /// Consider this the "finalize" of the Texture.
