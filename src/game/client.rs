@@ -47,7 +47,7 @@ impl Client {
     };
 
     // Set up the render engine.
-    new_client.render_engine = Some(RenderEngine::new(new_client.window_handler.borrow_window()));
+    new_client.render_engine = Some(RenderEngine::new(&new_client.window_handler));
 
     new_client.reset_lua_vm();
 
