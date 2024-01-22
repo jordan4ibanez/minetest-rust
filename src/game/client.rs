@@ -41,14 +41,17 @@ pub struct Client {
 
 impl Client {
   pub fn new(client_name: String, address: String, port: i32) -> Self {
+    // * This is testing for automatically locking the mouse in upon game engine start.
+    let mut mouse = MouseController::new();
+
     let mut new_client = Client {
-      window_handler: WindowHandler::new(),
+      window_handler: WindowHandler::new(&mut mouse),
       render_engine: None,
       client_name,
       connection: None, //ClientConnection::new(address, port),
       lua_engine: None,
 
-      mouse: MouseController::new(),
+      mouse,
       keyboard: KeyboardController::new(),
 
       quit_received: false,
