@@ -12,6 +12,8 @@ pub struct Texture {
   dimensions: UVec2,
 
   diffuse_texture: Option<wgpu::Texture>,
+  diffuse_texture_view: Option<wgpu::TextureView>,
+  diffuse_sampler: Option<wgpu::Sampler>,
 }
 
 impl Texture {
@@ -30,6 +32,8 @@ impl Texture {
       dimensions: UVec2::new(dimensions.0, dimensions.1),
 
       diffuse_texture: None,
+      diffuse_texture_view: None,
+      diffuse_sampler: None,
     }
   }
 
@@ -90,5 +94,25 @@ impl Texture {
       },
       texture_size,
     );
+
+    // We don't need to configure the texture view much, so let's
+    // let wgpu define it.
+    self.diffuse_texture_view = Some(
+      self
+        .diffuse_texture
+        .as_ref()
+        .unwrap()
+        .create_view(&wgpu::TextureViewDescriptor::default()),
+    );
+
+    self.diffuse_sampler = Some(device.create_sampler(&wgpu::SamplerDescriptor {
+      address_mode_u: wgpu::AddressMode::ClampToEdge,
+      address_mode_v: wgpu::AddressMode::ClampToEdge,
+      address_mode_w: wgpu::AddressMode::ClampToEdge,
+      mag_filter: wgpu::FilterMode::Linear,
+      min_filter: wgpu::FilterMode::Nearest,
+      mipmap_filter: wgpu::FilterMode::Nearest,
+      ..Default::default()
+    }));
   }
 }
