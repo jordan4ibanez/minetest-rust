@@ -221,6 +221,20 @@ impl WindowHandler {
   }
 
   ///
+  /// Get the window width.
+  ///
+  pub fn get_width(&self) -> u32 {
+    self.size.x
+  }
+
+  ///
+  /// Get the window height.
+  ///
+  pub fn get_height(&self) -> u32 {
+    self.size.y
+  }
+
+  ///
   /// Internally updates the mouse position, automatically.
   ///
   fn update_mouse_position(&mut self, x: i32, y: i32) {
