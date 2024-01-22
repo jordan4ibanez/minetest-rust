@@ -1,4 +1,5 @@
 mod camera;
+mod color_uniform;
 mod mesh;
 mod render_containers;
 mod texture;
@@ -23,7 +24,7 @@ use crate::{
   },
 };
 
-use self::{camera::Camera, render_containers::RenderCall};
+use self::{camera::Camera, color_uniform::ColorUniform, render_containers::RenderCall};
 
 use super::{mouse::MouseController, window_handler::WindowHandler};
 
@@ -67,6 +68,9 @@ pub struct RenderEngine {
 
   meshes: HashMap<String, Mesh>,
   textures: HashMap<String, Texture>,
+
+  // ! testing variables
+  color_uniform: ColorUniform,
 }
 
 impl RenderEngine {
@@ -218,6 +222,9 @@ impl RenderEngine {
     let mut camera = Camera::new(Vec3A::new(0.0, 0.0, -2.0), 65.0, &device, window_handler);
     camera.build_view_projection_matrix(&device, window_handler);
 
+    // ! TESTING
+    let mut color_uniform = ColorUniform::new(0.0, 0.0, 0.0);
+
     let mut new_render_engine = RenderEngine {
       camera,
 
@@ -249,6 +256,9 @@ impl RenderEngine {
 
       meshes: HashMap::new(),
       textures: HashMap::new(),
+
+      // ! TESTING
+      color_uniform,
     };
 
     // ! THIS IS TEMPORARY MESH DEBUGGING !
