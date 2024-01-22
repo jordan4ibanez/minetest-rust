@@ -1,4 +1,4 @@
-use glam::{IVec2, UVec2};
+use glam::IVec2;
 
 pub struct MouseController {
   position: IVec2,
