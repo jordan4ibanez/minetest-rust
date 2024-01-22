@@ -277,7 +277,7 @@ impl RenderEngine {
         }, // E
       ]);
 
-      new_mesh.push_index_array(&mut vec![0, 1, 4, 1, 2, 4, 2, 3, 4]);
+      new_mesh.push_index_vec(&mut vec![0, 1, 4, 1, 2, 4, 2, 3, 4]);
 
       // * Passes in the entire device as a mutable ref to finalize the Mesh.
       new_mesh.generate_wgpu_buffers(&mut new_render_engine.device);

@@ -136,8 +136,8 @@ impl Mesh {
   ///
   /// Push a vector of raw vertex data into the Mesh.
   ///
-  pub fn push_index_array(&mut self, index_array: &mut Vec<u32>) {
-    self.index_data.append(index_array);
+  pub fn push_index_vec(&mut self, index_vec: &mut Vec<u32>) {
+    self.index_data.append(index_vec);
   }
 
   ///
