@@ -79,7 +79,6 @@ impl MouseController {
   /// * This should only be used in WindowHandler!
   ///
   pub fn set_relative_position(&mut self, xrel: i32, yrel: i32) {
-    println!("{}", self.relative_position);
     self.relative_position.x = xrel;
     self.relative_position.y = yrel;
   }

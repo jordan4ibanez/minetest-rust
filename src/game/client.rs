@@ -182,6 +182,12 @@ impl Client {
     }
 
     // println!("camera pos {:?}", camera_pos);
+    let mouse_relative = self.mouse.get_relative_position();
+    if mouse_relative.length_squared() != 0 {
+      println!("Mouse is moved!");
+      let mut camera = self.render_engine.as_mut().unwrap().get_camera();
+      camera.get_position();
+    }
 
     self
       .render_engine

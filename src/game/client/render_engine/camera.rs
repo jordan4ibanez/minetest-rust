@@ -1,6 +1,6 @@
 mod camera_uniform;
 
-use glam::{Mat4, Vec3A, Vec4};
+use glam::{Mat4, Vec3, Vec3A, Vec4};
 use wgpu::util::DeviceExt;
 
 use crate::game::client::window_handler::WindowHandler;
@@ -95,8 +95,27 @@ impl Camera {
     self.eye.z = new_position.z;
   }
 
+  ///
+  /// Get the Camera's position.
+  ///
   pub fn get_position(&self) -> &Vec3A {
     &self.eye
+  }
+
+  ///
+  /// Set the Camera's rotation.
+  ///
+  pub fn set_rotation(&mut self, new_rotation: &Vec3) {
+    self.rotation.x = new_rotation.x;
+    self.rotation.y = new_rotation.y;
+    self.rotation.z = new_rotation.z;
+  }
+
+  ///
+  /// Get the Camera's rotation.
+  ///
+  pub fn get_rotation(&self) -> &Vec3A {
+    &self.rotation
   }
 
   ///
