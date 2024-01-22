@@ -59,7 +59,7 @@ impl Mesh {
   ///
   /// Automatically generates the required wgpu data buffers and makes it part of the Mesh.
   ///
-  /// Consider this a "finalize" of the Mesh.
+  /// Consider this the "finalize" of the Mesh.
   ///
   pub fn generate_wgpu_buffers(&mut self, device: &mut wgpu::Device) {
     // Final check of the data.

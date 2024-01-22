@@ -33,6 +33,11 @@ impl Texture {
     }
   }
 
+  ///
+  /// Automatically generates the required wgpu data buffers and makes it part of the Mesh.
+  /// 
+  /// Consider this the "finalize" of the Texture.
+  /// 
   pub fn generate_wgpu_buffer(&mut self, device: &wgpu::Device) {
     let texture_size = wgpu::Extent3d {
       width: self.dimensions.x,
@@ -40,6 +45,7 @@ impl Texture {
       depth_or_array_layers: 1,
     };
 
+    // * Keep these comments in here, they're very helpful.
     self.diffuse_texture = Some(device.create_texture(&wgpu::TextureDescriptor {
       // All textures are stored as 3D, we represent our 2D texture
       // by setting depth to 1.
