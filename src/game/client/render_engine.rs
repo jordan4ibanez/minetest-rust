@@ -9,9 +9,9 @@ use std::{
   mem::swap,
 };
 
-use glam::{DVec3, UVec2};
+use glam::{DVec3, UVec2, Vec3A};
 use log::error;
-use sdl2::video::Window;
+
 use wgpu::{CommandEncoder, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
@@ -23,7 +23,7 @@ use crate::{
   },
 };
 
-use self::render_containers::RenderCall;
+use self::{camera::Camera, render_containers::RenderCall};
 
 use super::window_handler::WindowHandler;
 
@@ -36,6 +36,8 @@ use super::window_handler::WindowHandler;
 /// Utilizes wgpu as the main driving force to render.
 ///
 pub struct RenderEngine {
+  camera: Camera,
+
   // General implementation.
   instance: wgpu::Instance,
   surface: wgpu::Surface,
@@ -68,7 +70,7 @@ pub struct RenderEngine {
 }
 
 impl RenderEngine {
-  pub fn new(window: &Window) -> Self {
+  pub fn new(window_handler: &WindowHandler) -> Self {
     // This is written verbosely so you can read what's going on easier.
 
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
@@ -78,7 +80,7 @@ impl RenderEngine {
       gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
     });
 
-    let surface = match link_wgpu_to_sdl2(&instance, window) {
+    let surface = match link_wgpu_to_sdl2(&instance, window_handler.borrow_window()) {
       Ok(new_surface) => new_surface,
       Err(e) => panic!("{}", e),
     };
@@ -141,7 +143,7 @@ impl RenderEngine {
       .unwrap_or(surface_caps.formats[0]);
 
     // Need to get the window size to configure the surface.
-    let (width, height) = window.size();
+    let (width, height) = window_handler.borrow_window().size();
 
     let config = wgpu::SurfaceConfiguration {
       usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
@@ -210,6 +212,8 @@ impl RenderEngine {
     );
 
     let mut new_render_engine = RenderEngine {
+      camera: Camera::new(Vec3A::new(0.0, 1.0, 2.0), 45.0, window_handler),
+
       // General implementation.
       instance,
       surface,
