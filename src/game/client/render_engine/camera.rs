@@ -1,6 +1,14 @@
-use glam::{DMat4, DVec3, Mat4, Vec3A};
+use glam::{Mat4, Vec3A, Vec4};
 
 use crate::game::client::window_handler::WindowHandler;
+
+#[rustfmt::skip]
+pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
+  x_axis: Vec4::new(1.0, 0.0, 0.0, 0.0),
+  y_axis: Vec4::new(0.0, 1.0, 0.0, 0.0),
+  z_axis: Vec4::new(0.0, 0.0, 0.5, 0.5),
+  w_axis: Vec4::new(0.0, 0.0, 0.0, 1.0),
+};
 
 pub struct Camera {
   eye: Vec3A,
@@ -29,6 +37,9 @@ impl Camera {
     let x = f32::MAX;
 
     let view = Mat4::look_at_rh(self.eye.into(), self.target.into(), self.up.into());
-    
+
+    let projection = Mat4::perspective_rh(self.fov_y, self.aspect_ratio, self.z_near, self.z_far);
+
+    OPENGL_TO_WGPU_MATRIX * projection * view
   }
 }
