@@ -565,85 +565,6 @@ impl RenderEngine {
   }
 
   ///
-  ///! I mean, it's called trollface rave, if it's not obvious this is a test I dunno what else I can type here.
-  ///
-  fn trollface_rave(&mut self, delta: f64) {
-    let multiplier = 2.0;
-    if self.up {
-      match self.channel {
-        0 => {
-          let mut r = self.color_uniform.get_r();
-          r += (delta * multiplier) as f32;
-          println!("r {}", r);
-          if r >= 1.0 {
-            self.up = false;
-            r = 1.0;
-          }
-          self.color_uniform.set_r(r);
-        }
-        1 => {
-          let mut g = self.color_uniform.get_g();
-          g += (delta * multiplier) as f32;
-          println!("g {}", g);
-          if g >= 1.0 {
-            self.up = false;
-            g = 1.0;
-          }
-          self.color_uniform.set_g(g);
-        }
-        2 => {
-          let mut b = self.color_uniform.get_b();
-          b += (delta * multiplier) as f32;
-          println!("b {}", b);
-          if b >= 1.0 {
-            self.up = false;
-            b = 1.0;
-          }
-          self.color_uniform.set_b(b);
-        }
-        _ => {}
-      }
-    } else {
-      match self.channel {
-        0 => {
-          let mut r = self.color_uniform.get_r();
-          r -= (delta * multiplier) as f32;
-          println!("r {}", r);
-          if r <= 0.0 {
-            self.up = true;
-            r = 0.0;
-            self.channel += 1;
-          }
-          self.color_uniform.set_r(r);
-        }
-        1 => {
-          let mut g = self.color_uniform.get_g();
-          g -= (delta * multiplier) as f32;
-          println!("g {}", g);
-          if g <= 0.0 {
-            self.up = true;
-            g = 0.0;
-            self.channel += 1;
-          }
-          self.color_uniform.set_g(g);
-        }
-        2 => {
-          let mut b = self.color_uniform.get_b();
-          b -= (delta * multiplier) as f32;
-          println!("b {}", b);
-          if b <= 0.0 {
-            self.up = true;
-            b = 0.0;
-            self.channel = 0;
-          }
-          self.color_uniform.set_b(b);
-        }
-        _ => {}
-      }
-    }
-  }
-
-  ///
   /// Store a Mesh into the render engine for usage.
   ///
   pub fn store_mesh(&mut self, name: &str, mesh: Mesh) {
@@ -690,7 +611,6 @@ impl RenderEngine {
   ///
   pub fn update(&mut self, window_handler: &WindowHandler, delta: f64) {
     self.update_size(window_handler.get_size());
-    self.trollface_rave(delta);
     // self.test_implementation(window_handler);
   }
 }
