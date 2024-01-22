@@ -45,7 +45,7 @@ pub struct RenderEngine {
   shader: wgpu::ShaderModule,
   bind_group_layout: wgpu::BindGroupLayout,
   bind_group: wgpu::BindGroup,
-  pipeline_layout: wgpu::PipelineLayout,
+  render_pipeline_layout: wgpu::PipelineLayout,
   render_pipeline: wgpu::RenderPipeline,
   surface_format: wgpu::TextureFormat,
 
@@ -133,7 +133,7 @@ impl RenderEngine {
     });
 
     // Create the pipeline layout.
-    let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+    let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
       label: Some("render_pipeline_layout"),
       bind_group_layouts: &[], //&bind_group_layout],
       push_constant_ranges: &[],
@@ -166,7 +166,7 @@ impl RenderEngine {
 
     // And the pipeline, very important!.
     let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-      layout: Some(&pipeline_layout),
+      layout: Some(&render_pipeline_layout),
       vertex: wgpu::VertexState {
         buffers: &[Mesh::get_wgpu_descriptor()],
         module: &shader,
@@ -230,7 +230,7 @@ impl RenderEngine {
       shader,
       bind_group_layout,
       bind_group,
-      pipeline_layout,
+      render_pipeline_layout,
       render_pipeline,
       surface_format,
 
