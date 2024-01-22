@@ -247,8 +247,7 @@ impl RenderEngine {
       meshes: HashMap::new(),
     };
 
-    // ! THIS IS WHERE THE TEMPORARY DEBUG VERTEX IS CREATED!
-    // ! WHY IS THIS RANDOMLY IN THE MIDDLE OF THE INITIALIZER ?
+    // ! THIS IS TEMPORARY MESH DEBUGGING !
     {
       let name = "debug".to_string();
       let mut new_mesh = Mesh::new(&name);
@@ -285,6 +284,7 @@ impl RenderEngine {
       // * It's now owned by the render engine.
       new_render_engine.store_mesh(&name, new_mesh);
     }
+    // ! END TEMPORARY MESH DEBUGGING !
 
     new_render_engine
   }
