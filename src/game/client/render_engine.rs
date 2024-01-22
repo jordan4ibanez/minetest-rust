@@ -64,6 +64,7 @@ pub struct RenderEngine {
   unbatched_queue: VecDeque<RenderCall>,
 
   meshes: HashMap<String, Mesh>,
+  textures: HashMap<String, Texture>,
 }
 
 impl RenderEngine {
@@ -248,6 +249,7 @@ impl RenderEngine {
       unbatched_queue: VecDeque::new(),
 
       meshes: HashMap::new(),
+      textures: HashMap::new(),
     };
 
     // ! THIS IS TEMPORARY MESH DEBUGGING !
