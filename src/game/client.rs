@@ -144,7 +144,11 @@ impl Client {
       .update(&self.window_handler, delta);
 
     // Now render everything. 3 steps for now.
-    self.render_engine.as_mut().unwrap().initialize_render();
+    self
+      .render_engine
+      .as_mut()
+      .unwrap()
+      .initialize_render(&self.window_handler);
     self.render_engine.as_mut().unwrap().render_mesh_unbatched(
       "debug",
       "tf.jpg",
