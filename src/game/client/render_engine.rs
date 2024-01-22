@@ -25,7 +25,7 @@ use crate::{
 
 use self::{camera::Camera, render_containers::RenderCall};
 
-use super::window_handler::WindowHandler;
+use super::{mouse::MouseController, window_handler::WindowHandler};
 
 ///
 /// The main rendering engine for the game.
@@ -488,12 +488,12 @@ impl RenderEngine {
   /// Simply changes the clear color based on the x and y of the mouse.
   ///
   /// !remove me!
-  fn test_implementation(&mut self, window_handler: &WindowHandler) {
+  fn test_implementation(&mut self, window_handler: &WindowHandler, mouse: &MouseController) {
     let width = window_handler.get_size().x as f64;
-    let progress_x = window_handler.get_mouse_position().x as f64;
+    let progress_x = mouse.get_x() as f64;
 
     let height = window_handler.get_size().y as f64;
-    let progress_y = window_handler.get_mouse_position().y as f64;
+    let progress_y = mouse.get_y() as f64;
 
     let mut red_color = progress_x / width;
     if red_color.is_infinite() {
