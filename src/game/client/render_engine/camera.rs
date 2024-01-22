@@ -65,7 +65,7 @@ impl Camera {
     );
 
     self.camera_bind_group = Some(device.create_bind_group(&wgpu::BindGroupDescriptor {
-      layout: &Camera::get_wgpu_bind_group_layout(&device),
+      layout: &Camera::get_wgpu_bind_group_layout(device),
       entries: &[wgpu::BindGroupEntry {
         binding: 0,
         resource: self.camera_buffer.as_mut().unwrap().as_entire_binding(),
