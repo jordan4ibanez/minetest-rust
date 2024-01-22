@@ -13,6 +13,7 @@ use std::{
 use glam::{DVec3, UVec2, Vec3A};
 use log::error;
 
+use serde::de;
 use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
@@ -73,6 +74,8 @@ pub struct RenderEngine {
   color_uniform: ColorUniform,
   color_buffer: wgpu::Buffer,
   color_bind_group: wgpu::BindGroup,
+  channel: i8,
+  up: bool,
 }
 
 impl RenderEngine {
@@ -284,6 +287,8 @@ impl RenderEngine {
       color_uniform,
       color_buffer,
       color_bind_group,
+      channel: 0,
+      up: true,
     };
 
     // ! THIS IS TEMPORARY MESH DEBUGGING !
@@ -560,6 +565,84 @@ impl RenderEngine {
   }
 
   ///
+  ///! I mean, it's called trollface rave, if it's not obvious this is a test I dunno what else I can type here.
+  ///
+  fn trollface_rave(&mut self, delta: f64) {
+    if self.up {
+      match self.channel {
+        0 => {
+          let mut r = self.color_uniform.get_r();
+          r += (delta * 1.0) as f32;
+          println!("r {}", r);
+          if r >= 1.0 {
+            self.up = false;
+            r = 1.0;
+          }
+          self.color_uniform.set_r(r);
+        }
+        1 => {
+          let mut g = self.color_uniform.get_g();
+          g += (delta * 1.0) as f32;
+          println!("g {}", g);
+          if g >= 1.0 {
+            self.up = false;
+            g = 1.0;
+          }
+          self.color_uniform.set_g(g);
+        }
+        2 => {
+          let mut b = self.color_uniform.get_b();
+          b += (delta * 1.0) as f32;
+          println!("b {}", b);
+          if b >= 1.0 {
+            self.up = false;
+            b = 1.0;
+          }
+          self.color_uniform.set_b(b);
+        }
+        _ => {}
+      }
+    } else {
+      match self.channel {
+        0 => {
+          let mut r = self.color_uniform.get_r();
+          r -= (delta * 1.0) as f32;
+          println!("r {}", r);
+          if r <= 0.0 {
+            self.up = true;
+            r = 0.0;
+            self.channel += 1;
+          }
+          self.color_uniform.set_r(r);
+        }
+        1 => {
+          let mut g = self.color_uniform.get_g();
+          g -= (delta * 1.0) as f32;
+          println!("g {}", g);
+          if g <= 0.0 {
+            self.up = true;
+            g = 0.0;
+            self.channel += 1;
+          }
+          self.color_uniform.set_g(g);
+        }
+        2 => {
+          let mut b = self.color_uniform.get_b();
+          b -= (delta * 1.0) as f32;
+          println!("b {}", b);
+          if b <= 0.0 {
+            self.up = true;
+            b = 0.0;
+            self.channel = 0;
+          }
+          self.color_uniform.set_b(b);
+        }
+        _ => {}
+      }
+    }
+  }
+
+  ///
   /// Store a Mesh into the render engine for usage.
   ///
   pub fn store_mesh(&mut self, name: &str, mesh: Mesh) {
@@ -606,7 +689,7 @@ impl RenderEngine {
   ///
   pub fn update(&mut self, window_handler: &WindowHandler, delta: f64) {
     self.update_size(window_handler.get_size());
-
+    self.trollface_rave(delta);
     // self.test_implementation(window_handler);
   }
 }
