@@ -40,7 +40,7 @@ pub struct WindowHandler {
 }
 
 impl WindowHandler {
-  pub fn new() -> Self {
+  pub fn new(mouse: &mut MouseController) -> Self {
     // We're going to do this line by line,
     // in case any of this fails.
 
@@ -72,6 +72,15 @@ impl WindowHandler {
     };
 
     new_window_handler.show();
+
+    new_window_handler.sdl_context.mouse().capture(true);
+
+    new_window_handler.toggle_mouse_capture(mouse);
+
+    new_window_handler
+      .sdl_context
+      .mouse()
+      .set_relative_mouse_mode(true);
 
     new_window_handler
   }
@@ -171,6 +180,19 @@ impl WindowHandler {
   ///
   pub fn should_quit(&self) -> bool {
     self.quit_received
+  }
+
+  ///! TEMPORARY TESTING !
+  ///
+  /// Capture/release the mouse on F5 keypress.
+  ///
+  ///! TEMPORARY TESTING !
+  fn toggle_mouse_capture(&self, mouse: &mut MouseController) {
+    mouse.toggle_relative_mode();
+    self
+      .sdl_context
+      .mouse()
+      .set_relative_mouse_mode(mouse.is_relative_mode());
   }
 
   ///
