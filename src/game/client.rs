@@ -128,6 +128,9 @@ impl Client {
   /// This is referred to as on_step in C++ minetest.
   ///
   pub fn on_tick(&mut self, delta: f64) {
+    // This is for the Mouse' Camera controls.
+    self.mouse.reset_mouse_relative_position();
+
     // Update the SDL2 context.
     self
       .window_handler

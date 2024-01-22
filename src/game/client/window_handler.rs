@@ -266,14 +266,14 @@ impl WindowHandler {
   /// Automatically updates the Mouse' position.
   ///
   fn update_mouse_position(&self, x: i32, y: i32, mouse: &mut MouseController) {
-    mouse.set_position(x as u32, y as u32);
+    mouse.set_position(x, y);
   }
 
   ///
   /// Automatically updates the Mouse' relative position.
   ///
   fn update_mouse_relative_position(&self, xrel: i32, yrel: i32, mouse: &mut MouseController) {
-    mouse.set_relative_position(xrel as u32, yrel as u32);
+    mouse.set_relative_position(xrel, yrel);
   }
 
   ///
@@ -289,6 +289,7 @@ impl WindowHandler {
     mouse: &mut MouseController,
   ) {
     self.update_mouse_position(x, y, mouse);
+    self.update_mouse_relative_position(xrel, yrel, mouse);
   }
 
   ///

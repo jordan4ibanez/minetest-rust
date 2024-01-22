@@ -113,7 +113,13 @@ impl Camera {
   ) {
     self.aspect_ratio = window_handler.get_width() as f32 / window_handler.get_height() as f32;
 
-    let view = Mat4::look_at_rh(self.eye.into(), self.target.into(), self.up.into());
+    let view = Mat4::from_euler(
+      glam::EulerRot::XYZ,
+      self.rotation.x,
+      self.rotation.y,
+      self.rotation.z,
+    );
+    // let view = Mat4::look_at_rh(self.eye.into(), self.target.into(), self.up.into());
 
     let projection = Mat4::perspective_rh(self.fov_y, self.aspect_ratio, self.z_near, self.z_far);
 
