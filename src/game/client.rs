@@ -7,8 +7,8 @@ mod window_handler;
 use glam::DVec3;
 
 use self::{
-  client_connection::ClientConnection, keyboard::KeyboardController, render_engine::RenderEngine,
-  window_handler::WindowHandler,
+  client_connection::ClientConnection, keyboard::KeyboardController, mouse::MouseController,
+  render_engine::RenderEngine, window_handler::WindowHandler,
 };
 
 use super::lua_engine::LuaEngine;
@@ -32,6 +32,8 @@ pub struct Client {
   client_name: String,
   connection: Option<ClientConnection>,
   lua_engine: Option<LuaEngine>,
+
+  mouse: MouseController,
   keyboard: KeyboardController,
 
   quit_received: bool,
@@ -45,6 +47,8 @@ impl Client {
       client_name,
       connection: None, //ClientConnection::new(address, port),
       lua_engine: None,
+
+      mouse: MouseController::new(),
       keyboard: KeyboardController::new(),
 
       quit_received: false,
@@ -122,7 +126,7 @@ impl Client {
   ///
   pub fn on_tick(&mut self, delta: f64) {
     // Update the SDL2 context.
-    self.window_handler.update(delta);
+    self.window_handler.update(delta, &mut self.mouse);
 
     // Poll any incoming network traffic. (non blocking)
     if let Some(connection) = &mut self.connection {
