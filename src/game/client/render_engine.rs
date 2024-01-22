@@ -252,8 +252,7 @@ impl RenderEngine {
 
     // ! THIS IS TEMPORARY MESH DEBUGGING !
     {
-      let name = "debug".to_string();
-      let mut new_mesh = Mesh::new(&name);
+      let mut new_mesh = Mesh::new("debug");
       // new_mesh.push_vertex();
       new_mesh.push_vertex_array(&mut vec![
         Vertex {
