@@ -1,3 +1,5 @@
+mod camera_uniform;
+
 use glam::{Mat4, Vec3A, Vec4};
 
 use crate::game::client::window_handler::WindowHandler;
