@@ -12,7 +12,7 @@ use std::{
 use glam::{DVec3, UVec2, Vec3A};
 use log::error;
 
-use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
+use wgpu::{CommandEncoder, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
 use crate::{
