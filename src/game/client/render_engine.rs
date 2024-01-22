@@ -16,7 +16,10 @@ use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
 use crate::{
   file_utilities::read_file_to_string,
-  game::client::render_engine::mesh::{Mesh, Vertex},
+  game::client::render_engine::{
+    mesh::{Mesh, Vertex},
+    texture::Texture,
+  },
 };
 
 use self::render_containers::RenderCall;
