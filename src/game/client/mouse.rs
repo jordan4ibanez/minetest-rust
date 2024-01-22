@@ -31,6 +31,20 @@ impl MouseController {
   }
 
   ///
+  /// Get the X position of the Mouse.
+  ///
+  pub fn get_x(&self) -> u32 {
+    self.position.x
+  }
+
+  ///
+  /// Get the Y position of the Mouse.
+  ///
+  pub fn get_y(&self) -> u32 {
+    self.position.y
+  }
+
+  ///
   /// Set the Mouse' relative position.
   ///
   /// * This should only be used in WindowHandler!
