@@ -4,6 +4,8 @@ use glam::{Mat4, Vec3A, Vec4};
 
 use crate::game::client::window_handler::WindowHandler;
 
+use self::camera_uniform::CameraUniform;
+
 #[rustfmt::skip]
 pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
   x_axis: Vec4::new(1.0, 0.0, 0.0, 0.0),
@@ -20,6 +22,8 @@ pub struct Camera {
   fov_y: f32,
   z_near: f32,
   z_far: f32,
+
+  camera_uniform: CameraUniform,
 }
 
 impl Camera {
@@ -32,6 +36,8 @@ impl Camera {
       fov_y: 45.0,
       z_near: 0.1,
       z_far: 100.0,
+
+      camera_uniform: CameraUniform::new(),
     }
   }
 
@@ -56,13 +62,22 @@ impl Camera {
   ///
   /// This also updates the aspect ratio, so WindowHandler is required.
   ///
-  pub fn build_view_projection_matrix(&mut self, window_handler: &WindowHandler) -> Mat4 {
+  pub fn build_view_projection_matrix(&mut self, window_handler: &WindowHandler) {
     self.aspect_ratio = window_handler.get_width() as f32 / window_handler.get_height() as f32;
 
     let view = Mat4::look_at_rh(self.eye.into(), self.target.into(), self.up.into());
 
     let projection = Mat4::perspective_rh(self.fov_y, self.aspect_ratio, self.z_near, self.z_far);
 
-    OPENGL_TO_WGPU_MATRIX * projection * view
+    self
+      .camera_uniform
+      .update_view_projection(OPENGL_TO_WGPU_MATRIX * projection * view);
+  }
+
+  ///
+  /// Get the wgpu raw uniform contents to pass into the pipelne.
+  ///
+  pub fn get_wgpu_uniform(&self) -> &[u8] {
+    bytemuck::cast_slice(self.camera_uniform.get_view_projection())
   }
 }
