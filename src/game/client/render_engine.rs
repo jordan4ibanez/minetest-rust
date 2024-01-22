@@ -127,7 +127,10 @@ impl RenderEngine {
     // Create the pipeline layout.
     let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
       label: Some("render_pipeline_layout"),
-      bind_group_layouts: &[&Texture::get_wgpu_bind_group_layout(&device)],
+      bind_group_layouts: &[
+        &Texture::get_wgpu_bind_group_layout(&device),
+        &Camera::get_wgpu_bind_group_layout(&device),
+      ],
       push_constant_ranges: &[],
     });
 
