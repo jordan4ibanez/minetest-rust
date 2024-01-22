@@ -568,11 +568,12 @@ impl RenderEngine {
   ///! I mean, it's called trollface rave, if it's not obvious this is a test I dunno what else I can type here.
   ///
   fn trollface_rave(&mut self, delta: f64) {
+    let multiplier = 2.0;
     if self.up {
       match self.channel {
         0 => {
           let mut r = self.color_uniform.get_r();
-          r += (delta * 1.0) as f32;
+          r += (delta * multiplier) as f32;
           println!("r {}", r);
           if r >= 1.0 {
             self.up = false;
@@ -582,7 +583,7 @@ impl RenderEngine {
         }
         1 => {
           let mut g = self.color_uniform.get_g();
-          g += (delta * 1.0) as f32;
+          g += (delta * multiplier) as f32;
           println!("g {}", g);
           if g >= 1.0 {
             self.up = false;
@@ -592,7 +593,7 @@ impl RenderEngine {
         }
         2 => {
           let mut b = self.color_uniform.get_b();
-          b += (delta * 1.0) as f32;
+          b += (delta * multiplier) as f32;
           println!("b {}", b);
           if b >= 1.0 {
             self.up = false;
@@ -606,7 +607,7 @@ impl RenderEngine {
       match self.channel {
         0 => {
           let mut r = self.color_uniform.get_r();
-          r -= (delta * 1.0) as f32;
+          r -= (delta * multiplier) as f32;
           println!("r {}", r);
           if r <= 0.0 {
             self.up = true;
@@ -617,7 +618,7 @@ impl RenderEngine {
         }
         1 => {
           let mut g = self.color_uniform.get_g();
-          g -= (delta * 1.0) as f32;
+          g -= (delta * multiplier) as f32;
           println!("g {}", g);
           if g <= 0.0 {
             self.up = true;
@@ -628,7 +629,7 @@ impl RenderEngine {
         }
         2 => {
           let mut b = self.color_uniform.get_b();
-          b -= (delta * 1.0) as f32;
+          b -= (delta * multiplier) as f32;
           println!("b {}", b);
           if b <= 0.0 {
             self.up = true;
