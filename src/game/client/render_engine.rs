@@ -23,7 +23,10 @@ use crate::{
   },
 };
 
-use self::{camera::Camera, render_containers::RenderCall};
+use self::{
+  camera::Camera,
+  render_containers::RenderCall,
+};
 
 use super::window_handler::WindowHandler;
 
