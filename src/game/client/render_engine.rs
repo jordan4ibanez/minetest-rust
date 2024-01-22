@@ -290,6 +290,8 @@ impl RenderEngine {
       let mut new_texture = Texture::new("prototype_texture/tf.jpg");
 
       new_texture.generate_wgpu_buffer(&new_render_engine.device, &new_render_engine.queue);
+
+      new_render_engine.store_texture(&new_texture.get_name().clone(), new_texture);
     }
     // ! END TEMPORARY MESH DEBUGGING !
 
