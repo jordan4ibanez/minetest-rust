@@ -4,6 +4,7 @@ pub struct MouseController {
   position: UVec2,
   relative_position: UVec2,
   relative_mode: bool,
+  sensitivity: f32,
 }
 
 impl MouseController {
@@ -12,6 +13,7 @@ impl MouseController {
       position: UVec2::new(0, 0),
       relative_position: UVec2::new(0, 0),
       relative_mode: false,
+      sensitivity: 0.001,
     }
   }
 
@@ -77,5 +79,19 @@ impl MouseController {
   ///
   pub fn get_relative_position(&self) -> &UVec2 {
     &self.relative_position
+  }
+
+  ///
+  /// Set the Mouse' sensitivity.
+  ///
+  pub fn set_sensitivity(&mut self, new_sensitivity: f32) {
+    self.sensitivity = new_sensitivity;
+  }
+
+  ///
+  /// Get the Mouse' sensitivity.
+  ///
+  pub fn get_sensitivity(&self) -> f32 {
+    self.sensitivity
   }
 }
