@@ -133,6 +133,9 @@ impl Texture {
     &self.bind_group
   }
 
+  ///
+  /// Static function to tell wgpu how to use the Texture.
+  ///
   pub fn get_wgpu_bind_group_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
     device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
       entries: &[
