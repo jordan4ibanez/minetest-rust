@@ -27,4 +27,6 @@ impl KeyboardController {
       None => false,
     }
   }
+
+  // * future note: this can poll for key pressed. Simply store memory with an update.
 }
