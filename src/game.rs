@@ -9,6 +9,8 @@ use std::{
   time::Duration,
 };
 
+use delta::Timer;
+
 use spin_sleep_util::{interval, Interval, RateReporter};
 
 use crate::command_line::CommandLineInterface;
@@ -48,6 +50,7 @@ pub struct Game {
 
   interval: Interval,
   fps_reporter: RateReporter,
+  delta_reporter: Timer,
 
   delta: f64,
   current_fps: f64,
@@ -79,7 +82,8 @@ impl Game {
     };
 
     let interval = interval(Duration::from_secs_f64(1.0 / loop_helper_goal));
-    let rate_reporter = RateReporter::new(Duration::from_secs(1));
+    let fps_reporter = RateReporter::new(Duration::from_secs(1));
+    let delta_reporter = Timer::new();
 
     //todo: make this happen!
     println!("we need a minetest.conf parser for vsync!");
@@ -101,7 +105,8 @@ impl Game {
       is_server: cli.server,
 
       interval,
-      fps_reporter: rate_reporter,
+      fps_reporter,
+      delta_reporter,
 
       delta: 0.0,
       current_fps: 0.0,
@@ -194,6 +199,10 @@ impl Game {
   fn main(&mut self) {
     //? Here is where the logic loop goes.
 
+    self.delta = self.delta_reporter.mark_secs();
+    // * Uncomment this to see the exact delta time.
+    // println!("delta: {:.32}", self.delta);
+
     //* Begin server/client on_tick()
 
     if self.is_server {
@@ -239,9 +248,6 @@ impl Game {
     if self.vsync_mode == 0 || self.is_server {
       self.interval.tick();
     }
-
-    let x = self.interval.period().as_secs_f64();
-    println!("delta: {}", x);
   }
 
   ///
