@@ -10,7 +10,7 @@ use std::{
   mem::swap,
 };
 
-use glam::{DVec3, UVec2, Vec3A};
+use glam::{UVec2, Vec3A};
 use log::error;
 
 use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
@@ -551,9 +551,9 @@ impl RenderEngine {
     &mut self,
     model_name: &str,
     texture_name: &str,
-    translation: DVec3,
-    rotation: DVec3,
-    scale: DVec3,
+    translation: Vec3A,
+    rotation: Vec3A,
+    scale: Vec3A,
   ) {
     self.unbatched_queue.push_back(RenderCall::new(
       model_name,

@@ -1,4 +1,4 @@
-use glam::DVec3;
+use glam::Vec3A;
 
 ///
 /// A container to handle unbatched draw calls.
@@ -6,18 +6,18 @@ use glam::DVec3;
 pub struct RenderCall {
   model_name: String,
   texture_name: String,
-  translation: DVec3,
-  rotation: DVec3,
-  scale: DVec3,
+  translation: Vec3A,
+  rotation: Vec3A,
+  scale: Vec3A,
 }
 
 impl RenderCall {
   pub fn new(
     model_name: &str,
     texture_name: &str,
-    translation: DVec3,
-    rotation: DVec3,
-    scale: DVec3,
+    translation: Vec3A,
+    rotation: Vec3A,
+    scale: Vec3A,
   ) -> Self {
     RenderCall {
       model_name: model_name.to_owned(),
@@ -36,15 +36,15 @@ impl RenderCall {
     &self.texture_name
   }
 
-  pub fn get_translation(&self) -> &DVec3 {
+  pub fn get_translation(&self) -> &Vec3A {
     &self.translation
   }
 
-  pub fn get_rotation(&self) -> &DVec3 {
+  pub fn get_rotation(&self) -> &Vec3A {
     &self.rotation
   }
 
-  pub fn get_scale(&self) -> &DVec3 {
+  pub fn get_scale(&self) -> &Vec3A {
     &self.scale
   }
 }
