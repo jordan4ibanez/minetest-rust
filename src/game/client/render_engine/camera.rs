@@ -25,8 +25,8 @@ pub struct Camera {
   z_far: f32,
 
   camera_uniform: CameraUniform,
-  camera_buffer: Option<wgpu::Buffer>,
-  camera_bind_group: Option<wgpu::BindGroup>,
+  camera_buffer: wgpu::Buffer,
+  camera_bind_group: wgpu::BindGroup,
 }
 
 impl Camera {
@@ -36,6 +36,24 @@ impl Camera {
     device: &wgpu::Device,
     window_handler: &WindowHandler,
   ) -> Self {
+    let camera_uniform = CameraUniform::new();
+
+    // Now we create the camera's buffer.
+    let camera_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+      label: Some("camera_buffer"),
+      contents: bytemuck::cast_slice(camera_uniform.get_view_projection()),
+      usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+    });
+
+    let camera_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+      layout: &Camera::get_wgpu_bind_group_layout(device),
+      entries: &[wgpu::BindGroupEntry {
+        binding: 0,
+        resource: camera_buffer.as_entire_binding(),
+      }],
+      label: Some("camera_bind_group"),
+    });
+
     Camera {
       eye: position,
       target: Vec3A::new(0.0, 0.0, 0.0),
@@ -45,34 +63,16 @@ impl Camera {
       z_near: 0.1,
       z_far: 100.0,
 
-      camera_uniform: CameraUniform::new(),
-      camera_buffer: None,
-      camera_bind_group: None,
+      camera_uniform,
+      camera_buffer,
+      camera_bind_group,
     }
   }
 
   ///
   /// Automatically updates the camera's internal buffer.
   ///
-  fn update_buffer(&mut self, device: &wgpu::Device) {
-    // Now we create the camera's buffer.
-    self.camera_buffer = Some(
-      device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-        label: Some("camera_buffer"),
-        contents: self.get_wgpu_uniform(),
-        usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-      }),
-    );
-
-    self.camera_bind_group = Some(device.create_bind_group(&wgpu::BindGroupDescriptor {
-      layout: &Camera::get_wgpu_bind_group_layout(device),
-      entries: &[wgpu::BindGroupEntry {
-        binding: 0,
-        resource: self.camera_buffer.as_mut().unwrap().as_entire_binding(),
-      }],
-      label: Some("camera_bind_group"),
-    }));
-  }
+  fn update_buffer(&mut self, device: &wgpu::Device) {}
 
   ///
   /// Set the FOV of the Camera.
@@ -130,7 +130,7 @@ impl Camera {
   /// Get the Camera's bind group for rendering.
   ///
   pub fn get_bind_group(&self) -> &wgpu::BindGroup {
-    self.camera_bind_group.as_ref().unwrap()
+    &self.camera_bind_group
   }
 
   ///
