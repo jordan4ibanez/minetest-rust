@@ -132,7 +132,7 @@ impl Camera {
   ) {
     self.aspect_ratio = window_handler.get_width() as f32 / window_handler.get_height() as f32;
 
-    let mut view_rot = Mat4::from_euler(
+    let view_rot = Mat4::from_euler(
       glam::EulerRot::XYZ,
       self.rotation.x,
       self.rotation.y,
