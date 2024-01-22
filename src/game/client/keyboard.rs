@@ -10,4 +10,21 @@ impl KeyboardController {
       keys: HashMap::new(),
     }
   }
+
+  ///
+  /// Simply dumps a key's state into the memory.
+  ///
+  pub fn set_key(&mut self, key_name: &str, pressed: bool) {
+    self.keys.insert(key_name.to_owned(), pressed);
+  }
+
+  ///
+  /// Checks if a key is down, if it was never pressed, it's down.
+  ///
+  pub fn is_key_down(&self, key_name: &str) -> bool {
+    match self.keys.get(key_name) {
+      Some(key_down) => *key_down,
+      None => false,
+    }
+  }
 }
