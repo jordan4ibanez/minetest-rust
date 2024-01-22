@@ -37,8 +37,6 @@ use super::window_handler::WindowHandler;
 ///
 pub struct RenderEngine {
   camera: Camera,
-  camera_buffer: wgpu::Buffer,
-  camera_bind_group: wgpu::BindGroup,
 
   // General implementation.
   instance: wgpu::Instance,
@@ -217,29 +215,11 @@ impl RenderEngine {
     );
 
     // Initial creation and updating of the Camera.
-    let mut camera = Camera::new(Vec3A::new(0.0, 1.0, 2.0), 45.0, window_handler);
-    camera.build_view_projection_matrix(window_handler);
-
-    // Now we create the camera's buffer.
-    let camera_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-      label: Some("camera_buffer"),
-      contents: camera.get_wgpu_uniform(),
-      usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-    });
-
-    let camera_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-      layout: &Camera::get_wgpu_bind_group_layout(&device),
-      entries: &[wgpu::BindGroupEntry {
-        binding: 0,
-        resource: camera_buffer.as_entire_binding(),
-      }],
-      label: Some("camera_bind_group"),
-    });
+    let mut camera = Camera::new(Vec3A::new(0.0, 1.0, 2.0), 45.0, &device, window_handler);
+    camera.build_view_projection_matrix(&device, window_handler);
 
     let mut new_render_engine = RenderEngine {
       camera,
-      camera_buffer,
-      camera_bind_group,
 
       // General implementation.
       instance,
@@ -354,7 +334,9 @@ impl RenderEngine {
   /// Also, the Camera's uniform is updated here.
   ///
   pub fn initialize_render(&mut self, window_handler: &WindowHandler) {
-    self.camera.build_view_projection_matrix(window_handler);
+    self
+      .camera
+      .build_view_projection_matrix(&self.device, window_handler);
 
     self.output = Some(
       self
@@ -428,7 +410,6 @@ impl RenderEngine {
         });
 
     render_pass.set_pipeline(&self.render_pipeline);
-    render_pass.set_bind_group(1, &self.camera_bind_group, &[]);
 
     while !self.unbatched_queue.is_empty() {
       let unbatched_render_call = self.unbatched_queue.pop_front().unwrap();
@@ -442,6 +423,7 @@ impl RenderEngine {
           match self.textures.get(texture_name) {
             Some(texture) => {
               render_pass.set_bind_group(0, texture.get_wgpu_diffuse_bind_group(), &[]);
+              render_pass.set_bind_group(1, &self.camera.get_bind_group(), &[]);
 
               render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
               render_pass.set_index_buffer(
