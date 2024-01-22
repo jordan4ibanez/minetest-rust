@@ -147,6 +147,7 @@ impl Client {
     self.render_engine.as_mut().unwrap().initialize_render();
     self.render_engine.as_mut().unwrap().render_mesh_unbatched(
       "debug",
+      "tf.jpg",
       DVec3::new(0.0, 0.0, 0.0),
       DVec3::new(0.0, 0.0, 0.0),
       DVec3::new(0.0, 0.0, 0.0),
