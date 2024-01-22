@@ -136,6 +136,24 @@ impl Client {
 
     //todo: should probably do side effects from lua here
 
+    let mut camera_pos = *self
+      .render_engine
+      .as_mut()
+      .unwrap()
+      .get_camera()
+      .get_position();
+
+    camera_pos.y += delta as f32;
+
+    println!("camera pos {:?}", camera_pos);
+
+    self
+      .render_engine
+      .as_mut()
+      .unwrap()
+      .get_camera()
+      .set_position(&camera_pos);
+
     // Update the RenderEngine with the WindowHandler.
     self
       .render_engine
