@@ -14,7 +14,7 @@ use log::error;
 
 use self::key_event_enum::KeyEvent;
 
-use super::mouse::MouseController;
+use super::{keyboard::KeyboardController, mouse::MouseController};
 
 ///
 /// SDL2 window controller.
@@ -335,7 +335,12 @@ impl WindowHandler {
     }
   }
 
-  pub fn update(&mut self, delta: f64, mouse: &mut MouseController) {
+  pub fn update(
+    &mut self,
+    delta: f64,
+    mouse: &mut MouseController,
+    keyboard: &mut KeyboardController,
+  ) {
     let mut event_pump = self
       .sdl_context
       .event_pump()

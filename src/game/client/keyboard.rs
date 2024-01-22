@@ -16,6 +16,8 @@ impl KeyboardController {
   ///
   pub fn set_key(&mut self, key_name: &str, pressed: bool) {
     self.keys.insert(key_name.to_owned(), pressed);
+
+    println!("{} is pressed? {}", key_name, pressed);
   }
 
   ///

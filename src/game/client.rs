@@ -129,7 +129,9 @@ impl Client {
   ///
   pub fn on_tick(&mut self, delta: f64) {
     // Update the SDL2 context.
-    self.window_handler.update(delta, &mut self.mouse);
+    self
+      .window_handler
+      .update(delta, &mut self.mouse, &mut self.keyboard);
 
     // Poll any incoming network traffic. (non blocking)
     if let Some(connection) = &mut self.connection {
