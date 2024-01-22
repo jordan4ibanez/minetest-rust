@@ -33,8 +33,29 @@ impl Camera {
     }
   }
 
-  pub fn build_view_projection_matrix(&self) -> Mat4 {
-    let x = f32::MAX;
+  ///
+  /// Set the FOV of the Camera.
+  ///
+  pub fn set_fov(&mut self, new_fov: f32) {
+    self.fov_y = new_fov;
+  }
+
+  ///
+  /// Set the position of the Camera.
+  ///
+  pub fn set_position(&mut self, new_position: &Vec3A) {
+    self.eye = *new_position;
+  }
+
+  ///
+  /// Rebuild the projection matrix.
+  ///
+  /// Passes back a new view projection matrix.
+  ///
+  /// This also updates the aspect ratio, so WindowHandler is required.
+  ///
+  pub fn build_view_projection_matrix(&mut self, window_handler: &WindowHandler) -> Mat4 {
+    self.aspect_ratio = window_handler.get_width() as f32 / window_handler.get_height() as f32;
 
     let view = Mat4::look_at_rh(self.eye.into(), self.target.into(), self.up.into());
 
