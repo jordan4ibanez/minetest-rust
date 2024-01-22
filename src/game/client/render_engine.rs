@@ -13,7 +13,7 @@ use std::{
 use glam::{DVec3, UVec2, Vec3A};
 use log::error;
 
-use wgpu::{CommandEncoder, SurfaceTexture, TextureView};
+use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
 use crate::{
@@ -71,6 +71,8 @@ pub struct RenderEngine {
 
   // ! testing variables
   color_uniform: ColorUniform,
+  color_buffer: wgpu::Buffer,
+  color_bind_group: wgpu::BindGroup,
 }
 
 impl RenderEngine {
@@ -131,8 +133,13 @@ impl RenderEngine {
     let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
       label: Some("render_pipeline_layout"),
       bind_group_layouts: &[
+        // * Group tells you directly the @group(x) in the shader.
+        // Group 0.
         &Texture::get_wgpu_bind_group_layout(&device),
+        // Group 1.
         &Camera::get_wgpu_bind_group_layout(&device),
+        // Group 2.
+        &ColorUniform::get_wgpu_bind_group_layout(&device),
       ],
       push_constant_ranges: &[],
     });
@@ -223,7 +230,23 @@ impl RenderEngine {
     camera.build_view_projection_matrix(&device, window_handler);
 
     // ! TESTING
-    let mut color_uniform = ColorUniform::new(0.0, 0.0, 0.0);
+    let color_uniform = ColorUniform::new(0.0, 0.0, 0.0);
+
+    // Now we create the Color buffer.
+    let color_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+      label: Some("color_buffer"),
+      contents: color_uniform.get_wgpu_raw_data(),
+      usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+    });
+
+    let color_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+      layout: &ColorUniform::get_wgpu_bind_group_layout(&device),
+      entries: &[wgpu::BindGroupEntry {
+        binding: 0,
+        resource: color_buffer.as_entire_binding(),
+      }],
+      label: Some("color_bind_group"),
+    });
 
     let mut new_render_engine = RenderEngine {
       camera,
@@ -259,6 +282,8 @@ impl RenderEngine {
 
       // ! TESTING
       color_uniform,
+      color_buffer,
+      color_bind_group,
     };
 
     // ! THIS IS TEMPORARY MESH DEBUGGING !
@@ -356,6 +381,14 @@ impl RenderEngine {
       self.camera.get_wgpu_raw_matrix(),
     );
 
+    // ! testing
+
+    self.queue.write_buffer(
+      &self.color_buffer,
+      0,
+      self.color_uniform.get_wgpu_raw_data(),
+    );
+
     self.output = Some(
       self
         .surface
@@ -442,6 +475,7 @@ impl RenderEngine {
             Some(texture) => {
               render_pass.set_bind_group(0, texture.get_wgpu_diffuse_bind_group(), &[]);
               render_pass.set_bind_group(1, self.camera.get_bind_group(), &[]);
+              render_pass.set_bind_group(2, &self.color_bind_group, &[]);
 
               render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
               render_pass.set_index_buffer(
