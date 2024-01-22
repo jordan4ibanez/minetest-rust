@@ -215,7 +215,7 @@ impl RenderEngine {
     );
 
     // Initial creation and updating of the Camera.
-    let mut camera = Camera::new(Vec3A::new(0.0, 0.0, 0.0), 65.0, &device, window_handler);
+    let mut camera = Camera::new(Vec3A::new(0.0, 0.0, -2.0), 65.0, &device, window_handler);
     camera.build_view_projection_matrix(&device, window_handler);
 
     let mut new_render_engine = RenderEngine {

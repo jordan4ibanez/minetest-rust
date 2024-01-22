@@ -161,24 +161,24 @@ impl Client {
 
     // * A very simple test to check the buffer in the shader.
     if self.keyboard.is_key_down("A") {
-      camera_pos.x -= delta as f32;
+      camera_pos.x += delta as f32;
     }
     if self.keyboard.is_key_down("D") {
-      camera_pos.x += delta as f32;
+      camera_pos.x -= delta as f32;
     }
 
     if self.keyboard.is_key_down("W") {
-      camera_pos.z -= delta as f32;
+      camera_pos.z += delta as f32;
     }
     if self.keyboard.is_key_down("S") {
-      camera_pos.z += delta as f32;
+      camera_pos.z -= delta as f32;
     }
 
     if self.keyboard.is_key_down("Left Shift") {
-      camera_pos.y -= delta as f32;
+      camera_pos.y += delta as f32;
     }
     if self.keyboard.is_key_down("Space") {
-      camera_pos.y += delta as f32;
+      camera_pos.y -= delta as f32;
     }
 
     // println!("camera pos {:?}", camera_pos);
