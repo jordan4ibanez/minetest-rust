@@ -43,8 +43,7 @@ pub struct RenderEngine {
   queue: wgpu::Queue,
   //todo: replace shader with a hashmap of shaders.
   shader: wgpu::ShaderModule,
-  // bind_group_layout: wgpu::BindGroupLayout,
-  // bind_group: wgpu::BindGroup,
+
   render_pipeline_layout: wgpu::PipelineLayout,
   render_pipeline: wgpu::RenderPipeline,
   surface_format: wgpu::TextureFormat,
@@ -120,17 +119,6 @@ impl RenderEngine {
       label: Some("default_shader"),
       source: wgpu::ShaderSource::Wgsl(read_file_to_string("shaders/default_shader.wgsl").into()),
     });
-
-    // Create bind group components.
-    // let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-    //   label: Some("bind_group_layout"),
-    //   entries: &[],
-    // });
-    // let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-    //   label: Some("bind_group"),
-    //   layout: &bind_group_layout,
-    //   entries: &[],
-    // });
 
     // Create the pipeline layout.
     let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -228,8 +216,7 @@ impl RenderEngine {
       device,
       queue,
       shader,
-      // bind_group_layout,
-      // bind_group,
+
       render_pipeline_layout,
       render_pipeline,
       surface_format,
