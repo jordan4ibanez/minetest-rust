@@ -502,6 +502,13 @@ impl RenderEngine {
   }
 
   ///
+  /// Store a Texture into the render engine for usage.
+  ///
+  pub fn store_texture(&mut self, name: &str, texture: Texture) {
+    self.textures.insert(name.to_owned(), texture);
+  }
+
+  ///
   /// Render a mesh unbatched.
   ///
   /// !PROTOTYPING!
