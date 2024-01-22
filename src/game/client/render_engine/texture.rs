@@ -14,8 +14,6 @@ pub struct Texture {
   diffuse_texture: Option<wgpu::Texture>,
   diffuse_texture_view: Option<wgpu::TextureView>,
   diffuse_sampler: Option<wgpu::Sampler>,
-
-  texture_bind_group_layout: Option<wgpu::BindGroupLayout>,
   diffuse_bind_group: Option<wgpu::BindGroup>,
 }
 
@@ -38,7 +36,6 @@ impl Texture {
       diffuse_texture_view: None,
       diffuse_sampler: None,
 
-      texture_bind_group_layout: None,
       diffuse_bind_group: None,
     }
   }
@@ -50,8 +47,37 @@ impl Texture {
     &self.name
   }
 
-  pub fn get_wgpu_bind_group(&self) -> &wgpu::BindGroup {
+  ///
+  /// Get the wgpu diffuse bind group for rendering.
+  ///
+  pub fn get_wgpu_diffuse_bind_group(&self) -> &wgpu::BindGroup {
     self.diffuse_bind_group.as_ref().unwrap()
+  }
+
+  pub fn get_wgpu_bind_group_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
+    device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+      entries: &[
+        wgpu::BindGroupLayoutEntry {
+          binding: 0,
+          visibility: wgpu::ShaderStages::FRAGMENT,
+          ty: wgpu::BindingType::Texture {
+            multisampled: false,
+            view_dimension: wgpu::TextureViewDimension::D2,
+            sample_type: wgpu::TextureSampleType::Float { filterable: true },
+          },
+          count: None,
+        },
+        wgpu::BindGroupLayoutEntry {
+          binding: 1,
+          visibility: wgpu::ShaderStages::FRAGMENT,
+          // This should match the filterable field of the
+          // corresponding Texture entry above.
+          ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+          count: None,
+        },
+      ],
+      label: Some("texture_bind_group_layout"),
+    })
   }
 
   ///
@@ -132,40 +158,11 @@ impl Texture {
       ..Default::default()
     }));
 
-    let mut texture_bind_group_layout_name = self.name.clone();
-    texture_bind_group_layout_name.push_str("_bind_group_layout");
-
-    self.texture_bind_group_layout = Some(device.create_bind_group_layout(
-      &wgpu::BindGroupLayoutDescriptor {
-        entries: &[
-          wgpu::BindGroupLayoutEntry {
-            binding: 0,
-            visibility: wgpu::ShaderStages::FRAGMENT,
-            ty: wgpu::BindingType::Texture {
-              multisampled: false,
-              view_dimension: wgpu::TextureViewDimension::D2,
-              sample_type: wgpu::TextureSampleType::Float { filterable: true },
-            },
-            count: None,
-          },
-          wgpu::BindGroupLayoutEntry {
-            binding: 1,
-            visibility: wgpu::ShaderStages::FRAGMENT,
-            // This should match the filterable field of the
-            // corresponding Texture entry above.
-            ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
-            count: None,
-          },
-        ],
-        label: Some(&texture_bind_group_layout_name),
-      },
-    ));
-
     let mut diffuse_bind_group_name = self.name.clone();
     diffuse_bind_group_name.push_str("_diffuse_bind_group");
 
     self.diffuse_bind_group = Some(device.create_bind_group(&wgpu::BindGroupDescriptor {
-      layout: self.texture_bind_group_layout.as_ref().unwrap(),
+      layout: &Texture::get_wgpu_bind_group_layout(device),
       entries: &[
         wgpu::BindGroupEntry {
           binding: 0,
