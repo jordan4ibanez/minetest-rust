@@ -561,6 +561,13 @@ impl RenderEngine {
   }
 
   ///
+  /// Grab the Camera mutably to do things with it.
+  ///
+  pub fn get_camera(&mut self) -> &mut Camera {
+    &mut self.camera
+  }
+
+  ///
   /// Run all required update procedures on the RenderEngine.
   ///
   pub fn update(&mut self, window_handler: &WindowHandler, delta: f64) {
