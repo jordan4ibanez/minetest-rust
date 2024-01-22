@@ -201,7 +201,7 @@ impl Game {
     self.delta = self.delta_reporter.report();
 
     // * Uncomment this to see the exact delta time.
-    println!("delta: {:.32}", self.delta);
+    // println!("delta: {:.32}", self.delta);
 
     //* Begin server/client on_tick()
 
