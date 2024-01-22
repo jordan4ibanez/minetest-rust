@@ -1,5 +1,6 @@
 mod client_connection;
 mod keyboard;
+mod mouse;
 mod render_engine;
 mod window_handler;
 
