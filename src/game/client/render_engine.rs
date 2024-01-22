@@ -1,3 +1,4 @@
+mod camera;
 mod mesh;
 mod render_containers;
 mod texture;
