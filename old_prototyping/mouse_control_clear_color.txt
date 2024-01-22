@@ -1,0 +1,33 @@
+  /// !remove me!
+  ///
+  /// A test of combining the window handler with the clear color.
+  ///
+  /// Simply changes the clear color based on the x and y of the mouse.
+  ///
+  /// !remove me!
+  fn test_implementation(&mut self, window_handler: &WindowHandler, mouse: &MouseController) {
+    let width = window_handler.get_size().x as f64;
+    let progress_x = mouse.get_x() as f64;
+
+    let height = window_handler.get_size().y as f64;
+    let progress_y = mouse.get_y() as f64;
+
+    let mut red_color = progress_x / width;
+    if red_color.is_infinite() {
+      red_color = 0.0;
+    }
+
+    let mut blue_color = progress_y / height;
+    if blue_color.is_infinite() {
+      blue_color = 0.0;
+    }
+
+    let old_clear = self.clear_color;
+
+    self.clear_color.r = red_color;
+    self.clear_color.b = blue_color;
+
+    if old_clear != self.clear_color {
+      println!("clear color updated! {:?}", self.clear_color);
+    }
+  }
