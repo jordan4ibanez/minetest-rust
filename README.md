@@ -30,8 +30,7 @@ https://discord.gg/Z2wCscTB4F
 - wgpu - Graphics multiplexer. (Vulkan, OpenGL, WebGPU, metal)
 - wgpu_sdl_linker - A micro library which allows safely linking wgpu with SDL2.
 - bytemuck - Used in conjunction with wgpu to cash vertex data.
-
-- delta - Used to calculate the time between frames.
+- 
 - rand - For doing random things.
 
 ##### Packages to be implemented:
