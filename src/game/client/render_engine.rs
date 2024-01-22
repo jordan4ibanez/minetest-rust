@@ -499,13 +499,18 @@ impl RenderEngine {
   pub fn render_mesh_unbatched(
     &mut self,
     model_name: &str,
+    texture_name: &str,
     translation: DVec3,
     rotation: DVec3,
     scale: DVec3,
   ) {
-    self
-      .unbatched_queue
-      .push_back(RenderCall::new(model_name, translation, rotation, scale))
+    self.unbatched_queue.push_back(RenderCall::new(
+      model_name,
+      texture_name,
+      translation,
+      rotation,
+      scale,
+    ))
   }
 
   ///
