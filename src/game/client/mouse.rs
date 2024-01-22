@@ -1,12 +1,12 @@
 use glam::UVec2;
 
-pub struct Mouse {
+pub struct MouseController {
   position: UVec2,
 }
 
-impl Mouse {
+impl MouseController {
   pub fn new() -> Self {
-    Mouse {
+    MouseController {
       position: UVec2::new(0, 0),
     }
   }
