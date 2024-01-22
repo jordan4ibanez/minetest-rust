@@ -334,9 +334,17 @@ impl RenderEngine {
   /// Also, the Camera's uniform is updated here.
   ///
   pub fn initialize_render(&mut self, window_handler: &WindowHandler) {
+    // First update the camera in cpu memory.
     self
       .camera
       .build_view_projection_matrix(&self.device, window_handler);
+
+    // Write the new camera information into wgpu.
+    self.queue.write_buffer(
+      self.camera.get_buffer(),
+      0,
+      self.camera.get_wgpu_raw_matrix(),
+    );
 
     self.output = Some(
       self

@@ -125,15 +125,21 @@ impl Camera {
   ///
   /// Get the wgpu raw uniform contents to pass into the pipelne.
   ///
-  pub fn get_wgpu_uniform(&self) -> &[u8] {
+  pub fn get_wgpu_raw_matrix(&self) -> &[u8] {
     bytemuck::cast_slice(self.camera_uniform.get_view_projection())
   }
 
   ///
-  /// Get the Camera's bind group for rendering.
+  /// Get the Camera's wgpu bind group for rendering.
   ///
   pub fn get_bind_group(&self) -> &wgpu::BindGroup {
     &self.camera_bind_group
+  }
+
+  ///
+  /// Get the Camera's wgpu buffer.
+  pub fn get_buffer(&self) -> &wgpu::Buffer {
+    &self.camera_buffer
   }
 
   ///
