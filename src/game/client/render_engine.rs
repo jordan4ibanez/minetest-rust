@@ -332,7 +332,7 @@ impl RenderEngine {
       new_render_engine.store_mesh(&new_mesh.get_name().clone(), new_mesh);
 
       let new_texture = Texture::new(
-        "prototype_texture/tf.jpg",
+        "prototype_textures/tf.jpg",
         &new_render_engine.device,
         &new_render_engine.queue,
       );
