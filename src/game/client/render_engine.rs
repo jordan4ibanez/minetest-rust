@@ -231,7 +231,7 @@ impl RenderEngine {
 
     // Initial creation and updating of the Camera.
     let mut camera = Camera::new(Vec3A::new(0.0, 0.0, -2.0), 65.0, &device, window_handler);
-    camera.build_view_projection_matrix(&device, window_handler);
+    camera.build_view_projection_matrix(&device, window_handler, &queue);
 
     // ! TESTING
     let color_uniform = ColorUniform::new(1.0, 1.0, 1.0);
@@ -378,14 +378,9 @@ impl RenderEngine {
     // First update the camera in cpu memory.
     self
       .camera
-      .build_view_projection_matrix(&self.device, window_handler);
+      .build_view_projection_matrix(&self.device, window_handler, &self.queue);
 
-    // Write the new camera information into wgpu.
-    self.queue.write_buffer(
-      self.camera.get_buffer(),
-      0,
-      self.camera.get_wgpu_raw_matrix(),
-    );
+    
 
     // ! testing
 

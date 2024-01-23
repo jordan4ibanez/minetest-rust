@@ -75,9 +75,12 @@ impl Camera {
   }
 
   ///
-  /// Automatically updates the camera's internal buffer.
+  /// Automatically updates the camera's internal buffer in wgpu.
   ///
-  fn update_buffer(&mut self, device: &wgpu::Device) {}
+  fn update_buffer(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
+    // Write the new camera information into wgpu.
+    queue.write_buffer(self.get_buffer(), 0, self.get_wgpu_raw_matrix());
+  }
 
   ///
   /// Set the FOV of the Camera.
@@ -129,6 +132,7 @@ impl Camera {
     &mut self,
     device: &wgpu::Device,
     window_handler: &WindowHandler,
+    queue: &wgpu::Queue,
   ) {
     self.aspect_ratio = window_handler.get_width() as f32 / window_handler.get_height() as f32;
 
@@ -149,7 +153,7 @@ impl Camera {
       .camera_uniform
       .update_view_projection(OPENGL_TO_WGPU_MATRIX * projection * view_rot * view_translation);
 
-    self.update_buffer(device);
+    self.update_buffer(device, queue);
   }
 
   ///
