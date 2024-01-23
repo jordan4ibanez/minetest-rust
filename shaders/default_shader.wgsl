@@ -10,7 +10,7 @@ struct ModelUniform {
   trs_projection: mat4x4<f32>,
 }
 @group(3) @binding(0)
-var<uniform> model: ModelUniform;
+var<uniform> model_uniform: ModelUniform;
 
 struct VertexInput {
   @location(0) position: vec3<f32>,
@@ -31,7 +31,7 @@ fn vs_main(
   var out: VertexOutput;
   out.texture_coordinates = model.texture_coordinates;
   out.color = model.color;
-  out.clip_position = camera.view_projection * vec4<f32>(model.position, 1.0);
+  out.clip_position = camera.view_projection * model_uniform.trs_projection * vec4<f32>(model.position, 1.0);
   return out;
 }
 
