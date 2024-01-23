@@ -120,6 +120,9 @@ impl Camera {
   ///
   /// This also updates the aspect ratio, so WindowHandler is required.
   ///
+  /// On top of this, it will also update the wgpu matrix uniform automatically.
+  /// So the queue is required.
+  ///
   pub fn build_view_projection_matrix(
     &mut self,
     device: &wgpu::Device,
@@ -145,13 +148,7 @@ impl Camera {
       .camera_uniform
       .update_view_projection(OPENGL_TO_WGPU_MATRIX * projection * view_rot * view_translation);
 
-    self.update_wgpu_buffer(device, queue);
-  }
-
-  ///
-  /// Automatically writes the camera's matrix information in wgpu.
-  ///
-  fn update_wgpu_buffer(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
+    // Automatically writes the camera's matrix information in wgpu.
     queue.write_buffer(self.get_buffer(), 0, self.get_wgpu_raw_matrix());
   }
 
