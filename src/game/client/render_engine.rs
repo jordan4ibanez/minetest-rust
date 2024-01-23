@@ -14,7 +14,7 @@ use std::{
 use glam::{UVec2, Vec3A};
 use log::error;
 
-use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
+use wgpu::{CommandEncoder, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
 use crate::{
@@ -279,27 +279,27 @@ impl RenderEngine {
         Vertex {
           position: [-0.0868241, 0.49240386, 0.0],
           texture_coordinates: [0.4131759, 0.00759614],
-          color: [0.5, 0.0, 0.5],
+          color: [1.0, 1.0, 1.0],
         }, // A
         Vertex {
           position: [-0.49513406, 0.06958647, 0.0],
           texture_coordinates: [0.0048659444, 0.43041354],
-          color: [0.5, 0.0, 0.5],
+          color: [1.0, 1.0, 1.0],
         }, // B
         Vertex {
           position: [-0.21918549, -0.44939706, 0.0],
           texture_coordinates: [0.28081453, 0.949397],
-          color: [0.5, 0.0, 0.5],
+          color: [1.0, 1.0, 1.0],
         }, // C
         Vertex {
           position: [0.35966998, -0.3473291, 0.0],
           texture_coordinates: [0.85967, 0.84732914],
-          color: [0.5, 0.0, 0.5],
+          color: [1.0, 1.0, 1.0],
         }, // D
         Vertex {
           position: [0.44147372, 0.2347359, 0.0],
           texture_coordinates: [0.9414737, 0.2652641],
-          color: [0.5, 0.0, 0.5],
+          color: [1.0, 1.0, 1.0],
         }, // E
       ]);
 
@@ -547,6 +547,7 @@ impl RenderEngine {
   ///
   pub fn update(&mut self, window_handler: &WindowHandler, delta: f64) {
     self.update_size(window_handler.get_size());
+    // self.trollface_rave(delta);
     // self.test_implementation(window_handler);
   }
 }
