@@ -229,7 +229,7 @@ impl Client {
       "debug",
       "tf.jpg",
       Vec3A::new(0.0, 0.0, 0.0),
-      Vec3A::new(self.spin_test as f32, 0.0, 0.0),
+      Vec3A::new(0.0, self.spin_test as f32, 0.0),
       Vec3A::new(0.0, 0.0, 0.0),
     );
     println!("spin  {}", self.spin_test);
