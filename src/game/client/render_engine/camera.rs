@@ -1,6 +1,6 @@
 mod camera_uniform;
 
-use glam::{Mat4, Quat, Vec3, Vec3A, Vec4};
+use glam::{Mat4, Vec3, Vec3A, Vec4};
 use wgpu::util::DeviceExt;
 
 use crate::game::client::window_handler::WindowHandler;
