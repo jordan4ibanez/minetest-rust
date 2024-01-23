@@ -239,6 +239,9 @@ impl RenderEngine {
 
     // ! TESTING
     let color_uniform = ColorUniform::new(1.0, 1.0, 1.0, &device);
+    // ! END TESTING
+
+    let mesh_trs_uniform = MeshTRSUniform::new(&device);
 
     let mut new_render_engine = RenderEngine {
       camera,
@@ -272,10 +275,13 @@ impl RenderEngine {
       meshes: HashMap::new(),
       textures: HashMap::new(),
 
-      // ! TESTING
+      mesh_trs_uniform,
+
+      // ! TESTING VARIABLES
       color_uniform,
       channel: 0,
       up: true,
+      // ! END TESTING VARIABLES
     };
 
     // ! THIS IS TEMPORARY MESH DEBUGGING !
