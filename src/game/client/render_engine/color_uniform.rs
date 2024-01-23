@@ -26,6 +26,7 @@ pub struct ColorUniform {
 }
 impl ColorUniform {
   pub fn new(r: f32, g: f32, b: f32, device: &wgpu::Device) -> Self {
+    // Let's start by creating the struct which encapsulates the RGB data.
     let color_rgba = ColorRGBA::new(r, g, b);
 
     // Now we create the Color buffer.
