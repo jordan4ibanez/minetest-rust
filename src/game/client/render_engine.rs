@@ -464,6 +464,27 @@ impl RenderEngine {
               render_pass.set_bind_group(1, self.camera.get_bind_group(), &[]);
               render_pass.set_bind_group(2, self.color_uniform.get_bind_group(), &[]);
 
+              // ! This is a workaround for borrowing mut & not mut at once.
+              // MeshTRSUniform is used for unbatched calls.
+
+              self
+                .mesh_trs_uniform
+                .build_model_projection_matrix(&self.device, &self.queue);
+
+              self
+                .mesh_trs_uniform
+                .set_translation(unbatched_render_call.get_translation());
+              self
+                .mesh_trs_uniform
+                .set_rotation(unbatched_render_call.get_rotation());
+              self
+                .mesh_trs_uniform
+                .set_scale(unbatched_render_call.get_scale());
+
+              render_pass.set_bind_group(3, self.mesh_trs_uniform.get_bind_group(), &[]);
+
+              // ! End workaround
+
               render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
               render_pass.set_index_buffer(
                 mesh.get_wgpu_index_buffer().slice(..),
