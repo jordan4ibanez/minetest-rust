@@ -3,7 +3,6 @@ use wgpu::util::DeviceExt;
 
 use crate::game::client::window_handler::WindowHandler;
 
-#[rustfmt::skip]
 pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
   x_axis: Vec4::new(1.0, 0.0, 0.0, 0.0),
   y_axis: Vec4::new(0.0, 1.0, 0.0, 0.0),
