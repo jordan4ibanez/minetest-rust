@@ -1,6 +1,7 @@
 mod camera;
 mod color_uniform;
 mod mesh;
+mod mesh_trs_uniform;
 mod render_containers;
 mod texture;
 
