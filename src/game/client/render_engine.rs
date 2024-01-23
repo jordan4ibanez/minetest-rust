@@ -21,6 +21,7 @@ use crate::{
   file_utilities::read_file_to_string,
   game::client::render_engine::{
     mesh::{Mesh, Vertex},
+    mesh_trs_uniform::MeshTRSUniform,
     texture::Texture,
   },
 };
