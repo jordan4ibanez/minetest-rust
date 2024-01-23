@@ -38,6 +38,8 @@ pub struct Camera {
   z_far: f32,
 
   camera_uniform: CameraUniform,
+
+  // wgpu components.
   camera_buffer: wgpu::Buffer,
   camera_bind_group: wgpu::BindGroup,
 }
@@ -81,6 +83,8 @@ impl Camera {
       z_far: 100.0,
 
       camera_uniform,
+
+      // wgpu components.
       camera_buffer,
       camera_bind_group,
     }
