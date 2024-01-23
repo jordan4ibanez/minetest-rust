@@ -146,6 +146,8 @@ impl RenderEngine {
         &Camera::get_wgpu_bind_group_layout(&device),
         // Group 2.
         &ColorUniform::get_wgpu_bind_group_layout(&device),
+        // Group 3.
+        &MeshTRSUniform::get_wgpu_bind_group_layout(&device),
       ],
       push_constant_ranges: &[],
     });
