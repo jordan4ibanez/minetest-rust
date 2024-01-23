@@ -143,7 +143,7 @@ impl Camera {
   ) {
     self.aspect_ratio = window_handler.get_width() as f32 / window_handler.get_height() as f32;
 
-    let view_rot = Mat4::from_euler(
+    let view_rotation = Mat4::from_euler(
       glam::EulerRot::XYZ,
       self.rotation.x,
       self.rotation.y,
@@ -157,7 +157,7 @@ impl Camera {
     let projection = Mat4::perspective_rh(self.fov_y, self.aspect_ratio, self.z_near, self.z_far);
 
     self.camera_uniform.view_projection =
-      (OPENGL_TO_WGPU_MATRIX * projection * view_rot * view_translation).to_cols_array_2d();
+      (OPENGL_TO_WGPU_MATRIX * projection * view_rotation * view_translation).to_cols_array_2d();
 
     // Automatically writes the camera's matrix information in wgpu.
     queue.write_buffer(self.get_buffer(), 0, self.get_wgpu_raw_matrix());
@@ -166,7 +166,7 @@ impl Camera {
   ///
   /// Get the wgpu raw uniform contents to pass into the pipelne.
   ///
-  pub fn get_wgpu_raw_matrix(&self) -> &[u8] {
+  fn get_wgpu_raw_matrix(&self) -> &[u8] {
     bytemuck::cast_slice(&self.camera_uniform.view_projection)
   }
 
