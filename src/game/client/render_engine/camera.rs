@@ -5,8 +5,6 @@ use wgpu::util::DeviceExt;
 
 use crate::game::client::window_handler::WindowHandler;
 
-use self::camera_uniform::CameraUniform;
-
 #[rustfmt::skip]
 pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
   x_axis: Vec4::new(1.0, 0.0, 0.0, 0.0),
@@ -14,6 +12,23 @@ pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
   z_axis: Vec4::new(0.0, 0.0, 0.5, 0.5),
   w_axis: Vec4::new(0.0, 0.0, 0.0, 1.0),
 };
+
+// We need this for Rust to store our data correctly for the shaders
+#[repr(C)]
+// This is so we can store this in a buffer
+#[derive(Debug, Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+pub struct CameraUniform {
+  // We can't use cgmath with bytemuck directly, so we'll have
+  // to convert the Matrix4 into a 4x4 f32 array
+  view_projection: [[f32; 4]; 4],
+}
+impl CameraUniform {
+  pub fn new() -> Self {
+    Self {
+      view_projection: Mat4::IDENTITY.to_cols_array_2d(),
+    }
+  }
+}
 
 pub struct Camera {
   eye: Vec3A,
@@ -43,7 +58,7 @@ impl Camera {
     // Now we create the Camera's buffer.
     let camera_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
       label: Some("camera_buffer"),
-      contents: bytemuck::cast_slice(camera_uniform.get_view_projection()),
+      contents: bytemuck::cast_slice(&camera_uniform.view_projection),
       usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
     });
 
@@ -144,9 +159,8 @@ impl Camera {
 
     let projection = Mat4::perspective_rh(self.fov_y, self.aspect_ratio, self.z_near, self.z_far);
 
-    self
-      .camera_uniform
-      .update_view_projection(OPENGL_TO_WGPU_MATRIX * projection * view_rot * view_translation);
+    self.camera_uniform.view_projection =
+      (OPENGL_TO_WGPU_MATRIX * projection * view_rot * view_translation).to_cols_array_2d();
 
     // Automatically writes the camera's matrix information in wgpu.
     queue.write_buffer(self.get_buffer(), 0, self.get_wgpu_raw_matrix());
@@ -156,7 +170,7 @@ impl Camera {
   /// Get the wgpu raw uniform contents to pass into the pipelne.
   ///
   pub fn get_wgpu_raw_matrix(&self) -> &[u8] {
-    bytemuck::cast_slice(self.camera_uniform.get_view_projection())
+    bytemuck::cast_slice(&self.camera_uniform.view_projection)
   }
 
   ///
