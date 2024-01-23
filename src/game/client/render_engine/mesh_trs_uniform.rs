@@ -1,4 +1,5 @@
 use glam::{Mat4, Vec3, Vec3A, Vec4};
+use std::{cell::RefCell, rc::Rc};
 use wgpu::util::DeviceExt;
 
 use crate::game::client::window_handler::WindowHandler;
@@ -27,12 +28,15 @@ impl ModelUniform {
   }
 }
 
+///
+/// ! When rust 2024 comes out, test making this not interior mutable.
+///
 pub struct MeshTRSUniform {
-  translation: Vec3A,
-  rotation: Vec3A,
-  scale: Vec3A,
+  translation: Rc<RefCell<Vec3A>>,
+  rotation: Rc<RefCell<Vec3A>>,
+  scale: Rc<RefCell<Vec3A>>,
 
-  model_uniform: ModelUniform,
+  model_uniform: Rc<RefCell<ModelUniform>>,
 
   // wgpu components.
   model_buffer: wgpu::Buffer,
@@ -62,11 +66,11 @@ impl MeshTRSUniform {
     });
 
     MeshTRSUniform {
-      translation: Vec3A::new(0.0, 0.0, 0.0),
-      rotation: Vec3A::new(0.0, 0.0, 0.0),
-      scale: Vec3A::new(0.0, 0.0, 0.0),
+      translation: Rc::new(RefCell::new(Vec3A::new(0.0, 0.0, 0.0))),
+      rotation: Rc::new(RefCell::new(Vec3A::new(0.0, 0.0, 0.0))),
+      scale: Rc::new(RefCell::new(Vec3A::new(0.0, 0.0, 0.0))),
 
-      model_uniform,
+      model_uniform: Rc::new(RefCell::new(model_uniform)),
 
       // wgpu components.
       model_buffer,
@@ -77,59 +81,64 @@ impl MeshTRSUniform {
   ///
   /// Set the translation of the Mesh TRS Uniform.
   ///
-  pub fn set_translation(&mut self, new_translation: &Vec3A) {
-    self.translation.x = new_translation.x;
-    self.translation.y = new_translation.y;
-    self.translation.z = new_translation.z;
+  pub fn set_translation(&self, new_translation: &Vec3A) {
+    self.translation.as_ref().borrow_mut().x = new_translation.x;
+    self.translation.as_ref().borrow_mut().y = new_translation.y;
+    self.translation.as_ref().borrow_mut().z = new_translation.z;
   }
 
   ///
   /// Set the rotation of the Mesh TRS Uniform.
   ///
-  pub fn set_rotation(&mut self, new_rotation: &Vec3A) {
-    self.rotation.x = new_rotation.x;
-    self.rotation.y = new_rotation.y;
-    self.rotation.z = new_rotation.z;
+  pub fn set_rotation(&self, new_rotation: &Vec3A) {
+    self.rotation.as_ref().borrow_mut().x = new_rotation.x;
+    self.rotation.as_ref().borrow_mut().y = new_rotation.y;
+    self.rotation.as_ref().borrow_mut().z = new_rotation.z;
   }
 
   ///
   /// Set the scale of the Mesh TRS Uniform.
   ///
-  pub fn set_scale(&mut self, new_scale: &Vec3A) {
-    self.scale.x = new_scale.x;
-    self.scale.y = new_scale.y;
-    self.scale.z = new_scale.z;
+  pub fn set_scale(&self, new_scale: &Vec3A) {
+    self.scale.as_ref().borrow_mut().x = new_scale.x;
+    self.scale.as_ref().borrow_mut().y = new_scale.y;
+    self.scale.as_ref().borrow_mut().z = new_scale.z;
   }
 
   ///
   /// The TRS model projection will automatically rebuild itself every time it is polled.
   ///
   fn build_model_projection_matrix(
-    &mut self,
+    &self,
     device: &wgpu::Device,
     window_handler: &WindowHandler,
     queue: &wgpu::Queue,
   ) {
     let view_rotation = Mat4::from_euler(
       glam::EulerRot::XYZ,
-      self.rotation.x,
-      self.rotation.y,
-      self.rotation.z,
+      self.rotation.as_ref().borrow().x,
+      self.rotation.as_ref().borrow().y,
+      self.rotation.as_ref().borrow().z,
     );
 
-    let view_translation = Mat4::from_translation(Vec3::from(self.translation));
+    let view_translation = Mat4::from_translation(Vec3::from(*self.translation.as_ref().borrow()));
 
-    self.model_uniform.model_projection =
+    self.model_uniform.as_ref().borrow_mut().model_projection =
       (OPENGL_TO_WGPU_MATRIX * view_rotation * view_translation).to_cols_array_2d();
 
-    queue.write_buffer(self.get_buffer(), 0, self.get_wgpu_raw_matrix());
+    queue.write_buffer(
+      self.get_buffer(),
+      0,
+      self.get_wgpu_raw_matrix().as_ref().borrow().as_slice(),
+    );
   }
 
   ///
   /// Get the wgpu raw uniform contents to pass into the pipeline.
   ///
-  fn get_wgpu_raw_matrix(&self) -> &[u8] {
-    bytemuck::cast_slice(&self.model_uniform.model_projection)
+  fn get_wgpu_raw_matrix(&self) -> Rc<RefCell<Vec<u8>>> {
+    let x = bytemuck::cast_slice(&self.model_uniform.as_ref().borrow().model_projection).to_owned();
+    Rc::new(RefCell::new(x))
   }
 
   ///
