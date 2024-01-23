@@ -108,12 +108,7 @@ impl MeshTRSUniform {
   ///
   /// The TRS model projection will automatically rebuild itself every time it is polled.
   ///
-  fn build_model_projection_matrix(
-    &self,
-    device: &wgpu::Device,
-    window_handler: &WindowHandler,
-    queue: &wgpu::Queue,
-  ) {
+  pub fn build_model_projection_matrix(&self, device: &wgpu::Device, queue: &wgpu::Queue) {
     let view_rotation = Mat4::from_euler(
       glam::EulerRot::XYZ,
       self.rotation.as_ref().borrow().x,
