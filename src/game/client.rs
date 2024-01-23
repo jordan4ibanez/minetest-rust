@@ -37,6 +37,9 @@ pub struct Client {
   keyboard: KeyboardController,
 
   quit_received: bool,
+
+  // ! TESTING
+  spin_test: f64,
 }
 
 impl Client {
@@ -55,6 +58,9 @@ impl Client {
       keyboard: KeyboardController::new(),
 
       quit_received: false,
+
+      // ! TESTING
+      spin_test: 0.0,
     };
 
     // Set up the render engine.
@@ -211,6 +217,9 @@ impl Client {
       .update(&self.window_handler, delta);
 
     // Now render everything. 3 steps for now.
+
+    self.spin_test += delta;
+
     self
       .render_engine
       .as_mut()
@@ -220,9 +229,10 @@ impl Client {
       "debug",
       "tf.jpg",
       Vec3A::new(0.0, 0.0, 0.0),
-      Vec3A::new(0.0, 0.0, 0.0),
+      Vec3A::new(self.spin_test as f32, 0.0, 0.0),
       Vec3A::new(0.0, 0.0, 0.0),
     );
+    println!("spin  {}", self.spin_test);
     self.render_engine.as_mut().unwrap().process_render_calls();
     self.render_engine.as_mut().unwrap().finalize_render();
 
