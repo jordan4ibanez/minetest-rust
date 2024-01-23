@@ -72,8 +72,6 @@ pub struct RenderEngine {
 
   // ! testing variables
   color_uniform: ColorUniform,
-  color_buffer: wgpu::Buffer,
-  color_bind_group: wgpu::BindGroup,
   channel: i8,
   up: bool,
 }
@@ -234,23 +232,7 @@ impl RenderEngine {
     camera.build_view_projection_matrix(&device, window_handler, &queue);
 
     // ! TESTING
-    let color_uniform = ColorUniform::new(1.0, 1.0, 1.0);
-
-    // Now we create the Color buffer.
-    let color_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-      label: Some("color_buffer"),
-      contents: color_uniform.get_wgpu_raw_data(),
-      usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-    });
-
-    let color_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-      layout: &ColorUniform::get_wgpu_bind_group_layout(&device),
-      entries: &[wgpu::BindGroupEntry {
-        binding: 0,
-        resource: color_buffer.as_entire_binding(),
-      }],
-      label: Some("color_bind_group"),
-    });
+    let color_uniform = ColorUniform::new(1.0, 1.0, 1.0, &device);
 
     let mut new_render_engine = RenderEngine {
       camera,
@@ -286,8 +268,6 @@ impl RenderEngine {
 
       // ! TESTING
       color_uniform,
-      color_buffer,
-      color_bind_group,
       channel: 0,
       up: true,
     };
@@ -380,15 +360,9 @@ impl RenderEngine {
       .camera
       .build_view_projection_matrix(&self.device, window_handler, &self.queue);
 
-    
-
-    // ! testing
-
-    self.queue.write_buffer(
-      &self.color_buffer,
-      0,
-      self.color_uniform.get_wgpu_raw_data(),
-    );
+    // Next we will write the color buffer into memory.
+    // ! TODO: this might be needed in the unbatched/batched loop. Test this.
+    self.color_uniform.write_buffer_to_wgpu(&self.queue);
 
     self.output = Some(
       self
@@ -476,7 +450,7 @@ impl RenderEngine {
             Some(texture) => {
               render_pass.set_bind_group(0, texture.get_wgpu_diffuse_bind_group(), &[]);
               render_pass.set_bind_group(1, self.camera.get_bind_group(), &[]);
-              render_pass.set_bind_group(2, &self.color_bind_group, &[]);
+              render_pass.set_bind_group(2, self.color_uniform.get_bind_group(), &[]);
 
               render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
               render_pass.set_index_buffer(
