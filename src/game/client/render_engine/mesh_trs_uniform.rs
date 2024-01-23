@@ -1,9 +1,19 @@
-use glam::Vec3A;
+use glam::{Mat4, Vec3A, Vec4};
+
+#[rustfmt::skip]
+pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
+  x_axis: Vec4::new(1.0, 0.0, 0.0, 0.0),
+  y_axis: Vec4::new(0.0, 1.0, 0.0, 0.0),
+  z_axis: Vec4::new(0.0, 0.0, 0.5, 0.5),
+  w_axis: Vec4::new(0.0, 0.0, 0.0, 1.0),
+};
 
 pub struct MeshTRSUniform {
   translation: Vec3A,
   rotation: Vec3A,
   scale: Vec3A,
+
+  model_projection: [[f32; 4]; 4],
 }
 
 impl MeshTRSUniform {
@@ -12,6 +22,7 @@ impl MeshTRSUniform {
       translation: Vec3A::new(0.0, 0.0, 0.0),
       rotation: Vec3A::new(0.0, 0.0, 0.0),
       scale: Vec3A::new(0.0, 0.0, 0.0),
+      model_projection: Mat4::IDENTITY.to_cols_array_2d(),
     }
   }
 
