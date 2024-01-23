@@ -1,5 +1,3 @@
-mod camera_uniform;
-
 use glam::{Mat4, Vec3, Vec3A, Vec4};
 use wgpu::util::DeviceExt;
 
@@ -13,13 +11,13 @@ pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
   w_axis: Vec4::new(0.0, 0.0, 0.0, 1.0),
 };
 
-// We need this for Rust to store our data correctly for the shaders
+// We need this for Rust to store our data correctly for the shaders.
 #[repr(C)]
-// This is so we can store this in a buffer
+// This is so we can store this in a buffer.
 #[derive(Debug, Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct CameraUniform {
   // We can't use cgmath with bytemuck directly, so we'll have
-  // to convert the Matrix4 into a 4x4 f32 array
+  // to convert the Matrix4 into a 4x4 f32 array.
   view_projection: [[f32; 4]; 4],
 }
 impl CameraUniform {
