@@ -6,6 +6,12 @@ struct CameraUniform {
 @group(1) @binding(0)
 var<uniform> camera: CameraUniform;
 
+struct ModelUniform {
+  trs_projection: mat4x4<f32>,
+}
+@group(3) @binding(0)
+var<uniform> model: ModelUniform;
+
 struct VertexInput {
   @location(0) position: vec3<f32>,
   @location(1) texture_coordinates: vec2<f32>,
