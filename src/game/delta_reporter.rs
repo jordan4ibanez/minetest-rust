@@ -18,9 +18,12 @@ impl DeltaReporter {
   ///
   /// Get the time in seconds as f64 since the last loop.
   ///
+  /// You can thank the creator of spin_sleep alexheretic for helping me micro opt this!
+  ///
   pub fn report(&mut self) -> f64 {
-    let delta = self.old_time.elapsed().as_secs_f64();
-    self.old_time = Instant::now();
+    let now = Instant::now();
+    let delta = now.duration_since(self.old_time).as_secs_f64();
+    self.old_time = now;
     delta
   }
 }
