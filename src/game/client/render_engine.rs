@@ -71,10 +71,13 @@ pub struct RenderEngine {
   meshes: HashMap<String, Mesh>,
   textures: HashMap<String, Texture>,
 
-  // ! testing variables
+  mesh_trs_uniform: MeshTRSUniform,
+
+  // ! TESTING VARIABLES
   color_uniform: ColorUniform,
   channel: i8,
   up: bool,
+  // ! END TESTING VARIABLES
 }
 
 impl RenderEngine {
