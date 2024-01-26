@@ -31,7 +31,7 @@ pub struct Client {
   render_engine: RenderEngine,
   client_name: String,
   connection: ClientConnection,
-  lua_engine: Option<LuaEngine>,
+  lua_engine: LuaEngine,
 
   mouse: MouseController,
   keyboard: KeyboardController,
@@ -44,9 +44,11 @@ pub struct Client {
 
 impl Client {
   pub fn new(client_name: String, address: String, port: i32) -> Self {
-    // * This is testing for automatically locking the mouse in upon game engine start.
+    // Input engines.
     let mut mouse = MouseController::new();
     let keyboard = KeyboardController::new();
+
+    // Set up the window handler.
     let window_handler = WindowHandler::new(&mut mouse);
 
     // Set up the render engine.
@@ -55,12 +57,15 @@ impl Client {
     // Set up a blank client connection.
     let connection = ClientConnection::new(address, port);
 
+    // Finally create the Client-side luau virtual machine.
+    let lua_engine = LuaEngine::new(false);
+
     let mut new_client = Client {
       window_handler,
       render_engine,
       client_name,
       connection,
-      lua_engine: None,
+      lua_engine,
 
       mouse,
       keyboard,
@@ -94,26 +99,11 @@ impl Client {
   }
 
   ///
-  /// Deletes the lua VM.
-  ///
-  fn delete_lua_vm(&mut self) {
-    self.lua_engine = None
-  }
-
-  ///
-  /// Creates a new client lua VM.
-  ///
-  fn create_lua_vm(&mut self) {
-    self.lua_engine = Some(LuaEngine::new(false));
-  }
-
-  ///
   /// Wipe the memory of the lua VM.
   /// Automatically regenerates a blank client VM.
   ///
   pub fn reset_lua_vm(&mut self) {
-    self.delete_lua_vm();
-    self.create_lua_vm();
+    self.lua_engine = LuaEngine::new(false);
   }
 
   ///
@@ -154,12 +144,7 @@ impl Client {
 
     //todo: probably should do user input here
 
-    // We want this to throw a runtime panic if we make a logic error.
-    // ! Never turn this into a silent bypass via: is_some() or if let
-    match &self.lua_engine {
-      Some(lua_engine) => lua_engine.on_tick(delta),
-      None => panic!("minetest: Client LuaEngine does not exist!"),
-    }
+    self.lua_engine.on_tick(delta);
 
     //todo: should probably do side effects from lua here
 
