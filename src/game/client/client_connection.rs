@@ -65,7 +65,7 @@ impl ClientConnection {
     // ! Note: this literally is the handshake right now
     // self.send_data(self.end_point.unwrap(), "MINETEST_HAND_SHAKE");
 
-    let mut new_client_connection = ClientConnection {
+    ClientConnection {
       address,
       port,
 
@@ -83,9 +83,7 @@ impl ClientConnection {
       task,
       handler,
       event_receiver,
-    };
-
-    new_client_connection
+    }
   }
 
   ///
@@ -113,7 +111,7 @@ impl ClientConnection {
   /// Construct the address & port into a parsable socket string.
   ///
   fn get_socket(address: &str, port: i32) -> String {
-    let mut socket = address.clone().to_owned();
+    let mut socket = address.to_owned();
     socket.push(':');
     socket.push_str(port.to_string().as_str());
 
