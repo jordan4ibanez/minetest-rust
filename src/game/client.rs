@@ -28,7 +28,7 @@ use super::lua_engine::LuaEngine;
 ///
 pub struct Client {
   window_handler: WindowHandler,
-  render_engine: Option<RenderEngine>,
+  render_engine: RenderEngine,
   client_name: String,
   connection: Option<ClientConnection>,
   lua_engine: Option<LuaEngine>,
@@ -46,10 +46,14 @@ impl Client {
   pub fn new(client_name: String, address: String, port: i32) -> Self {
     // * This is testing for automatically locking the mouse in upon game engine start.
     let mut mouse = MouseController::new();
+    let window_handler = WindowHandler::new(&mut mouse);
+
+    // Set up the render engine.
+    let render_engine = RenderEngine::new(&window_handler);
 
     let mut new_client = Client {
-      window_handler: WindowHandler::new(&mut mouse),
-      render_engine: None,
+      window_handler,
+      render_engine,
       client_name,
       connection: None, //ClientConnection::new(address, port),
       lua_engine: None,
@@ -62,9 +66,6 @@ impl Client {
       // ! TESTING
       spin_test: 0.0,
     };
-
-    // Set up the render engine.
-    new_client.render_engine = Some(RenderEngine::new(&new_client.window_handler));
 
     new_client.reset_lua_vm();
 
@@ -158,12 +159,9 @@ impl Client {
 
     //todo: should probably do side effects from lua here
 
-    let mut camera_pos = *self
-      .render_engine
-      .as_mut()
-      .unwrap()
-      .get_camera()
-      .get_position();
+    let camera = self.render_engine.get_camera();
+
+    let mut camera_pos = *camera.get_position();
 
     // * A very simple test to check the buffer in the shader.
     if self.keyboard.is_key_down("A") {
@@ -191,7 +189,7 @@ impl Client {
     let mouse_relative = self.mouse.get_relative_position();
     if mouse_relative.length_squared() != 0 {
       println!("Mouse is moved!");
-      let camera = self.render_engine.as_mut().unwrap().get_camera();
+      let camera = self.render_engine.get_camera();
       let mut camera_rotation = *camera.get_rotation();
 
       camera_rotation.y += mouse_relative.x as f32 * self.mouse.get_sensitivity();
@@ -202,30 +200,17 @@ impl Client {
       println!("{:?}", camera.get_rotation());
     }
 
-    self
-      .render_engine
-      .as_mut()
-      .unwrap()
-      .get_camera()
-      .set_position(&camera_pos);
+    self.render_engine.get_camera().set_position(&camera_pos);
 
     // Update the RenderEngine with the WindowHandler.
-    self
-      .render_engine
-      .as_mut()
-      .unwrap()
-      .update(&self.window_handler, delta);
+    self.render_engine.update(&self.window_handler, delta);
 
     // Now render everything. 3 steps for now.
 
     self.spin_test += delta;
 
-    self
-      .render_engine
-      .as_mut()
-      .unwrap()
-      .initialize_render(&self.window_handler);
-    self.render_engine.as_mut().unwrap().render_mesh_unbatched(
+    self.render_engine.initialize_render(&self.window_handler);
+    self.render_engine.render_mesh_unbatched(
       "debug",
       "tf.jpg",
       Vec3A::new(0.0, 0.0, 0.0),
@@ -233,8 +218,8 @@ impl Client {
       Vec3A::new(0.0, 0.0, 0.0),
     );
     println!("spin  {}", self.spin_test);
-    self.render_engine.as_mut().unwrap().process_render_calls();
-    self.render_engine.as_mut().unwrap().finalize_render();
+    self.render_engine.process_render_calls();
+    self.render_engine.finalize_render();
 
     // This will need to run a close event for the client engine and send out a close event to the internal server.
     if self.window_handler.should_quit() {
