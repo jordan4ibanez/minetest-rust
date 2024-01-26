@@ -30,7 +30,7 @@ pub struct Client {
   window_handler: WindowHandler,
   render_engine: RenderEngine,
   client_name: String,
-  connection: Option<ClientConnection>,
+  connection: ClientConnection,
   lua_engine: Option<LuaEngine>,
 
   mouse: MouseController,
@@ -52,11 +52,14 @@ impl Client {
     // Set up the render engine.
     let render_engine = RenderEngine::new(&window_handler);
 
+    // Set up a blank client connection.
+    let connection = ClientConnection::new(address, port);
+
     let mut new_client = Client {
       window_handler,
       render_engine,
       client_name,
-      connection: None, //ClientConnection::new(address, port),
+      connection,
       lua_engine: None,
 
       mouse,
@@ -145,8 +148,8 @@ impl Client {
       .update(delta, &mut self.mouse, &mut self.keyboard);
 
     // Poll any incoming network traffic. (non blocking)
-    if let Some(connection) = &mut self.connection {
-      connection.receive(delta);
+    if self.connection.is_connected() {
+      self.connection.receive(delta);
     }
 
     //todo: probably should do user input here
