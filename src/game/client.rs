@@ -121,6 +121,13 @@ impl Client {
   }
 
   ///
+  /// Borrow the WindowHandler mutably.
+  ///
+  pub fn get_window_handler(&mut self) -> &mut WindowHandler {
+    &mut self.window_handler
+  }
+
+  ///
   /// Tick tock.
   ///
   /// Every time the game goes into the next main loop iteration
@@ -206,7 +213,7 @@ impl Client {
       Vec3A::new(0.0, self.spin_test as f32, 0.0),
       Vec3A::new(0.0, 0.0, 0.0),
     );
-    println!("spin  {}", self.spin_test);
+    // println!("spin  {}", self.spin_test);
     self.render_engine.process_render_calls();
     self.render_engine.finalize_render();
 
