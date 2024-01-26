@@ -17,16 +17,22 @@ use super::lua_engine::LuaEngine;
 /// ?  - Marked with ? because it's still being thought out at the moment.
 ///
 pub struct Server {
-  lua_engine: Option<LuaEngine>,
+  lua_engine: LuaEngine,
   connection: ServerConnection,
   shutdown_approved: bool,
 }
 
 impl Server {
   pub fn new(address: String, port: i32, game_name: String) -> Self {
+    // Create a connection.
+    let connection = ServerConnection::new(address, port);
+
+    // Create the base Luau virtual machine.
+    let lua_engine = LuaEngine::new(true);
+
     let mut new_server = Server {
-      lua_engine: None,
-      connection: ServerConnection::new(address, port),
+      lua_engine,
+      connection,
       shutdown_approved: false,
     };
 
@@ -40,33 +46,18 @@ impl Server {
   }
 
   ///
-  /// Deletes the lua VM.
-  ///
-  fn delete_lua_vm(&mut self) {
-    self.lua_engine = None
-  }
-
-  ///
-  /// Creates a new client lua VM.
-  ///
-  fn create_lua_vm(&mut self) {
-    self.lua_engine = Some(LuaEngine::new(true));
-  }
-
-  ///
   /// Wipe the memory of the lua VM.
   /// Automatically regenerates a blank server VM.
   ///
   pub fn reset_lua_vm(&mut self) {
-    self.delete_lua_vm();
-    self.create_lua_vm();
+    self.lua_engine = LuaEngine::new(true);
   }
 
   ///
   /// Chain initial game load into LuaEngine to clean up new() implemenetation.
   ///
   pub fn load_game(&mut self, game_name: String) {
-    self.lua_engine.as_mut().unwrap().load_game(game_name)
+    self.lua_engine.load_game(game_name)
   }
 
   ///
@@ -117,12 +108,7 @@ impl Server {
       return;
     }
 
-    // We want this to throw a runtime panic if we make a logic error.
-    // ! Never turn this into a silent bypass via: is_some() or if let
-    match &self.lua_engine {
-      Some(lua_engine) => lua_engine.on_tick(delta),
-      None => panic!("minetest: Server LuaEngine does not exist!"),
-    }
+    self.lua_engine.on_tick(delta);
   }
 }
 
