@@ -15,9 +15,9 @@ pub struct ServerConnection {
   address: String,
   port: i32,
 
-  task: Option<NodeTask>,
-  handler: Option<NodeHandler<()>>,
-  event_receiver: Option<EventReceiver<StoredNodeEvent<()>>>,
+  task: NodeTask,
+  handler: NodeHandler<()>,
+  event_receiver: EventReceiver<StoredNodeEvent<()>>,
   pub clients: HashMap<Endpoint, String>,
 
   // Multiple shutdown requests from valid endpoints can be sent in the same tick.
@@ -27,21 +27,41 @@ pub struct ServerConnection {
 
 impl ServerConnection {
   pub fn new(address: String, port: i32) -> Self {
-    let mut new_server_connection = ServerConnection {
+    let socket_address = Self::get_socket(&address, port)
+      .to_socket_addrs()
+      .unwrap()
+      .next()
+      .unwrap();
+    let transport_protocol = Transport::Udp;
+
+    let (handler, listener) = node::split::<()>();
+
+    // todo: fixme: this is udp, why are we doing a match here?
+    // todo: If this fails, the server probably doesn't have a network
+    // todo: adapter! Why is it a server?!
+    match handler.network().listen(transport_protocol, socket_address) {
+      Ok((id, real_address)) => {
+        println!(
+          "minetest: connection created at id [{}], real address [{}]",
+          id, real_address
+        );
+      }
+      Err(e) => panic!("{}", e),
+    }
+
+    let (task, event_receiver) = listener.enqueue();
+
+    ServerConnection {
       address,
       port,
 
-      task: None,
-      handler: None,
-      event_receiver: None,
+      task,
+      handler,
+      event_receiver,
       clients: HashMap::new(),
 
       shutdown_requests: vec![],
-    };
-
-    new_server_connection.initialize();
-
-    new_server_connection
+    }
   }
 
   ///
@@ -61,10 +81,10 @@ impl ServerConnection {
   ///
   /// Construct the address & port into a parsable socket string.
   ///
-  pub fn get_socket(&self) -> String {
-    let mut socket = self.address.clone();
+  pub fn get_socket(address: &str, port: i32) -> String {
+    let mut socket = address.to_owned();
     socket.push(':');
-    socket.push_str(self.port.to_string().as_str());
+    socket.push_str(port.to_string().as_str());
 
     socket
   }
@@ -73,12 +93,7 @@ impl ServerConnection {
   /// Send raw data to an EndPoint (ClientConnection).
   ///
   fn send_data(&self, end_point: Endpoint, data: &str) {
-    self
-      .handler
-      .clone()
-      .unwrap()
-      .network()
-      .send(end_point, data.as_bytes());
+    self.handler.network().send(end_point, data.as_bytes());
   }
 
   ///
@@ -124,51 +139,18 @@ impl ServerConnection {
 
     // We want to grind through ALL the events.
     while has_new_event {
-      match &mut self.event_receiver {
-        Some(event_receiver) => {
-          if let Some(event) = event_receiver.receive_timeout(Duration::new(0, 0)) {
-            match event {
-              StoredNodeEvent::Network(new_event) => {
-                self.event_reaction(new_event.clone());
-              }
-              // todo: figure out what a signal is!
-              StoredNodeEvent::Signal(_) => todo!(),
-            }
-          } else {
-            has_new_event = false;
+      if let Some(event) = self.event_receiver.receive_timeout(Duration::new(0, 0)) {
+        match event {
+          StoredNodeEvent::Network(new_event) => {
+            self.event_reaction(new_event.clone());
           }
+          // todo: figure out what a signal is!
+          StoredNodeEvent::Signal(_) => todo!(),
         }
-        None => panic!("minetest: ServerConnection listener does not exist!"),
+      } else {
+        has_new_event = false;
       }
     }
-  }
-
-  ///
-  /// Internal initializer procedure automatically run on a new ServerConnection.
-  ///
-  fn initialize(&mut self) {
-    let socket_address = self.get_socket().to_socket_addrs().unwrap().next().unwrap();
-    let transport_protocol = Transport::Udp;
-
-    let (handler, listener) = node::split::<()>();
-
-    // todo: fixme: this is udp, why are we doing a match here?
-    // todo: If this fails, the server probably doesn't have a network
-    // todo: adapter! Why is it a server?!
-    match handler.network().listen(transport_protocol, socket_address) {
-      Ok((id, real_address)) => {
-        println!(
-          "minetest: connection created at id [{}], real address [{}]",
-          id, real_address
-        );
-      }
-      Err(e) => panic!("{}", e),
-    }
-
-    let (task, event_receiver) = listener.enqueue();
-    self.handler = Some(handler);
-    self.task = Some(task);
-    self.event_receiver = Some(event_receiver);
   }
 }
 
@@ -177,7 +159,7 @@ impl Drop for ServerConnection {
     // ServerConnection must stop the handler entity or the Server
     // will not shut down.
     println!("ServerConnection: Shutting down network handler.");
-    NodeHandler::stop(self.handler.as_ref().unwrap());
+    NodeHandler::stop(&self.handler);
     println!("ServerConnection dropped!");
   }
 }
