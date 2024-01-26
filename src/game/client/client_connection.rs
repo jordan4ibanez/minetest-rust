@@ -59,6 +59,13 @@ impl ClientConnection {
   }
 
   ///
+  /// Get if the Client is connected to a server.
+  ///
+  pub fn is_connected(&self) -> bool {
+    self.connected
+  }
+
+  ///
   /// Change the address that the server connection will utilize.
   ///
   pub fn set_address(&mut self, new_address: String) {
