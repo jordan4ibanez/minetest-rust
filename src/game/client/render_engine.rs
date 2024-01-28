@@ -297,7 +297,7 @@ impl RenderEngine {
 
     // ! THIS IS TEMPORARY MESH DEBUGGING !
     {
-      let mut new_mesh = Mesh::new("debug");
+      let mut new_mesh = Mesh::new("debug", "tf.jpg");
       new_mesh.push_vertex_vec(&mut vec![
         Vertex {
           position: [-0.0868241, 0.49240386, 0.0],
