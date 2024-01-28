@@ -28,7 +28,9 @@ use crate::{
 };
 
 use self::{
-  batched_render_call::BatchRenderCall, camera::Camera, color_uniform::ColorUniform,
+  batched_render_call::{BatchRaw, BatchRenderCall},
+  camera::Camera,
+  color_uniform::ColorUniform,
   render_call::RenderCall,
 };
 
@@ -74,7 +76,7 @@ pub struct RenderEngine {
 
   // Batched render queue.
   // ! TODO: MAKE THIS ONLY BatchRaw DATA !
-  batched_queue: HashMap<String, Vec<BatchRenderCall>>,
+  batched_queue: HashMap<String, Vec<BatchRaw>>,
 
   // Containers for wgpu data.
   meshes: HashMap<String, Mesh>,
@@ -598,13 +600,13 @@ impl RenderEngine {
       .or_default();
 
     // Now push one into the vector.
-    current_vec.push(BatchRenderCall::new(translation, rotation, scale));
+    current_vec.push(BatchRenderCall::new(translation, rotation, scale).as_batch_raw());
   }
 
   ///
   /// Push multiple batch calls into the batch queue.
   ///
-  pub fn render_mesh_batched(&mut self, model_name: &str, batch: &mut Vec<BatchRenderCall>) {
+  pub fn render_mesh_batched(&mut self, model_name: &str, batch: &mut Vec<BatchRaw>) {
     // If the key does not exist, we create it.
     let current_vec = self
       .batched_queue

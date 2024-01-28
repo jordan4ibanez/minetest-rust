@@ -11,6 +11,9 @@ pub struct BatchRaw {
 /// many of the same model at once. This is much faster than regular RenderCall when
 /// attempting to draw things like items and mobs, so please use it as so.
 ///
+/// ! Note: This is now just a formality. Rewrite this as a direct function instead.
+/// ! This is NOT designed to be modified after added !
+///
 pub struct BatchRenderCall {
   translation: Vec3A,
   rotation: Vec3A,
@@ -26,9 +29,6 @@ impl BatchRenderCall {
     }
   }
 
-  ///
-  /// ! INSTANT DEPRECATED !
-  ///
   pub fn as_batch_raw(&self) -> BatchRaw {
     let rotation = Quat::from_euler(
       glam::EulerRot::XYZ,
