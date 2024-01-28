@@ -1,44 +1,21 @@
 use glam::{Mat4, Quat, Vec3A};
 
+///
+/// A BatchRenderCall is a batched [aka instanced] render call optimized to draw
+/// many of the same model at once. This is much faster than regular RenderCall when
+/// attempting to draw things like items and mobs, so please use it as so.
+///
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct BatchRaw {
   matrix: [[f32; 4]; 4],
 }
 
-///
-/// An BatchRenderCall is a batched [aka instanced] render call optimized to draw
-/// many of the same model at once. This is much faster than regular RenderCall when
-/// attempting to draw things like items and mobs, so please use it as so.
-///
-/// ! Note: This is now just a formality. Rewrite this as a direct function instead.
-/// ! This is NOT designed to be modified after added !
-///
-pub struct BatchRenderCall {
-  translation: Vec3A,
-  rotation: Vec3A,
-  scale: Vec3A,
-}
-
-impl BatchRenderCall {
+impl BatchRaw {
   pub fn new(translation: Vec3A, rotation: Vec3A, scale: Vec3A) -> Self {
-    BatchRenderCall {
-      translation,
-      rotation,
-      scale,
-    }
-  }
-
-  pub fn as_batch_raw(&self) -> BatchRaw {
-    let rotation = Quat::from_euler(
-      glam::EulerRot::XYZ,
-      self.rotation.x,
-      self.rotation.y,
-      self.rotation.z,
-    );
-    let matrix =
-      Mat4::from_scale_rotation_translation(self.scale.into(), rotation, self.translation.into())
-        .to_cols_array_2d();
+    let rotation = Quat::from_euler(glam::EulerRot::XYZ, rotation.x, rotation.y, rotation.z);
+    let matrix = Mat4::from_scale_rotation_translation(scale.into(), rotation, translation.into())
+      .to_cols_array_2d();
     BatchRaw { matrix }
   }
 }
