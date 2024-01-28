@@ -28,9 +28,7 @@ use crate::{
 };
 
 use self::{
-  batched_render_call::{BatchRaw, BatchRenderCall},
-  camera::Camera,
-  color_uniform::ColorUniform,
+  batched_render_call::BatchRaw, camera::Camera, color_uniform::ColorUniform,
   render_call::RenderCall,
 };
 
@@ -600,7 +598,7 @@ impl RenderEngine {
       .or_default();
 
     // Now push one into the vector.
-    current_vec.push(BatchRenderCall::new(translation, rotation, scale).as_batch_raw());
+    current_vec.push(BatchRaw::new(translation, rotation, scale));
   }
 
   ///
