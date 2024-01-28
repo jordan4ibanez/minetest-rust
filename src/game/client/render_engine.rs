@@ -579,6 +579,43 @@ impl RenderEngine {
   }
 
   ///
+  /// Push one batch call into the batch queue.
+  ///
+  /// This is less efficient than render_mesh_batched because
+  /// it needs to check if the key exists every time.
+  ///
+  pub fn render_mesh_batched_single(
+    &mut self,
+    model_name: &str,
+    translation: Vec3A,
+    rotation: Vec3A,
+    scale: Vec3A,
+  ) {
+    // If the key does not exist, we create it.
+    let current_vec = self
+      .batched_queue
+      .entry(model_name.to_string())
+      .or_default();
+
+    // Now push one into the vector.
+    current_vec.push(BatchRenderCall::new(translation, rotation, scale));
+  }
+
+  ///
+  /// Push multiple batch calls into the batch queue.
+  ///
+  pub fn render_mesh_batched(&mut self, model_name: &str, batch: &mut Vec<BatchRenderCall>) {
+    // If the key does not exist, we create it.
+    let current_vec = self
+      .batched_queue
+      .entry(model_name.to_string())
+      .or_default();
+
+    // Now append multiple into the vector.
+    current_vec.append(batch);
+  }
+
+  ///
   /// Grab the Camera mutably to do things with it.
   ///
   pub fn get_camera(&mut self) -> &mut Camera {
