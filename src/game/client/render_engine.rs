@@ -27,7 +27,10 @@ use crate::{
   },
 };
 
-use self::{camera::Camera, color_uniform::ColorUniform, render_call::RenderCall};
+use self::{
+  camera::Camera, color_uniform::ColorUniform, instance_render_call::InstanceRenderCall,
+  render_call::RenderCall,
+};
 
 use super::window_handler::WindowHandler;
 
@@ -68,6 +71,10 @@ pub struct RenderEngine {
 
   // Unbatched render queue.
   unbatched_queue: VecDeque<RenderCall>,
+
+  // Batched render queue.
+  // ! TODO: MAKE THIS ONLY InstanceRaw DATA !
+  batched_queue: HashMap<String, InstanceRenderCall>,
 
   meshes: HashMap<String, Mesh>,
   textures: HashMap<String, Texture>,
@@ -270,6 +277,9 @@ impl RenderEngine {
 
       // Unbatched render queue.
       unbatched_queue: VecDeque::new(),
+
+      // Batched render queue.
+      batched_queue: HashMap::new(),
 
       meshes: HashMap::new(),
       textures: HashMap::new(),
