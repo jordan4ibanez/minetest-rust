@@ -459,13 +459,13 @@ impl RenderEngine {
     render_pass.set_pipeline(&self.render_pipeline);
 
     while !self.uninstanced_queue.is_empty() {
-      let unbatched_render_call = self.uninstanced_queue.pop_front().unwrap();
+      let uninstanced_render_call = self.uninstanced_queue.pop_front().unwrap();
 
-      let model_name = unbatched_render_call.get_model_name();
+      let model_name = uninstanced_render_call.get_model_name();
 
       match self.meshes.get(model_name) {
         Some(mesh) => {
-          let texture_name = unbatched_render_call.get_texture_name();
+          let texture_name = uninstanced_render_call.get_texture_name();
 
           match self.textures.get(texture_name) {
             Some(texture) => {
@@ -482,13 +482,13 @@ impl RenderEngine {
 
               self
                 .mesh_trs_uniform
-                .set_translation(unbatched_render_call.get_translation());
+                .set_translation(uninstanced_render_call.get_translation());
               self
                 .mesh_trs_uniform
-                .set_rotation(unbatched_render_call.get_rotation());
+                .set_rotation(uninstanced_render_call.get_rotation());
               self
                 .mesh_trs_uniform
-                .set_scale(unbatched_render_call.get_scale());
+                .set_scale(uninstanced_render_call.get_scale());
 
               render_pass.set_bind_group(3, self.mesh_trs_uniform.get_bind_group(), &[]);
 
