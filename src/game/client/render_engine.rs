@@ -69,12 +69,12 @@ pub struct RenderEngine {
   size: UVec2,
   clear_color: wgpu::Color,
 
-  // Unbatched render queue.
-  unbatched_queue: VecDeque<RenderCall>,
+  // Uninstanced render queue.
+  uninstanced_queue: VecDeque<RenderCall>,
 
-  // Batched render queue.
+  // Instanced render queue.
   // ! TODO: MAKE THIS ONLY InstanceRaw DATA !
-  batched_queue: HashMap<String, InstanceRenderCall>,
+  instanced_queue: HashMap<String, InstanceRenderCall>,
 
   meshes: HashMap<String, Mesh>,
   textures: HashMap<String, Texture>,
@@ -275,11 +275,11 @@ impl RenderEngine {
       size: UVec2::new(width, height),
       clear_color,
 
-      // Unbatched render queue.
-      unbatched_queue: VecDeque::new(),
+      // Uninstanced render queue.
+      uninstanced_queue: VecDeque::new(),
 
-      // Batched render queue.
-      batched_queue: HashMap::new(),
+      // Intanced render queue.
+      instanced_queue: HashMap::new(),
 
       meshes: HashMap::new(),
       textures: HashMap::new(),
@@ -458,8 +458,8 @@ impl RenderEngine {
 
     render_pass.set_pipeline(&self.render_pipeline);
 
-    while !self.unbatched_queue.is_empty() {
-      let unbatched_render_call = self.unbatched_queue.pop_front().unwrap();
+    while !self.uninstanced_queue.is_empty() {
+      let unbatched_render_call = self.uninstanced_queue.pop_front().unwrap();
 
       let model_name = unbatched_render_call.get_model_name();
 
@@ -568,7 +568,7 @@ impl RenderEngine {
     rotation: Vec3A,
     scale: Vec3A,
   ) {
-    self.unbatched_queue.push_back(RenderCall::new(
+    self.uninstanced_queue.push_back(RenderCall::new(
       model_name,
       texture_name,
       translation,
