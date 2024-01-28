@@ -11,6 +11,11 @@ pub struct RenderCall {
   scale: Vec3A,
 }
 
+///
+/// Uninstanced render call struct.
+///
+/// If you want to instance it, see InstanceRenderCall.
+///
 impl RenderCall {
   pub fn new(
     model_name: &str,
