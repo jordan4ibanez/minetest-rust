@@ -12,9 +12,9 @@ pub struct RenderCall {
 }
 
 ///
-/// Uninstanced render call struct.
+/// Unbatched render call struct.
 ///
-/// If you want to instance it, see InstanceRenderCall.
+/// If you want to batch it, see BatchRenderCall.
 ///
 impl RenderCall {
   pub fn new(
