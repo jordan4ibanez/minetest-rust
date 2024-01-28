@@ -1,5 +1,6 @@
 mod camera;
 mod color_uniform;
+mod instance_render_call;
 mod mesh;
 mod mesh_trs_uniform;
 mod render_call;
