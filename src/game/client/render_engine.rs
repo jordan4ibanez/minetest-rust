@@ -74,7 +74,7 @@ pub struct RenderEngine {
 
   // Batched render queue.
   // ! TODO: MAKE THIS ONLY BatchRaw DATA !
-  batched_queue: HashMap<String, BatchRenderCall>,
+  batched_queue: HashMap<String, Vec<BatchRenderCall>>,
 
   // Containers for wgpu data.
   meshes: HashMap<String, Mesh>,
