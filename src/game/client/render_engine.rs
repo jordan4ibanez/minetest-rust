@@ -534,6 +534,9 @@ impl RenderEngine {
 
     final_output.unwrap().present();
 
+    // Clear out the batch call memory to prevent a memory leak.
+    self.batched_queue.clear();
+
     // Finally, the texture view is outdated, destroy it.
 
     self.texture_view = None;
