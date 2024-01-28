@@ -6,6 +6,11 @@ pub struct InstanceRaw {
   matrix: [[f32; 4]; 4],
 }
 
+///
+/// An InstanceRenderCall is a batched [aka instanced] render call optimized to draw
+/// many of the same model at once. This is much faster than regular RenderCall when
+/// attempting to draw things like items and mobs, so please use it as so.
+///
 pub struct InstanceRenderCall {
   translation: Vec3A,
   rotation: Vec3A,
