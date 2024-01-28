@@ -1,6 +1,6 @@
+mod batched_render_call;
 mod camera;
 mod color_uniform;
-mod batched_render_call;
 mod mesh;
 mod mesh_trs_uniform;
 mod render_call;
@@ -28,7 +28,7 @@ use crate::{
 };
 
 use self::{
-  camera::Camera, color_uniform::ColorUniform, batched_render_call::BatchRenderCall,
+  batched_render_call::BatchRenderCall, camera::Camera, color_uniform::ColorUniform,
   render_call::RenderCall,
 };
 
@@ -76,6 +76,7 @@ pub struct RenderEngine {
   // ! TODO: MAKE THIS ONLY BatchRaw DATA !
   batched_queue: HashMap<String, BatchRenderCall>,
 
+  // Containers for wgpu data.
   meshes: HashMap<String, Mesh>,
   textures: HashMap<String, Texture>,
 
@@ -281,6 +282,7 @@ impl RenderEngine {
       // Batched render queue.
       batched_queue: HashMap::new(),
 
+      // Containers for wgpu data.
       meshes: HashMap::new(),
       textures: HashMap::new(),
 
