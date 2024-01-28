@@ -26,6 +26,9 @@ impl InstanceRenderCall {
     }
   }
 
+  ///
+  /// ! INSTANT DEPRECATED !
+  ///
   pub fn as_instance_raw(&self) -> InstanceRaw {
     let rotation = Quat::from_euler(
       glam::EulerRot::XYZ,
