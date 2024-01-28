@@ -2,7 +2,7 @@ mod camera;
 mod color_uniform;
 mod mesh;
 mod mesh_trs_uniform;
-mod render_containers;
+mod render_call;
 mod texture;
 
 use std::{
@@ -26,7 +26,7 @@ use crate::{
   },
 };
 
-use self::{camera::Camera, color_uniform::ColorUniform, render_containers::RenderCall};
+use self::{camera::Camera, color_uniform::ColorUniform, render_call::RenderCall};
 
 use super::window_handler::WindowHandler;
 
