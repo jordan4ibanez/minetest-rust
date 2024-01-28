@@ -561,7 +561,6 @@ impl RenderEngine {
   ///
   /// Render a mesh unbatched.
   ///
-  /// !PROTOTYPING!
   pub fn render_mesh_unbatched(
     &mut self,
     model_name: &str,
