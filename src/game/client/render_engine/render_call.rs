@@ -33,22 +33,37 @@ impl RenderCall {
     }
   }
 
+  ///
+  /// Get the RenderCall's model name.
+  ///
   pub fn get_model_name(&self) -> &String {
     &self.model_name
   }
 
+  ///
+  /// Get the texture that will be used for this RenderCall.
+  ///
   pub fn get_texture_name(&self) -> &String {
     &self.texture_name
   }
 
+  ///
+  /// Get the translation of the RenderCall.
+  ///
   pub fn get_translation(&self) -> &Vec3A {
     &self.translation
   }
 
+  ///
+  /// Get the rotation of the RenderCall.
+  ///
   pub fn get_rotation(&self) -> &Vec3A {
     &self.rotation
   }
 
+  ///
+  /// Get the scale of the RenderCall.
+  ///
   pub fn get_scale(&self) -> &Vec3A {
     &self.scale
   }
