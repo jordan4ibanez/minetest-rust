@@ -127,8 +127,6 @@ impl RenderEngine {
       Err(e) => panic!("{}", e),
     };
 
-    let x = "hi there".to_string();
-
     // Load up the default shader source code.
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
       label: Some("default_shader"),
