@@ -5,6 +5,7 @@ mod mesh;
 mod mesh_trs_uniform;
 mod render_call;
 mod texture;
+mod trs_projection_data;
 
 use std::{
   collections::{HashMap, VecDeque},
