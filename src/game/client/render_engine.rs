@@ -212,6 +212,7 @@ impl RenderEngine {
         topology: wgpu::PrimitiveTopology::TriangleList,
         strip_index_format: None,
         front_face: wgpu::FrontFace::Ccw,
+        // Backface culling.
         cull_mode: Some(wgpu::Face::Back),
         unclipped_depth: false,
         polygon_mode: wgpu::PolygonMode::Fill,
@@ -658,7 +659,7 @@ impl RenderEngine {
   /// Due to the implementation nature, this needs to be run on each
   /// mesh in sequence.
   ///
-  pub fn process_instanced_render_call(
+  fn process_instanced_render_call(
     &mut self,
     mesh_name: &String,
     instance_data: &Vec<InstancedRenderData>,
@@ -723,8 +724,7 @@ impl RenderEngine {
     // Enable instancing in shader.
     self.instance_trigger.trigger_on(&self.queue);
 
-    // * Begin instanced render calls.
-
+    // * Begin instanced render call.
     match self.meshes.get(mesh_name) {
       Some(mesh) => {
         let texture_name = mesh.get_default_texture();
@@ -780,10 +780,25 @@ impl RenderEngine {
   ///
   /// Completely wipes out the instanced render queue and returns the current data to you.
   ///
-  pub fn take_instanced_data(&mut self) -> HashMap<String, Vec<InstancedRenderData>> {
+  fn take_instanced_data(&mut self) -> HashMap<String, Vec<InstancedRenderData>> {
     let mut temporary = HashMap::new();
     swap(&mut self.instanced_render_queue, &mut temporary);
     temporary
+  }
+
+  ///
+  /// Process and submit all the instanced render calls.
+  ///
+  pub fn process_instanced_render_calls(&mut self) {
+    // ! This is an absolute brute force method. Perhaps there's a more elegant way?
+    let instanced_key_value_set = self.take_instanced_data();
+
+    // Iterate through all the instanced data.
+    for (mesh_name, instance_data) in instanced_key_value_set {
+      self.initialize_render();
+      self.process_instanced_render_call(&mesh_name, &instance_data);
+      self.submit_render();
+    }
   }
 
   ///
