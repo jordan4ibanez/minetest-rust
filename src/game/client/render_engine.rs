@@ -23,6 +23,7 @@ use wgpu_sdl_linker::link_wgpu_to_sdl2;
 use crate::{
   file_utilities::read_file_to_string,
   game::client::render_engine::{
+    instance_trigger::InstanceTrigger,
     mesh::{Mesh, Vertex},
     texture::Texture,
   },
@@ -82,6 +83,8 @@ pub struct RenderEngine {
   textures: HashMap<String, Texture>,
 
   mesh_trs_uniform: MeshTRSUniform,
+
+  instance_trigger: InstanceTrigger,
 
   // ! TESTING VARIABLES
   color_uniform: ColorUniform,
@@ -243,6 +246,7 @@ impl RenderEngine {
     );
 
     let mesh_trs_uniform = MeshTRSUniform::new(&device);
+    let instance_trigger = InstanceTrigger::new(&device);
 
     // Initial creation and updating of the Camera.
     let mut camera = Camera::new(
@@ -251,6 +255,7 @@ impl RenderEngine {
       &device,
       window_handler,
       mesh_trs_uniform.get_buffer(),
+      instance_trigger.get_buffer(),
     );
     camera.build_view_projection_matrix(&device, window_handler, &queue);
 
@@ -296,6 +301,8 @@ impl RenderEngine {
       textures: HashMap::new(),
 
       mesh_trs_uniform,
+
+      instance_trigger,
 
       // ! TESTING VARIABLES
       color_uniform,
