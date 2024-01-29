@@ -18,12 +18,12 @@ pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
 pub struct TRSProjectionUniform {
   // We can't use cgmath with bytemuck directly, so we'll have
   // to convert the Matrix4 into a 4x4 f32 array.
-  view_projection: [[f32; 4]; 4],
+  projection: [[f32; 4]; 4],
 }
 impl TRSProjectionUniform {
   pub fn new() -> Self {
     Self {
-      view_projection: Mat4::IDENTITY.to_cols_array_2d(),
+      projection: Mat4::IDENTITY.to_cols_array_2d(),
     }
   }
 }
@@ -60,7 +60,7 @@ impl Camera {
     // Now we create the Camera's buffer.
     let camera_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
       label: Some("camera_buffer"),
-      contents: bytemuck::cast_slice(&camera_uniform.view_projection),
+      contents: bytemuck::cast_slice(&camera_uniform.projection),
       usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
     });
 
@@ -166,7 +166,7 @@ impl Camera {
 
     let projection = Mat4::perspective_rh(self.fov_y, self.aspect_ratio, self.z_near, self.z_far);
 
-    self.camera_uniform.view_projection =
+    self.camera_uniform.projection =
       (OPENGL_TO_WGPU_MATRIX * projection * view_rotation * view_translation).to_cols_array_2d();
 
     // Automatically write the data into the queue.
@@ -177,7 +177,7 @@ impl Camera {
   /// Get the wgpu raw uniform contents to pass into the pipelne.
   ///
   pub fn get_wgpu_raw_matrix(&self) -> &[u8] {
-    bytemuck::cast_slice(&self.camera_uniform.view_projection)
+    bytemuck::cast_slice(&self.camera_uniform.projection)
   }
 
   ///
