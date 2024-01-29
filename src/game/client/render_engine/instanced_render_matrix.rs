@@ -56,4 +56,10 @@ impl InstancedRenderData {
       ],
     }
   }
+
+  pub fn get_blank_data() -> Vec<f32> {
+    vec![
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+  }
 }
