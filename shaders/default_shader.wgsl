@@ -12,6 +12,13 @@ struct ModelUniform {
 @group(3) @binding(0)
 var<uniform> model_uniform: ModelUniform;
 
+struct InstanceInput {
+  @location(5) model_matrix_0: vec4<f32>,
+  @location(6) model_matrix_1: vec4<f32>,
+  @location(7) model_matrix_2: vec4<f32>,
+  @location(8) model_matrix_3: vec4<f32>,
+}
+
 struct VertexInput {
   @location(0) position: vec3<f32>,
   @location(1) texture_coordinates: vec2<f32>,
@@ -26,13 +33,14 @@ struct VertexOutput {
 
 @vertex
 fn vs_main(
-  model: VertexInput,
+    model: VertexInput,
+    instance: InstanceInput,
 ) -> VertexOutput {
-  var out: VertexOutput;
-  out.texture_coordinates = model.texture_coordinates;
-  out.color = model.color;
-  out.clip_position = camera.view_projection * model_uniform.trs_projection * vec4<f32>(model.position, 1.0);
-  return out;
+    var out: VertexOutput;
+    out.texture_coordinates = model.texture_coordinates;
+    out.color = model.color;
+    out.clip_position = camera.view_projection * model_uniform.trs_projection * vec4<f32>(model.position, 1.0);
+    return out;
 }
 
 // Fragment shader
@@ -51,5 +59,5 @@ var s_diffuse: sampler;
 
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-  return textureSample(t_diffuse, s_diffuse, in.texture_coordinates) * colorBuffer.rgb * vec4<f32>(in.color, 1.0);
+    return textureSample(t_diffuse, s_diffuse, in.texture_coordinates) * colorBuffer.rgb * vec4<f32>(in.color, 1.0);
 }
