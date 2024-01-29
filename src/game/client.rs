@@ -262,7 +262,7 @@ impl Client {
 
     // ! This is an absolute brute force method. Perhaps there's a more elegant way?
 
-    let instanced_key_value_set = self.render_engine.take_instanced_data().to_owned();
+    let instanced_key_value_set = self.render_engine.take_instanced_data();
 
     for (mesh_name, instance_data) in instanced_key_value_set {
       // self.render_engine.generate_frame_buffer();
