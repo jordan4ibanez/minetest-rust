@@ -1,5 +1,6 @@
 mod camera;
 mod color_uniform;
+mod instance_trigger;
 pub mod instanced_render_matrix;
 mod mesh;
 mod mesh_trs_uniform;
