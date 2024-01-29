@@ -1,6 +1,6 @@
 mod camera;
 mod color_uniform;
-mod instanced_render_matrix;
+pub mod instanced_render_matrix;
 mod mesh;
 mod mesh_trs_uniform;
 mod render_call;
