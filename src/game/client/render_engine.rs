@@ -653,7 +653,7 @@ impl RenderEngine {
             render_pass.draw_indexed(
               0..mesh.get_number_of_indices(),
               0,
-              1..(instance_data.len() as u32),
+              0..(instance_data.len() as u32),
             );
           }
           None => {
