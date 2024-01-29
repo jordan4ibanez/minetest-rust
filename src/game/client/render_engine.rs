@@ -7,7 +7,6 @@ mod render_call;
 mod texture;
 
 use std::{
-  borrow::Borrow,
   collections::{HashMap, VecDeque},
   iter,
   mem::swap,
@@ -23,14 +22,13 @@ use crate::{
   file_utilities::read_file_to_string,
   game::client::render_engine::{
     mesh::{Mesh, Vertex},
-    mesh_trs_uniform::MeshTRSUniform,
     texture::Texture,
   },
 };
 
 use self::{
   camera::Camera, color_uniform::ColorUniform, instanced_render_matrix::InstancedRenderData,
-  render_call::RenderCall,
+  mesh_trs_uniform::MeshTRSUniform, render_call::RenderCall,
 };
 
 use super::window_handler::WindowHandler;
@@ -154,8 +152,6 @@ impl RenderEngine {
         &Camera::get_wgpu_bind_group_layout(&device),
         // Group 2.
         &ColorUniform::get_wgpu_bind_group_layout(&device),
-        // Group 3.
-        &MeshTRSUniform::get_wgpu_bind_group_layout(&device),
       ],
       push_constant_ranges: &[],
     });
@@ -244,15 +240,21 @@ impl RenderEngine {
       adapter.get_info().backend.to_str()
     );
 
+    let mesh_trs_uniform = MeshTRSUniform::new(&device);
+
     // Initial creation and updating of the Camera.
-    let mut camera = Camera::new(Vec3A::new(0.0, 0.0, -2.0), 65.0, &device, window_handler);
+    let mut camera = Camera::new(
+      Vec3A::new(0.0, 0.0, -2.0),
+      65.0,
+      &device,
+      window_handler,
+      mesh_trs_uniform.get_buffer(),
+    );
     camera.build_view_projection_matrix(&device, window_handler, &queue);
 
     // ! TESTING
     let color_uniform = ColorUniform::new(1.0, 1.0, 1.0, &device);
     // ! END TESTING
-
-    let mesh_trs_uniform = MeshTRSUniform::new(&device);
 
     let mut new_render_engine = RenderEngine {
       camera,
@@ -383,7 +385,7 @@ impl RenderEngine {
   /// Also, the Camera's uniform is updated here.
   ///
   pub fn initialize_render(&mut self, window_handler: &WindowHandler) {
-    // First update the camera in cpu memory.
+    // First update the camera in cpu and wgu memory.
     self
       .camera
       .build_view_projection_matrix(&self.device, window_handler, &self.queue);
@@ -476,27 +478,25 @@ impl RenderEngine {
       },
     ));
 
+    // Activate the camera's bind group.
+    render_pass.set_bind_group(1, self.camera.get_bind_group(), &[]);
+
+    // Activate the color bind group.
+    render_pass.set_bind_group(2, self.color_uniform.get_bind_group(), &[]);
+
     while !self.render_queue.is_empty() {
       let not_instanced_render_call = self.render_queue.pop_front().unwrap();
 
-      let model_name = not_instanced_render_call.get_model_name();
+      let mesh_name = not_instanced_render_call.get_mesh_name();
 
-      match self.meshes.get(model_name) {
+      match self.meshes.get(mesh_name) {
         Some(mesh) => {
           let texture_name = not_instanced_render_call.get_texture_name();
 
           match self.textures.get(texture_name) {
             Some(texture) => {
+              // Now activate the used texture's bind group.
               render_pass.set_bind_group(0, texture.get_wgpu_diffuse_bind_group(), &[]);
-              render_pass.set_bind_group(1, self.camera.get_bind_group(), &[]);
-              render_pass.set_bind_group(2, self.color_uniform.get_bind_group(), &[]);
-
-              // * This is a workaround for borrowing mut & not mut at once.
-              // MeshTRSUniform is used for not instanced calls.
-
-              self
-                .mesh_trs_uniform
-                .build_model_projection_matrix(&self.device, &self.queue);
 
               self
                 .mesh_trs_uniform
@@ -508,9 +508,11 @@ impl RenderEngine {
                 .mesh_trs_uniform
                 .set_scale(not_instanced_render_call.get_scale());
 
-              render_pass.set_bind_group(3, self.mesh_trs_uniform.get_bind_group(), &[]);
+              self
+                .mesh_trs_uniform
+                .build_mesh_projection_matrix(&self.device, &self.queue);
 
-              // ! End workaround
+              // Now we're going to bind the pipeline to the Mesh and draw it.
 
               render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
               render_pass.set_vertex_buffer(1, self.instance_buffer.as_ref().unwrap().slice(..));
@@ -525,7 +527,7 @@ impl RenderEngine {
             None => error!("render_engine: {} is not a stored Texture.", texture_name),
           }
         }
-        None => error!("render_engine: {} is not a stored Mesh.", model_name),
+        None => error!("render_engine: {} is not a stored Mesh.", mesh_name),
       }
     }
   }
@@ -584,14 +586,14 @@ impl RenderEngine {
   ///
   pub fn render_mesh(
     &mut self,
-    model_name: &str,
+    mesh_name: &str,
     texture_name: &str,
     translation: Vec3A,
     rotation: Vec3A,
     scale: Vec3A,
   ) {
     self.render_queue.push_back(RenderCall::new(
-      model_name,
+      mesh_name,
       texture_name,
       translation,
       rotation,
@@ -607,7 +609,7 @@ impl RenderEngine {
   ///
   pub fn render_mesh_instanced_single(
     &mut self,
-    model_name: &str,
+    mesh_name: &str,
     translation: Vec3A,
     rotation: Vec3A,
     scale: Vec3A,
@@ -615,7 +617,7 @@ impl RenderEngine {
     // If the key does not exist, we create it.
     let current_vec = self
       .instanced_render_queue
-      .entry(model_name.to_string())
+      .entry(mesh_name.to_string())
       .or_default();
 
     // Now push one into the vector.
@@ -627,13 +629,13 @@ impl RenderEngine {
   ///
   pub fn render_mesh_instanced(
     &mut self,
-    model_name: &str,
+    mesh_name: &str,
     instancing: &mut Vec<InstancedRenderData>,
   ) {
     // If the key does not exist, we create it.
     let current_vec = self
       .instanced_render_queue
-      .entry(model_name.to_string())
+      .entry(mesh_name.to_string())
       .or_default();
 
     // Now append multiple into the vector.
