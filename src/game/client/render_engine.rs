@@ -31,8 +31,9 @@ use crate::{
 };
 
 use self::{
-  camera::Camera, color_uniform::ColorUniform, instanced_render_matrix::InstancedRenderData,
-  mesh_trs_uniform::MeshTRSUniform, render_call::RenderCall,
+  camera::Camera, color_uniform::ColorUniform, depth_buffer::DepthBuffer,
+  instanced_render_matrix::InstancedRenderData, mesh_trs_uniform::MeshTRSUniform,
+  render_call::RenderCall,
 };
 
 use super::window_handler::WindowHandler;
@@ -65,6 +66,7 @@ pub struct RenderEngine {
   output: Option<SurfaceTexture>,
   command_encoder: Option<CommandEncoder>,
   texture_view: Option<TextureView>,
+  depth_buffer: Option<DepthBuffer>,
   render_command_count: u32,
 
   // General variables.
@@ -282,6 +284,7 @@ impl RenderEngine {
       output: None,
       command_encoder: None,
       texture_view: None,
+      depth_buffer: None,
       render_command_count: 0,
 
       // General variables.
