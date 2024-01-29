@@ -4,7 +4,7 @@ use glam::{Mat4, Quat, Vec3A};
 
 ///
 /// A InstancedRenderUniform is an instanced render call optimized to draw
-/// many of the same model at once. This is much faster than regular RenderCall when
+/// many instances of the same mesh at once. This is much faster than regular RenderCall when
 /// attempting to draw things like items and mobs, so please use it as so.
 ///
 #[repr(C)]
