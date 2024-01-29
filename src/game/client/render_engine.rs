@@ -1,6 +1,6 @@
 mod camera;
 mod color_uniform;
-mod instanced_render_call;
+mod instanced_render_matrix;
 mod mesh;
 mod mesh_trs_uniform;
 mod render_call;
@@ -28,7 +28,7 @@ use crate::{
 };
 
 use self::{
-  camera::Camera, color_uniform::ColorUniform, instanced_render_call::InstancedRenderMatrix,
+  camera::Camera, color_uniform::ColorUniform, instanced_render_matrix::InstancedRenderMatrix,
   render_call::RenderCall,
 };
 
