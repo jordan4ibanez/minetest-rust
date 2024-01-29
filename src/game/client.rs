@@ -14,6 +14,8 @@ use self::{
   window_handler::WindowHandler,
 };
 
+const TESTING_LIMIT: usize = 1000;
+
 use super::lua_engine::LuaEngine;
 
 ///
@@ -43,6 +45,10 @@ pub struct Client {
 
   // ! TESTING
   spin_test: f64,
+
+  instancing: Vec<InstancedRenderData>,
+
+  iterated: bool,
 }
 
 impl Client {
@@ -77,6 +83,10 @@ impl Client {
 
       // ! TESTING
       spin_test: 0.0,
+
+      instancing: Vec::with_capacity(TESTING_LIMIT * TESTING_LIMIT),
+
+      iterated: false,
     };
 
     new_client.reset_lua_vm();
@@ -240,36 +250,46 @@ impl Client {
     // self.render_engine.generate_frame_buffer();
 
     // Instanced.
-    let testing = 1000;
 
-    let mut instancing: Vec<InstancedRenderData> = Vec::with_capacity(testing * testing);
-    for x in 0..testing {
-      for z in 0..testing {
-        instancing.push(InstancedRenderData::new(
-          vec3a(x as f32, z as f32, 0.0),
-          vec3a(0.0, self.spin_test as f32, 0.0),
-          vec3a(1.0, 1.0, 1.0),
-        ));
+    // ! this is EXTREMELY expensive to iterate over a million items!
+    if !self.iterated {
+      for x in 0..TESTING_LIMIT {
+        for z in 0..TESTING_LIMIT {
+          self.instancing.push(InstancedRenderData::new(
+            vec3a(x as f32, z as f32, 0.0),
+            vec3a(0.0, self.spin_test as f32, 0.0),
+            vec3a(1.0, 1.0, 1.0),
+          ));
+        }
       }
+      self.iterated = true;
     }
 
+    self.render_engine.initialize_render();
     self
       .render_engine
-      .render_mesh_instanced("debug", &instancing);
+      .process_instanced_render_call(&"debug".to_string(), &self.instancing);
+    self.render_engine.submit_render();
 
     // println!("spin  {}", self.spin_test);
 
+    // * Note: this is the correct way to do this. Above instancing code is for testing.
+
+    // self
+    //   .render_engine
+    //   .render_mesh_instanced("debug", &self.instancing);
+
     // ! This is an absolute brute force method. Perhaps there's a more elegant way?
 
-    let instanced_key_value_set = self.render_engine.take_instanced_data();
+    // let instanced_key_value_set = self.render_engine.take_instanced_data();
 
-    for (mesh_name, instance_data) in instanced_key_value_set {
-      self.render_engine.initialize_render();
-      self
-        .render_engine
-        .process_instanced_render_call(&mesh_name, &instance_data);
-      self.render_engine.submit_render();
-    }
+    // for (mesh_name, instance_data) in instanced_key_value_set {
+    //   self.render_engine.initialize_render();
+    //   self
+    //     .render_engine
+    //     .process_instanced_render_call(&mesh_name, &instance_data);
+    //   self.render_engine.submit_render();
+    // }
 
     self.render_engine.show_and_destroy_frame_buffer();
 
