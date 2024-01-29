@@ -1,11 +1,4 @@
-use glam::{Mat4, Vec4};
-
-pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
-  x_axis: Vec4::new(1.0, 0.0, 0.0, 0.0),
-  y_axis: Vec4::new(0.0, 1.0, 0.0, 0.0),
-  z_axis: Vec4::new(0.0, 0.0, 0.5, 0.5),
-  w_axis: Vec4::new(0.0, 0.0, 0.0, 1.0),
-};
+use glam::Mat4;
 
 ///
 /// Translation Rotation Scale Projection Data is a pure data container.
