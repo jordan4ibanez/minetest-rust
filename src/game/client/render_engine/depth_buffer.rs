@@ -50,4 +50,8 @@ impl DepthBuffer {
       sampler,
     }
   }
+
+  pub fn get_view(&self) -> &wgpu::TextureView {
+    &self.view
+  }
 }
