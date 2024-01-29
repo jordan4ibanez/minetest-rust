@@ -4,7 +4,7 @@ mod mouse;
 mod render_engine;
 mod window_handler;
 
-use glam::Vec3A;
+use glam::{vec3a, Vec3A};
 
 use self::{
   client_connection::ClientConnection,
@@ -241,22 +241,21 @@ impl Client {
 
     // Instanced.
     let testing = 1000;
-    let mut instancing: Vec<InstancedRenderData> = Vec::with_capacity(testing * testing);
 
-    let mut index = 0;
+    let mut instancing: Vec<InstancedRenderData> = Vec::with_capacity(testing * testing);
     for x in 0..testing {
       for z in 0..testing {
         instancing.push(InstancedRenderData::new(
-          Vec3A::new(x as f32, z as f32, 0.0),
-          Vec3A::new(0.0, self.spin_test as f32, 0.0),
-          Vec3A::new(1.0, 1.0, 1.0),
+          vec3a(x as f32, z as f32, 0.0),
+          vec3a(0.0, self.spin_test as f32, 0.0),
+          vec3a(1.0, 1.0, 1.0),
         ));
-        index += 1;
       }
     }
+
     self
       .render_engine
-      .render_mesh_instanced("debug", &mut instancing);
+      .render_mesh_instanced("debug", &instancing);
 
     // println!("spin  {}", self.spin_test);
 
@@ -265,7 +264,6 @@ impl Client {
     let instanced_key_value_set = self.render_engine.take_instanced_data();
 
     for (mesh_name, instance_data) in instanced_key_value_set {
-      // self.render_engine.generate_frame_buffer();
       self.render_engine.initialize_render();
       self
         .render_engine
