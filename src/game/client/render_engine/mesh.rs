@@ -155,6 +155,15 @@ impl Mesh {
   }
 
   ///
+  /// Get the default texture used for the mesh.
+  ///
+  /// ! This is a placeholder for now.
+  ///
+  pub fn get_default_texture(&self) -> &String {
+    &self.default_texture
+  }
+
+  ///
   /// Grab the wgpu vertex buffer for rendering.
   ///
   pub fn get_wgpu_vertex_buffer(&self) -> &wgpu::Buffer {
