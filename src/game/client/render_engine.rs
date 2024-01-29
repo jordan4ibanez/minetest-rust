@@ -7,6 +7,7 @@ mod render_call;
 mod texture;
 
 use std::{
+  borrow::Borrow,
   collections::{HashMap, VecDeque},
   iter,
   mem::swap,
@@ -15,7 +16,7 @@ use std::{
 use glam::{UVec2, Vec3A};
 use log::error;
 
-use wgpu::{CommandEncoder, SurfaceTexture, TextureView};
+use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
 use crate::{
@@ -188,7 +189,10 @@ impl RenderEngine {
     let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
       layout: Some(&render_pipeline_layout),
       vertex: wgpu::VertexState {
-        buffers: &[Mesh::get_wgpu_descriptor()],
+        buffers: &[
+          Mesh::get_wgpu_descriptor(),
+          InstancedRenderData::get_wgpu_descriptor(),
+        ],
         module: &shader,
         entry_point: "vs_main",
       },
@@ -461,6 +465,17 @@ impl RenderEngine {
 
     render_pass.set_pipeline(&self.render_pipeline);
 
+    // We set the instance buffer to be nothing for not instanced render calls.
+    // This blank_data must match our lifetime.
+    let blank_data = InstancedRenderData::get_blank_data();
+    self.instance_buffer = Some(self.device.create_buffer_init(
+      &wgpu::util::BufferInitDescriptor {
+        label: Some("Instance Buffer"),
+        contents: bytemuck::cast_slice(&blank_data),
+        usage: wgpu::BufferUsages::VERTEX,
+      },
+    ));
+
     while !self.render_queue.is_empty() {
       let not_instanced_render_call = self.render_queue.pop_front().unwrap();
 
@@ -498,6 +513,8 @@ impl RenderEngine {
               // ! End workaround
 
               render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
+              render_pass.set_vertex_buffer(1, self.instance_buffer.as_ref().unwrap().slice(..));
+
               render_pass.set_index_buffer(
                 mesh.get_wgpu_index_buffer().slice(..),
                 wgpu::IndexFormat::Uint32,
