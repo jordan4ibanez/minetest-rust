@@ -3,33 +3,30 @@
 struct CameraUniform {
   view_projection: mat4x4<f32>,
 };
-@group(1) @binding(0)
-var<uniform> camera: CameraUniform;
-
 struct ModelUniform {
   trs_projection: mat4x4<f32>,
 }
-@group(3) @binding(0)
-var<uniform> model_uniform: ModelUniform;
-
 struct InstanceInput {
   @location(5) model_matrix_0: vec4<f32>,
   @location(6) model_matrix_1: vec4<f32>,
   @location(7) model_matrix_2: vec4<f32>,
   @location(8) model_matrix_3: vec4<f32>,
 }
-
 struct VertexInput {
   @location(0) position: vec3<f32>,
   @location(1) texture_coordinates: vec2<f32>,
   @location(2) color: vec3<f32>,
 };
-
 struct VertexOutput {
   @builtin(position) clip_position: vec4<f32>,
   @location(0) texture_coordinates: vec2<f32>,
   @location(1) color: vec3<f32>,
 };
+
+@group(1) @binding(0)
+var<uniform> camera: CameraUniform;
+@group(1) @binding(1)
+var<uniform> model_uniform: ModelUniform;
 
 @vertex
 fn vs_main(
