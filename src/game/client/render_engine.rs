@@ -729,6 +729,7 @@ impl RenderEngine {
     assert!(self.command_encoder.is_none());
     assert!(self.output.is_none());
     assert!(self.texture_view.is_none());
+    assert!(self.depth_buffer.is_none());
   }
 
   ///
