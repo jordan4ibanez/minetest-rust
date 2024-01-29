@@ -43,7 +43,13 @@ fn vs_main(
     out.texture_coordinates = model.texture_coordinates;
     out.color = model.color;
     if instance_trigger.enabled == 1 {
-      //todo
+        let model_matrix = mat4x4<f32>(
+            instance.model_matrix_0,
+            instance.model_matrix_1,
+            instance.model_matrix_2,
+            instance.model_matrix_3,
+        );
+        out.clip_position = camera.view_projection * model_matrix * vec4<f32>(model.position, 1.0);
     } else {
         out.clip_position = camera.view_projection * model_uniform.trs_projection * vec4<f32>(model.position, 1.0);
     }
