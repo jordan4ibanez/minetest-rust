@@ -1,10 +1,10 @@
-use glam::{Mat4, Vec3, Vec3A};
+use glam::{Mat4, Quat, Vec3, Vec3A};
 
 use wgpu::util::DeviceExt;
 
 use crate::game::client::window_handler::WindowHandler;
 
-use super::trs_projection_data::{TRSProjectionData, OPENGL_TO_WGPU_MATRIX};
+use super::trs_projection_data::TRSProjectionData;
 
 pub struct Camera {
   eye: Vec3A,
@@ -136,21 +136,18 @@ impl Camera {
   ) {
     self.aspect_ratio = window_handler.get_width() as f32 / window_handler.get_height() as f32;
 
-    let view_rotation = Mat4::from_euler(
+    let rotation = Mat4::from_euler(
       glam::EulerRot::XYZ,
       self.rotation.x,
       self.rotation.y,
       self.rotation.z,
     );
 
-    let view_translation = Mat4::from_translation(Vec3::from(self.eye));
+    let translation = Mat4::from_translation(Vec3::from(self.eye));
 
-    // let view = Mat4::look_at_rh(self.eye.into(), self.target.into(), self.up.into());
+    let projection = Mat4::perspective_infinite_rh(self.fov_y, self.aspect_ratio, self.z_near);
 
-    let projection = Mat4::perspective_rh(self.fov_y, self.aspect_ratio, self.z_near, self.z_far);
-
-    self.camera_uniform.projection =
-      (OPENGL_TO_WGPU_MATRIX * projection * view_rotation * view_translation).to_cols_array_2d();
+    self.camera_uniform.projection = (projection * rotation * translation).to_cols_array_2d();
 
     // Automatically write the data into the queue.
     queue.write_buffer(self.get_buffer(), 0, self.get_wgpu_raw_matrix());
