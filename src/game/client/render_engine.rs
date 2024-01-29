@@ -425,6 +425,8 @@ impl RenderEngine {
         // to a rust-analyzer pre-release version!
         .create_view(&wgpu::TextureViewDescriptor::default()),
     );
+
+    self.depth_buffer = Some(DepthBuffer::new(&self.device, &self.config, "depth_buffer"));
   }
 
   ///
@@ -716,6 +718,9 @@ impl RenderEngine {
     swap(&mut final_output, &mut self.output);
 
     final_output.unwrap().present();
+
+    // Destroy the depth buffer.
+    self.depth_buffer = None;
 
     // Finally, the texture view is outdated, destroy it.
     self.texture_view = None;
