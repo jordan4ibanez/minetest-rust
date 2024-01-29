@@ -1,30 +1,8 @@
-use glam::{Mat4, Vec3, Vec3A, Vec4};
+use glam::{Mat4, Vec3, Vec3A};
 use std::{cell::RefCell, rc::Rc};
 use wgpu::util::DeviceExt;
 
-pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
-  x_axis: Vec4::new(1.0, 0.0, 0.0, 0.0),
-  y_axis: Vec4::new(0.0, 1.0, 0.0, 0.0),
-  z_axis: Vec4::new(0.0, 0.0, 0.5, 0.5),
-  w_axis: Vec4::new(0.0, 0.0, 0.0, 1.0),
-};
-
-// We need this for Rust to store our data correctly for the shaders.
-#[repr(C)]
-// This is so we can store this in a buffer.
-#[derive(Debug, Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
-struct ModelUniform {
-  // We can't use cgmath with bytemuck directly, so we'll have
-  // to convert the Matrix4 into a 4x4 f32 array.
-  model_projection: [[f32; 4]; 4],
-}
-impl ModelUniform {
-  pub fn new() -> Self {
-    Self {
-      model_projection: Mat4::IDENTITY.to_cols_array_2d(),
-    }
-  }
-}
+use super::trs_projection_data::{TRSProjectionData, OPENGL_TO_WGPU_MATRIX};
 
 ///
 /// ! When rust 2024 comes out, test making this not interior mutable.
@@ -34,7 +12,7 @@ pub struct MeshTRSUniform {
   rotation: Rc<RefCell<Vec3A>>,
   scale: Rc<RefCell<Vec3A>>,
 
-  model_uniform: Rc<RefCell<ModelUniform>>,
+  model_uniform: Rc<RefCell<TRSProjectionData>>,
 
   // wgpu components.
   model_buffer: wgpu::Buffer,
@@ -44,12 +22,12 @@ pub struct MeshTRSUniform {
 impl MeshTRSUniform {
   pub fn new(device: &wgpu::Device) -> Self {
     // First up is the MeshTRSUniform's uniform.
-    let model_uniform = ModelUniform::new();
+    let model_uniform = TRSProjectionData::new();
 
     // Now we create the MeshTRSUniform's buffer.
     let model_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
       label: Some("model_trs_buffer"),
-      contents: bytemuck::cast_slice(&model_uniform.model_projection),
+      contents: bytemuck::cast_slice(&model_uniform.projection),
       usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
     });
 
@@ -118,7 +96,7 @@ impl MeshTRSUniform {
 
     let view_translation = Mat4::from_translation(Vec3::from(*self.translation.as_ref().borrow()));
 
-    self.model_uniform.as_ref().borrow_mut().model_projection =
+    self.model_uniform.as_ref().borrow_mut().projection =
       (OPENGL_TO_WGPU_MATRIX * view_rotation * view_translation).to_cols_array_2d();
 
     // Automatically write new data to queue.
@@ -133,7 +111,7 @@ impl MeshTRSUniform {
   /// Get the wgpu raw uniform contents to pass into the pipeline.
   ///
   fn get_wgpu_raw_matrix(&self) -> Rc<RefCell<Vec<u8>>> {
-    let x = bytemuck::cast_slice(&self.model_uniform.as_ref().borrow().model_projection).to_owned();
+    let x = bytemuck::cast_slice(&self.model_uniform.as_ref().borrow().projection).to_owned();
     Rc::new(RefCell::new(x))
   }
 
