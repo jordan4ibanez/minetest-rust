@@ -240,15 +240,18 @@ impl Client {
     // self.render_engine.generate_frame_buffer();
 
     // Instanced.
-    let mut instancing: Vec<InstancedRenderData> = vec![];
+    let testing = 1000;
+    let mut instancing: Vec<InstancedRenderData> = Vec::with_capacity(testing * testing);
 
-    for x in 0..100 {
-      for z in 0..100 {
+    let mut index = 0;
+    for x in 0..testing {
+      for z in 0..testing {
         instancing.push(InstancedRenderData::new(
           Vec3A::new(x as f32, z as f32, 0.0),
           Vec3A::new(0.0, self.spin_test as f32, 0.0),
           Vec3A::new(1.0, 1.0, 1.0),
-        ))
+        ));
+        index += 1;
       }
     }
     self
