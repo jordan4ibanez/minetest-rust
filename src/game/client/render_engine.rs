@@ -72,8 +72,9 @@ pub struct RenderEngine {
   // Not instanced render queue. (Individual render calls)
   render_queue: VecDeque<RenderCall>,
 
-  // Instanced render queue.
-  instanced_render_queue: HashMap<String, Vec<InstancedRenderMatrix>>,
+  // Instanced render queue and buffer.
+  instanced_render_queue: HashMap<String, Vec<InstancedRenderData>>,
+  instance_buffer: Option<wgpu::Buffer>,
 
   // Containers for wgpu data.
   meshes: HashMap<String, Mesh>,
@@ -278,8 +279,9 @@ impl RenderEngine {
       // Not instanced render queue. (Individual render calls)
       render_queue: VecDeque::new(),
 
-      // Instanced render queue.
+      // Instanced render queue and buffer.
       instanced_render_queue: HashMap::new(),
+      instance_buffer: None,
 
       // Containers for wgpu data.
       meshes: HashMap::new(),
