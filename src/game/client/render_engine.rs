@@ -782,19 +782,15 @@ impl RenderEngine {
   ///
   /// Push multiple instance calls into the instance queue.
   ///
-  pub fn render_mesh_instanced(
-    &mut self,
-    mesh_name: &str,
-    instancing: &mut Vec<InstancedRenderData>,
-  ) {
+  pub fn render_mesh_instanced(&mut self, mesh_name: &str, instancing: &Vec<InstancedRenderData>) {
     // If the key does not exist, we create it.
     let current_vec = self
       .instanced_render_queue
       .entry(mesh_name.to_string())
       .or_default();
 
-    // Now append multiple into the vector.
-    current_vec.append(instancing);
+    // Now extend multiple into the vector.
+    current_vec.extend(instancing);
   }
 
   ///
