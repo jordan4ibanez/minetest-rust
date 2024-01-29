@@ -97,7 +97,7 @@ impl MeshTRSUniform {
     let view_translation = Mat4::from_translation(Vec3::from(*self.translation.as_ref().borrow()));
 
     self.model_uniform.as_ref().borrow_mut().projection =
-      (OPENGL_TO_WGPU_MATRIX * view_rotation * view_translation).to_cols_array_2d();
+      (OPENGL_TO_WGPU_MATRIX * view_translation * view_rotation).to_cols_array_2d();
 
     // Automatically write new data to queue.
     queue.write_buffer(
