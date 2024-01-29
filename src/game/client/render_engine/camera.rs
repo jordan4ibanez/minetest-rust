@@ -1,32 +1,10 @@
-use glam::{Mat4, Vec3, Vec3A, Vec4};
+use glam::{Mat4, Vec3, Vec3A};
 
 use wgpu::util::DeviceExt;
 
 use crate::game::client::window_handler::WindowHandler;
 
-pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
-  x_axis: Vec4::new(1.0, 0.0, 0.0, 0.0),
-  y_axis: Vec4::new(0.0, 1.0, 0.0, 0.0),
-  z_axis: Vec4::new(0.0, 0.0, 0.5, 0.5),
-  w_axis: Vec4::new(0.0, 0.0, 0.0, 1.0),
-};
-
-// We need this for Rust to store our data correctly for the shaders.
-#[repr(C)]
-// This is so we can store this in a buffer.
-#[derive(Debug, Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
-pub struct TRSProjectionData {
-  // We can't use cgmath with bytemuck directly, so we'll have
-  // to convert the Matrix4 into a 4x4 f32 array.
-  projection: [[f32; 4]; 4],
-}
-impl TRSProjectionData {
-  pub fn new() -> Self {
-    Self {
-      projection: Mat4::IDENTITY.to_cols_array_2d(),
-    }
-  }
-}
+use super::{mesh_trs_uniform::OPENGL_TO_WGPU_MATRIX, trs_projection_data::TRSProjectionData};
 
 pub struct Camera {
   eye: Vec3A,
