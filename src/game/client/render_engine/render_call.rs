@@ -4,7 +4,7 @@ use glam::Vec3A;
 /// A container to handle unbatched draw calls.
 ///
 pub struct RenderCall {
-  model_name: String,
+  mesh_name: String,
   texture_name: String,
   translation: Vec3A,
   rotation: Vec3A,
@@ -18,14 +18,14 @@ pub struct RenderCall {
 ///
 impl RenderCall {
   pub fn new(
-    model_name: &str,
+    mesh_name: &str,
     texture_name: &str,
     translation: Vec3A,
     rotation: Vec3A,
     scale: Vec3A,
   ) -> Self {
     RenderCall {
-      model_name: model_name.to_owned(),
+      mesh_name: mesh_name.to_owned(),
       texture_name: texture_name.to_owned(),
       translation,
       rotation,
@@ -34,10 +34,10 @@ impl RenderCall {
   }
 
   ///
-  /// Get the RenderCall's model name.
+  /// Get the RenderCall's mesh name.
   ///
-  pub fn get_model_name(&self) -> &String {
-    &self.model_name
+  pub fn get_mesh_name(&self) -> &String {
+    &self.mesh_name
   }
 
   ///
