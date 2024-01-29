@@ -28,7 +28,7 @@ use crate::{
 };
 
 use self::{
-  camera::Camera, color_uniform::ColorUniform, instanced_render_matrix::InstancedRenderMatrix,
+  camera::Camera, color_uniform::ColorUniform, instanced_render_matrix::InstancedRenderData,
   render_call::RenderCall,
 };
 
@@ -602,7 +602,7 @@ impl RenderEngine {
       .or_default();
 
     // Now push one into the vector.
-    current_vec.push(InstancedRenderMatrix::new(translation, rotation, scale));
+    current_vec.push(InstancedRenderData::new(translation, rotation, scale));
   }
 
   ///
@@ -611,7 +611,7 @@ impl RenderEngine {
   pub fn render_mesh_instanced(
     &mut self,
     model_name: &str,
-    instancing: &mut Vec<InstancedRenderMatrix>,
+    instancing: &mut Vec<InstancedRenderData>,
   ) {
     // If the key does not exist, we create it.
     let current_vec = self
