@@ -14,7 +14,7 @@ use self::{
   window_handler::WindowHandler,
 };
 
-const TESTING_LIMIT: usize = 1000;
+const TESTING_LIMIT: usize = 100;
 
 use super::lua_engine::LuaEngine;
 
@@ -45,10 +45,6 @@ pub struct Client {
 
   // ! TESTING
   spin_test: f64,
-
-  instancing: Vec<InstancedRenderData>,
-
-  iterated: bool,
 }
 
 impl Client {
@@ -83,10 +79,6 @@ impl Client {
 
       // ! TESTING
       spin_test: 0.0,
-
-      instancing: Vec::with_capacity(TESTING_LIMIT * TESTING_LIMIT),
-
-      iterated: false,
     };
 
     new_client.reset_lua_vm();
@@ -216,9 +208,11 @@ impl Client {
     // Update the RenderEngine with the WindowHandler.
     self.render_engine.update(&self.window_handler, delta);
 
-    // Now render everything. 3 steps for now.
+    // Now render everything.
 
     self.spin_test += delta;
+
+    // println!("spin  {}", self.spin_test);
 
     // Update the camera's projection matrix.
     self
@@ -228,9 +222,16 @@ impl Client {
     // Now create the framebuffer.
     self.render_engine.generate_frame_buffer();
 
-    // * Begin not instanced.
+    // Clear it, it contains old data.
+    self.render_engine.initialize_render();
+    self.render_engine.clear_buffers(true, true);
+    self.render_engine.submit_render();
+
+    // ? Begin rendering calls.
 
     self.render_engine.initialize_render();
+
+    // * Begin not instanced.
 
     // Not instanced.
     self.render_engine.render_mesh(
@@ -243,53 +244,28 @@ impl Client {
 
     self.render_engine.process_not_instanced_render_calls();
     self.render_engine.submit_render();
-    // self.render_engine.show_and_destroy_frame_buffer();
 
     // * Begin instanced.
 
-    // self.render_engine.generate_frame_buffer();
+    let mut instancing = Vec::with_capacity(TESTING_LIMIT * TESTING_LIMIT);
 
-    // Instanced.
-
-    // ! this is EXTREMELY expensive to iterate over a million items!
-    if !self.iterated {
-      for x in 0..TESTING_LIMIT {
-        for z in 0..TESTING_LIMIT {
-          self.instancing.push(InstancedRenderData::new(
-            vec3a(x as f32, z as f32, 0.0),
-            vec3a(0.0, self.spin_test as f32, 0.0),
-            vec3a(1.0, 1.0, 1.0),
-          ));
-        }
+    for x in 0..TESTING_LIMIT {
+      for z in 0..TESTING_LIMIT {
+        instancing.push(InstancedRenderData::new(
+          vec3a(x as f32, z as f32, 0.0),
+          vec3a(0.0, self.spin_test as f32, 0.0),
+          vec3a(1.0, 1.0, 1.0),
+        ));
       }
-      self.iterated = true;
     }
 
-    self.render_engine.initialize_render();
     self
       .render_engine
-      .process_instanced_render_call(&"debug".to_string(), &self.instancing);
-    self.render_engine.submit_render();
+      .render_mesh_instanced("debug", &instancing);
 
-    // println!("spin  {}", self.spin_test);
+    self.render_engine.process_instanced_render_calls();
 
-    // * Note: this is the correct way to do this. Above instancing code is for testing.
-
-    // self
-    //   .render_engine
-    //   .render_mesh_instanced("debug", &self.instancing);
-
-    // ! This is an absolute brute force method. Perhaps there's a more elegant way?
-
-    // let instanced_key_value_set = self.render_engine.take_instanced_data();
-
-    // for (mesh_name, instance_data) in instanced_key_value_set {
-    //   self.render_engine.initialize_render();
-    //   self
-    //     .render_engine
-    //     .process_instanced_render_call(&mesh_name, &instance_data);
-    //   self.render_engine.submit_render();
-    // }
+    // ? End rendering calls.
 
     self.render_engine.show_and_destroy_frame_buffer();
 
