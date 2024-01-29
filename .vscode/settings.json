@@ -12,7 +12,10 @@
   "luau-lsp.diagnostics.strictDatamodelTypes": true,
   "luau-lsp.index.enabled": true,
   "luau-lsp.hover.strictDatamodelTypes": true,
-  
   // rust
-  "rust-analyzer.check.command": "clippy"
+  "rust-analyzer.check.command": "clippy",
+  // wgsl-analyzer
+  "wgsl-analyzer.inlayHints.enabled": true,
+  "wgsl-analyzer.inlayHints.parameterHints": true,
+  "wgsl-analyzer.inlayHints.typeVerbosity": "full",
 }
