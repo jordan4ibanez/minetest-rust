@@ -162,26 +162,28 @@ impl Client {
 
     let mut camera_pos = *camera.get_position();
 
+    let move_speed = delta as f32 * 100.0;
+
     // * A very simple test to check the buffer in the shader.
     if self.keyboard.is_key_down("A") {
-      camera_pos.x += delta as f32;
+      camera_pos.x += move_speed;
     }
     if self.keyboard.is_key_down("D") {
-      camera_pos.x -= delta as f32;
+      camera_pos.x -= move_speed;
     }
 
     if self.keyboard.is_key_down("W") {
-      camera_pos.z += delta as f32;
+      camera_pos.z += move_speed;
     }
     if self.keyboard.is_key_down("S") {
-      camera_pos.z -= delta as f32;
+      camera_pos.z -= move_speed;
     }
 
     if self.keyboard.is_key_down("Left Shift") {
-      camera_pos.y += delta as f32;
+      camera_pos.y += move_speed;
     }
     if self.keyboard.is_key_down("Space") {
-      camera_pos.y -= delta as f32;
+      camera_pos.y -= move_speed;
     }
 
     // println!("camera pos {:?}", camera_pos);
