@@ -1,8 +1,8 @@
-use glam::{Mat4, Vec3, Vec3A};
-use std::{cell::RefCell, rc::Rc};
+use glam::{Mat4, Quat, Vec3A};
+use std::{cell::RefCell, ops::Deref, rc::Rc};
 use wgpu::util::DeviceExt;
 
-use super::trs_projection_data::{TRSProjectionData, OPENGL_TO_WGPU_MATRIX};
+use super::trs_projection_data::TRSProjectionData;
 
 ///
 /// ! When rust 2024 comes out, test making this not interior mutable.
@@ -87,17 +87,20 @@ impl MeshTRSUniform {
   /// This will also write the new data into the queue automatically.
   ///
   pub fn build_mesh_projection_matrix(&self, device: &wgpu::Device, queue: &wgpu::Queue) {
-    let view_rotation = Mat4::from_euler(
+    let rotation = Quat::from_euler(
       glam::EulerRot::XYZ,
       self.rotation.as_ref().borrow().x,
       self.rotation.as_ref().borrow().y,
       self.rotation.as_ref().borrow().z,
     );
+    let translation = *self.translation.as_ref().borrow().deref();
 
-    let view_translation = Mat4::from_translation(Vec3::from(*self.translation.as_ref().borrow()));
+    // let view_translation = Mat4::from_translation(Vec3::from(*self.translation.as_ref().borrow()));
+    let scale = *self.scale.as_ref().borrow().deref();
 
-    self.model_uniform.as_ref().borrow_mut().projection =
-      (OPENGL_TO_WGPU_MATRIX * view_translation * view_rotation).to_cols_array_2d();
+    let matrix = Mat4::from_scale_rotation_translation(scale.into(), rotation, translation.into());
+
+    self.model_uniform.as_ref().borrow_mut().projection = matrix.to_cols_array_2d();
 
     // Automatically write new data to queue.
     queue.write_buffer(
