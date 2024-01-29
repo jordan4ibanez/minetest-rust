@@ -7,6 +7,8 @@ use glam::{Mat4, Quat, Vec3A};
 /// many instances of the same mesh at once. This is much faster than regular RenderCall when
 /// attempting to draw things like items and mobs, so please use it as so.
 ///
+/// This may look like TRSProjectionData, but it's not.
+///
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct InstancedRenderData {
