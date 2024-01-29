@@ -1,4 +1,4 @@
-use glam::{Mat4, Quat, Vec3, Vec3A};
+use glam::{Mat4, Vec3, Vec3A};
 
 use wgpu::util::DeviceExt;
 
