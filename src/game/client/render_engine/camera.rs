@@ -15,12 +15,12 @@ pub const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4 {
 #[repr(C)]
 // This is so we can store this in a buffer.
 #[derive(Debug, Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
-pub struct TRSProjectionUniform {
+pub struct TRSProjectionData {
   // We can't use cgmath with bytemuck directly, so we'll have
   // to convert the Matrix4 into a 4x4 f32 array.
   projection: [[f32; 4]; 4],
 }
-impl TRSProjectionUniform {
+impl TRSProjectionData {
   pub fn new() -> Self {
     Self {
       projection: Mat4::IDENTITY.to_cols_array_2d(),
@@ -39,7 +39,7 @@ pub struct Camera {
   z_far: f32,
 
   // wgpu raw data.
-  camera_uniform: TRSProjectionUniform,
+  camera_uniform: TRSProjectionData,
 
   // wgpu components.
   camera_buffer: wgpu::Buffer,
@@ -55,7 +55,7 @@ impl Camera {
     mesh_buffer: &wgpu::Buffer,
   ) -> Self {
     // First up is the Camera's uniform.
-    let camera_uniform = TRSProjectionUniform::new();
+    let camera_uniform = TRSProjectionData::new();
 
     // Now we create the Camera's buffer.
     let camera_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
