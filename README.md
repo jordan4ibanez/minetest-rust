@@ -94,3 +94,11 @@ github repo: https://github.com/rui314/mold
 mold available repo packages: https://repology.org/project/mold/versions
 
 -----
+
+## wgsl-analyzer
+
+Currently the best wgsl analyzer I can find for vscode is wgsl-analyzer.
+
+github repo: https://github.com/wgsl-analyzer/wgsl-analyzer
+
+-----
