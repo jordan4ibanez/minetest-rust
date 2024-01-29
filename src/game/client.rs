@@ -210,31 +210,67 @@ impl Client {
 
     self.spin_test += delta;
 
-    self.render_engine.initialize_render(&self.window_handler);
+    // Update the camera's projection matrix.
+    self
+      .render_engine
+      .update_camera_matrix(&self.window_handler);
+
+    // Now create the framebuffer.
+    self.render_engine.generate_frame_buffer();
+
+    // * Begin not instanced.
+
+    self.render_engine.initialize_render();
 
     // Not instanced.
     self.render_engine.render_mesh(
       "debug",
       "tf.jpg",
-      Vec3A::new(0.0, 0.0, 0.0),
-      Vec3A::new(0.0, self.spin_test as f32, 0.0),
-      Vec3A::new(0.0, 0.0, 0.0),
+      Vec3A::new(-1.0, 0.0, 0.0),
+      Vec3A::new(0.0, -self.spin_test as f32, 0.0),
+      Vec3A::new(1.0, 1.0, 1.0),
     );
+
+    self.render_engine.process_not_instanced_render_calls();
+    self.render_engine.submit_render();
+    // self.render_engine.show_and_destroy_frame_buffer();
+
+    // * Begin instanced.
+
+    // self.render_engine.generate_frame_buffer();
 
     // Instanced.
     let mut instancing: Vec<InstancedRenderData> = vec![];
 
-    for x in 0..10 {
-      for z in 0..10 {}
+    for x in 0..100 {
+      for z in 0..100 {
+        instancing.push(InstancedRenderData::new(
+          Vec3A::new(x as f32, z as f32, 0.0),
+          Vec3A::new(0.0, self.spin_test as f32, 0.0),
+          Vec3A::new(1.0, 1.0, 1.0),
+        ))
+      }
     }
-
     self
       .render_engine
       .render_mesh_instanced("debug", &mut instancing);
 
     // println!("spin  {}", self.spin_test);
-    self.render_engine.process_render_calls();
-    self.render_engine.finalize_render();
+
+    // ! This is an absolute brute force method. Perhaps there's a more elegant way?
+
+    let instanced_key_value_set = self.render_engine.take_instanced_data().to_owned();
+
+    for (mesh_name, instance_data) in instanced_key_value_set {
+      // self.render_engine.generate_frame_buffer();
+      self.render_engine.initialize_render();
+      self
+        .render_engine
+        .process_instanced_render_call(&mesh_name, &instance_data);
+      self.render_engine.submit_render();
+    }
+
+    self.render_engine.show_and_destroy_frame_buffer();
 
     // This will need to run a close event for the client engine and send out a close event to the internal server.
     if self.window_handler.should_quit() {
