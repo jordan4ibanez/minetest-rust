@@ -69,12 +69,11 @@ pub struct RenderEngine {
   size: UVec2,
   clear_color: wgpu::Color,
 
-  // Unbatched render queue.
-  unbatched_queue: VecDeque<RenderCall>,
+  // Not instanced render queue. (Individual render calls)
+  render_queue: VecDeque<RenderCall>,
 
-  // Batched render queue.
-  // ! TODO: MAKE THIS ONLY BatchRaw DATA !
-  batched_queue: HashMap<String, Vec<InstancedRenderMatrix>>,
+  // Instanced render queue.
+  instanced_render_queue: HashMap<String, Vec<InstancedRenderMatrix>>,
 
   // Containers for wgpu data.
   meshes: HashMap<String, Mesh>,
@@ -276,11 +275,11 @@ impl RenderEngine {
       size: UVec2::new(width, height),
       clear_color,
 
-      // Unbatched render queue.
-      unbatched_queue: VecDeque::new(),
+      // Not instanced render queue. (Individual render calls)
+      render_queue: VecDeque::new(),
 
-      // Batched render queue.
-      batched_queue: HashMap::new(),
+      // Instanced render queue.
+      instanced_render_queue: HashMap::new(),
 
       // Containers for wgpu data.
       meshes: HashMap::new(),
@@ -384,7 +383,7 @@ impl RenderEngine {
       .build_view_projection_matrix(&self.device, window_handler, &self.queue);
 
     // Next we will write the color buffer into memory.
-    // ! TODO: this might be needed in the unbatched/batched loop. Test this.
+    // ! TODO: this might be needed in the uninstanced/instanced loop. Test this.
     self.color_uniform.write_buffer_to_wgpu(&self.queue);
 
     self.output = Some(
@@ -415,7 +414,7 @@ impl RenderEngine {
   ///
   /// Run the render procedure on the RenderEngine.
   ///
-  /// This flushes out all unbatched draw calls.
+  /// This flushes out all draw calls and actively runs them.
   ///
   /// ! This is still a prototype !
   ///
@@ -460,14 +459,14 @@ impl RenderEngine {
 
     render_pass.set_pipeline(&self.render_pipeline);
 
-    while !self.unbatched_queue.is_empty() {
-      let unbatched_render_call = self.unbatched_queue.pop_front().unwrap();
+    while !self.render_queue.is_empty() {
+      let not_instanced_render_call = self.render_queue.pop_front().unwrap();
 
-      let model_name = unbatched_render_call.get_model_name();
+      let model_name = not_instanced_render_call.get_model_name();
 
       match self.meshes.get(model_name) {
         Some(mesh) => {
-          let texture_name = unbatched_render_call.get_texture_name();
+          let texture_name = not_instanced_render_call.get_texture_name();
 
           match self.textures.get(texture_name) {
             Some(texture) => {
@@ -476,7 +475,7 @@ impl RenderEngine {
               render_pass.set_bind_group(2, self.color_uniform.get_bind_group(), &[]);
 
               // * This is a workaround for borrowing mut & not mut at once.
-              // MeshTRSUniform is used for unbatched calls.
+              // MeshTRSUniform is used for not instanced calls.
 
               self
                 .mesh_trs_uniform
@@ -484,13 +483,13 @@ impl RenderEngine {
 
               self
                 .mesh_trs_uniform
-                .set_translation(unbatched_render_call.get_translation());
+                .set_translation(not_instanced_render_call.get_translation());
               self
                 .mesh_trs_uniform
-                .set_rotation(unbatched_render_call.get_rotation());
+                .set_rotation(not_instanced_render_call.get_rotation());
               self
                 .mesh_trs_uniform
-                .set_scale(unbatched_render_call.get_scale());
+                .set_scale(not_instanced_render_call.get_scale());
 
               render_pass.set_bind_group(3, self.mesh_trs_uniform.get_bind_group(), &[]);
 
@@ -534,8 +533,8 @@ impl RenderEngine {
 
     final_output.unwrap().present();
 
-    // Clear out the batch call memory to prevent a memory leak.
-    self.batched_queue.clear();
+    // Clear out the instance call hashmap memory to prevent a memory leak.
+    self.instanced_render_queue.clear();
 
     // Finally, the texture view is outdated, destroy it.
 
@@ -562,9 +561,9 @@ impl RenderEngine {
   }
 
   ///
-  /// Render a mesh unbatched.
+  /// Render a mesh not instanced.
   ///
-  pub fn render_mesh_unbatched(
+  pub fn render_mesh(
     &mut self,
     model_name: &str,
     texture_name: &str,
@@ -572,7 +571,7 @@ impl RenderEngine {
     rotation: Vec3A,
     scale: Vec3A,
   ) {
-    self.unbatched_queue.push_back(RenderCall::new(
+    self.render_queue.push_back(RenderCall::new(
       model_name,
       texture_name,
       translation,
@@ -582,12 +581,12 @@ impl RenderEngine {
   }
 
   ///
-  /// Push one batch call into the batch queue.
+  /// Push one instance call into the instance queue.
   ///
-  /// This is less efficient than render_mesh_batched because
+  /// This is less efficient than render_mesh_instanced because
   /// it needs to check if the key exists every time.
   ///
-  pub fn render_mesh_batched_single(
+  pub fn render_mesh_instanced_single(
     &mut self,
     model_name: &str,
     translation: Vec3A,
@@ -596,7 +595,7 @@ impl RenderEngine {
   ) {
     // If the key does not exist, we create it.
     let current_vec = self
-      .batched_queue
+      .instanced_render_queue
       .entry(model_name.to_string())
       .or_default();
 
@@ -605,17 +604,21 @@ impl RenderEngine {
   }
 
   ///
-  /// Push multiple batch calls into the batch queue.
+  /// Push multiple instance calls into the instance queue.
   ///
-  pub fn render_mesh_batched(&mut self, model_name: &str, batch: &mut Vec<InstancedRenderMatrix>) {
+  pub fn render_mesh_instanced(
+    &mut self,
+    model_name: &str,
+    instancing: &mut Vec<InstancedRenderMatrix>,
+  ) {
     // If the key does not exist, we create it.
     let current_vec = self
-      .batched_queue
+      .instanced_render_queue
       .entry(model_name.to_string())
       .or_default();
 
     // Now append multiple into the vector.
-    current_vec.append(batch);
+    current_vec.append(instancing);
   }
 
   ///

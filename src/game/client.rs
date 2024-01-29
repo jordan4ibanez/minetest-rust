@@ -206,7 +206,7 @@ impl Client {
     self.spin_test += delta;
 
     self.render_engine.initialize_render(&self.window_handler);
-    self.render_engine.render_mesh_unbatched(
+    self.render_engine.render_mesh(
       "debug",
       "tf.jpg",
       Vec3A::new(0.0, 0.0, 0.0),
