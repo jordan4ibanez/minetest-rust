@@ -31,6 +31,7 @@ impl Camera {
     device: &wgpu::Device,
     window_handler: &WindowHandler,
     mesh_buffer: &wgpu::Buffer,
+    instance_trigger_buffer: &wgpu::Buffer,
   ) -> Self {
     // First up is the Camera's uniform.
     let camera_uniform = TRSProjectionData::new();
@@ -53,6 +54,10 @@ impl Camera {
         wgpu::BindGroupEntry {
           binding: 1,
           resource: mesh_buffer.as_entire_binding(),
+        },
+        wgpu::BindGroupEntry {
+          binding: 2,
+          resource: instance_trigger_buffer.as_entire_binding(),
         },
       ],
       label: Some("camera_bind_group"),
@@ -167,6 +172,7 @@ impl Camera {
 
   ///
   /// Get the Camera's wgpu buffer.
+  ///
   pub fn get_buffer(&self) -> &wgpu::Buffer {
     &self.camera_buffer
   }
@@ -189,6 +195,16 @@ impl Camera {
         },
         wgpu::BindGroupLayoutEntry {
           binding: 1,
+          visibility: wgpu::ShaderStages::VERTEX,
+          ty: wgpu::BindingType::Buffer {
+            ty: wgpu::BufferBindingType::Uniform,
+            has_dynamic_offset: false,
+            min_binding_size: None,
+          },
+          count: None,
+        },
+        wgpu::BindGroupLayoutEntry {
+          binding: 2,
           visibility: wgpu::ShaderStages::VERTEX,
           ty: wgpu::BindingType::Buffer {
             ty: wgpu::BufferBindingType::Uniform,
