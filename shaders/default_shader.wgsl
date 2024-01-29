@@ -22,11 +22,17 @@ struct VertexOutput {
   @location(0) texture_coordinates: vec2<f32>,
   @location(1) color: vec3<f32>,
 };
+struct InstanceTrigger {
+  // true and false, 1 and 0.
+  @location(0) enabled: i32,
+}
 
 @group(1) @binding(0)
 var<uniform> camera: CameraUniform;
 @group(1) @binding(1)
 var<uniform> model_uniform: ModelUniform;
+@group(1) @binding(2)
+var<uniform> instance_trigger: InstanceTrigger;
 
 @vertex
 fn vs_main(
@@ -36,7 +42,11 @@ fn vs_main(
     var out: VertexOutput;
     out.texture_coordinates = model.texture_coordinates;
     out.color = model.color;
-    out.clip_position = camera.view_projection * model_uniform.trs_projection * vec4<f32>(model.position, 1.0);
+    if instance_trigger.enabled == 1 {
+      //todo
+    } else {
+        out.clip_position = camera.view_projection * model_uniform.trs_projection * vec4<f32>(model.position, 1.0);
+    }
     return out;
 }
 
