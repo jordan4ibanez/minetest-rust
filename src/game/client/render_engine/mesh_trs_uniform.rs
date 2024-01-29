@@ -106,7 +106,9 @@ impl MeshTRSUniform {
   ///
   /// The TRS model projection will automatically rebuild itself every time it is polled.
   ///
-  pub fn build_model_projection_matrix(&self, device: &wgpu::Device, queue: &wgpu::Queue) {
+  /// This will also write the new data into the queue automatically.
+  ///
+  pub fn build_mesh_projection_matrix(&self, device: &wgpu::Device, queue: &wgpu::Queue) {
     let view_rotation = Mat4::from_euler(
       glam::EulerRot::XYZ,
       self.rotation.as_ref().borrow().x,
@@ -119,6 +121,7 @@ impl MeshTRSUniform {
     self.model_uniform.as_ref().borrow_mut().model_projection =
       (OPENGL_TO_WGPU_MATRIX * view_rotation * view_translation).to_cols_array_2d();
 
+    // Automatically write new data to queue.
     queue.write_buffer(
       self.get_buffer(),
       0,
