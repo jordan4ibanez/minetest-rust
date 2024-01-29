@@ -18,7 +18,7 @@ use std::{
 use glam::{UVec2, Vec3A};
 use log::error;
 
-use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
+use wgpu::{util::DeviceExt, CommandEncoder, LoadOp, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
 use crate::{
@@ -449,6 +449,76 @@ impl RenderEngine {
   }
 
   ///
+  /// You can clear the depth buffer and the color buffer with this.
+  ///
+  /// One or the other, or both. Or none, if you're feeling ridiculous.
+  ///
+  pub fn clear_buffers(&mut self, depth: bool, color: bool) {
+    // Do 3 very basic checks before attempting to render.
+    if self.output.is_none() {
+      panic!("RenderEngine: attempted to render with no output!");
+    }
+
+    if self.command_encoder.is_none() {
+      panic!("RenderEngine: attempted render with no command encoder!");
+    }
+
+    if self.texture_view.is_none() {
+      panic!("RenderEngine: attempted to render with no texture view!");
+    }
+
+    if self.depth_buffer.is_none() {
+      panic!("RenderEngine: attempted to render with no depth buffer!");
+    }
+
+    let clear_color = if color {
+      wgpu::LoadOp::Clear(self.clear_color)
+    } else {
+      wgpu::LoadOp::Load
+    };
+
+    let clear_depth = if depth {
+      wgpu::LoadOp::Clear(1.0)
+    } else {
+      wgpu::LoadOp::Load
+    };
+
+    // Begin a wgpu render pass
+    let mut render_pass =
+      self
+        .command_encoder
+        .as_mut()
+        .unwrap()
+        .begin_render_pass(&wgpu::RenderPassDescriptor {
+          // The label of this render pass.
+          label: Some("minetest_instanced_render_pass"),
+
+          // color attachments is a array of pipeline render pass color attachments.
+          color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+            view: self.texture_view.as_ref().unwrap(),
+            resolve_target: None,
+            ops: wgpu::Operations {
+              load: clear_color,
+              store: wgpu::StoreOp::Store,
+            },
+          })],
+
+          depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+            view: self.depth_buffer.as_ref().unwrap().get_view(),
+            depth_ops: Some(wgpu::Operations {
+              load: clear_depth,
+              store: wgpu::StoreOp::Store,
+            }),
+            stencil_ops: None,
+          }),
+          occlusion_query_set: None,
+          timestamp_writes: None,
+        });
+
+    render_pass.set_pipeline(&self.render_pipeline);
+  }
+
+  ///
   /// Run the render procedure on the RenderEngine.
   ///
   /// This flushes out all not instanced draw calls and actively runs them.
@@ -469,6 +539,10 @@ impl RenderEngine {
       panic!("RenderEngine: attempted to render with no texture view!");
     }
 
+    if self.depth_buffer.is_none() {
+      panic!("RenderEngine: attempted to render with no depth buffer!");
+    }
+
     // Begin a wgpu render pass
     let mut render_pass =
       self
@@ -484,7 +558,7 @@ impl RenderEngine {
             view: self.texture_view.as_ref().unwrap(),
             resolve_target: None,
             ops: wgpu::Operations {
-              load: wgpu::LoadOp::Clear(self.clear_color),
+              load: wgpu::LoadOp::Load,
               store: wgpu::StoreOp::Store,
             },
           })],
@@ -492,7 +566,7 @@ impl RenderEngine {
           depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
             view: self.depth_buffer.as_ref().unwrap().get_view(),
             depth_ops: Some(wgpu::Operations {
-              load: wgpu::LoadOp::Clear(1.0),
+              load: wgpu::LoadOp::Load,
               store: wgpu::StoreOp::Store,
             }),
             stencil_ops: None,
@@ -602,6 +676,10 @@ impl RenderEngine {
       panic!("RenderEngine: attempted to render with no texture view!");
     }
 
+    if self.depth_buffer.is_none() {
+      panic!("RenderEngine: attempted to render with no depth buffer!");
+    }
+
     // Begin a wgpu render pass
     let mut render_pass =
       self
@@ -617,7 +695,7 @@ impl RenderEngine {
             view: self.texture_view.as_ref().unwrap(),
             resolve_target: None,
             ops: wgpu::Operations {
-              load: wgpu::LoadOp::Clear(self.clear_color),
+              load: wgpu::LoadOp::Load,
               store: wgpu::StoreOp::Store,
             },
           })],
@@ -625,7 +703,7 @@ impl RenderEngine {
           depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
             view: self.depth_buffer.as_ref().unwrap().get_view(),
             depth_ops: Some(wgpu::Operations {
-              load: wgpu::LoadOp::Clear(1.0),
+              load: wgpu::LoadOp::Load,
               store: wgpu::StoreOp::Store,
             }),
             stencil_ops: None,
