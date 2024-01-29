@@ -4,7 +4,7 @@ use wgpu::util::DeviceExt;
 
 use crate::game::client::window_handler::WindowHandler;
 
-use super::{mesh_trs_uniform::OPENGL_TO_WGPU_MATRIX, trs_projection_data::TRSProjectionData};
+use super::trs_projection_data::{TRSProjectionData, OPENGL_TO_WGPU_MATRIX};
 
 pub struct Camera {
   eye: Vec3A,
