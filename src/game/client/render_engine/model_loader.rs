@@ -1,8 +1,11 @@
+mod obj_loader;
+
 use log::error;
 
-use crate::file_utilities::file_extension_from_path;
-
-mod obj_loader;
+use crate::{
+  file_utilities::file_extension_from_path,
+  game::client::render_engine::model_loader::obj_loader::ObjLoader,
+};
 
 ///
 /// Load a model up without having to worry about file extensions.
@@ -24,6 +27,7 @@ impl ModelLoader {
       }
       "obj" => {
         println!("ModelLoader: this is an OBJ model file.");
+        ObjLoader::load(path);
       }
       _ => {
         error!(
