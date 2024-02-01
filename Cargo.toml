@@ -27,7 +27,7 @@ ctrlc = { version = "*", features = ["termination"] }
 env_logger = "*"
 glam = { version = "*", features = ["approx", "bytemuck", "rand", "serde"] }
 gltf = "*"
-image = { version = "*", default-features = false, features = ["png", "jpeg"] }
+image = { version = "*", default-features = false, features = ["png", "jpeg", "webp"] }
 log = "*"
 message-io = "*"
 mlua = { version = "*", features = ["luau-jit"] }
