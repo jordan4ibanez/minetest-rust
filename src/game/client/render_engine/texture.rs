@@ -16,7 +16,7 @@ pub struct Texture {
 
 impl Texture {
   pub fn new(path: &str, device: &wgpu::Device, queue: &wgpu::Queue) -> Self {
-    let name = file_name_from_path(path);
+    let name = file_name_from_path(path).to_owned();
 
     let diffuse_bytes = read_file_to_byte_vec(path);
     let diffuse_image = image::load_from_memory(diffuse_bytes.as_slice()).unwrap();
