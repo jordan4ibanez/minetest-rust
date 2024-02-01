@@ -43,6 +43,19 @@ pub fn file_name_from_path(path: &str) -> String {
 }
 
 ///
+/// Get the file extension from the path provided.
+///
+pub fn file_extension_from_path(path: &str) -> String {
+  panic_if_no_path(path, "file extension to String");
+  Path::new(path)
+    .extension()
+    .unwrap()
+    .to_str()
+    .unwrap()
+    .to_string()
+}
+
+///
 /// This will first check if the file exists.
 ///
 /// Next it will automatically parse the file into a String.
