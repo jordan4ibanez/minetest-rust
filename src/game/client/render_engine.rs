@@ -27,6 +27,7 @@ use crate::{
   game::client::render_engine::{
     instance_trigger::InstanceTrigger,
     mesh::{Mesh, Vertex},
+    model_loader::ModelLoader,
     texture::Texture,
   },
 };
@@ -368,6 +369,12 @@ impl RenderEngine {
       );
 
       new_render_engine.store_texture(&new_texture.get_name().clone(), new_texture);
+
+      // ? BEGIN DEBUGGING MODEL LOADER ?
+
+      ModelLoader::load_model("./prototype_models/minetest_sam.gltf");
+
+      // ? END DEBUGGING MODEL LOADER ?
     }
     // ! END TEMPORARY MESH DEBUGGING !
 
