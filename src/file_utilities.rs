@@ -45,14 +45,9 @@ pub fn file_name_from_path(path: &str) -> String {
 ///
 /// Get the file extension from the path provided.
 ///
-pub fn file_extension_from_path(path: &str) -> String {
+pub fn file_extension_from_path(path: &str) -> &str {
   panic_if_no_path(path, "file extension to String");
-  Path::new(path)
-    .extension()
-    .unwrap()
-    .to_str()
-    .unwrap()
-    .to_string()
+  Path::new(path).extension().unwrap().to_str().unwrap()
 }
 
 ///
