@@ -8,10 +8,14 @@ mod obj_loader;
 /// If someone wants to add a new file format loader integration
 /// for the render engine, they just bolt in a new extension/function here.
 ///
-pub fn load_model(path: &str) {
-  println!("Hello I am loading hooray!");
+pub struct ModelLoader {}
 
-  let extension = file_extension_from_path(path);
+impl ModelLoader {
+  pub fn load_model(path: &str) {
+    println!("Hello I am loading hooray!");
 
-  println!("the extension is {}", extension);
+    let extension = file_extension_from_path(path);
+
+    println!("ModelLoader: the extension is [{}]", extension);
+  }
 }
