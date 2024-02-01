@@ -323,7 +323,7 @@ impl RenderEngine {
 
     // ! THIS IS TEMPORARY MESH DEBUGGING !
     {
-      let mut new_mesh = Mesh::new("debug", "tf.jpg");
+      let mut new_mesh = Mesh::new("debug", "tf.webp");
       new_mesh.push_vertex_vec(&mut vec![
         Vertex {
           position: [-0.0868241, 0.49240386, 0.0],
@@ -362,7 +362,7 @@ impl RenderEngine {
       new_render_engine.store_mesh(&new_mesh.get_name().clone(), new_mesh);
 
       let new_texture = Texture::new(
-        "prototype_textures/tf.jpg",
+        "prototype_textures/tf.webp",
         &new_render_engine.device,
         &new_render_engine.queue,
       );
