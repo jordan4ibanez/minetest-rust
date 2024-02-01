@@ -1,3 +1,5 @@
+use log::error;
+
 use crate::file_utilities::file_extension_from_path;
 
 mod obj_loader;
@@ -16,6 +18,21 @@ impl ModelLoader {
 
     let extension = file_extension_from_path(path);
 
-    println!("ModelLoader: the extension is [{}]", extension);
+    match extension {
+      "gltf" => {
+        println!("ModelLoader: this is a GLTF model file.");
+      }
+      "obj" => {
+        println!("ModelLoader: this is an OBJ model file.");
+      }
+      _ => {
+        error!(
+          "ModelLoader: [{}] is not an integrated model format.",
+          extension
+        );
+      }
+    }
+
+    // println!("ModelLoader: the extension is [{}]", extension);
   }
 }
