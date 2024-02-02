@@ -49,7 +49,6 @@ impl Vertex {
 #[derive(Debug)]
 pub struct Mesh {
   name: String,
-  default_texture: String,
   vertex_data: Vec<Vertex>,
   index_data: Vec<u32>,
   vertex_buffer: Option<wgpu::Buffer>,
@@ -58,10 +57,9 @@ pub struct Mesh {
 }
 
 impl Mesh {
-  pub fn new(name: &str, default_texture: &str) -> Self {
+  pub fn new(name: &str) -> Self {
     Mesh {
       name: name.to_owned(),
-      default_texture: default_texture.to_owned(),
       vertex_data: vec![],
       index_data: vec![],
       vertex_buffer: None,
@@ -152,15 +150,6 @@ impl Mesh {
   ///
   pub fn push_index_vec(&mut self, index_vec: &mut Vec<u32>) {
     self.index_data.append(index_vec);
-  }
-
-  ///
-  /// Get the default texture used for the mesh.
-  ///
-  /// ! This is a placeholder for now.
-  ///
-  pub fn get_default_texture(&self) -> &String {
-    &self.default_texture
   }
 
   ///
@@ -298,7 +287,7 @@ pub fn generate_mesh(
 
   // ! this is just a test, there is probably a much better way to to this!
   // ! What you're seeing is a raw prototype.
-  let mut mesh = Mesh::new("testing", "testing");
+  let mut mesh = Mesh::new("testing");
 
   // Can use one range iterator, they are all supposed to be equal.
   for i in 0..positions_components {
