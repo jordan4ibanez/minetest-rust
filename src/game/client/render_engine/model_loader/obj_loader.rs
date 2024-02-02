@@ -1,3 +1,14 @@
+use tobj::{Material, Mesh};
+
+///
+/// This struct simply holds the Obj model before we convert it into the
+/// internal generic format.
+///
+struct ObjModel {
+  pub meshes: Vec<Mesh>,
+  pub materials: Vec<Material>,
+}
+
 ///
 /// The OBJ file loader.
 ///
