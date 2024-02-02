@@ -5,6 +5,7 @@ mod instance_trigger;
 pub mod instanced_render_matrix;
 mod mesh;
 mod mesh_trs_uniform;
+mod model;
 mod model_loader;
 mod render_call;
 mod texture;
