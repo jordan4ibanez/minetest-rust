@@ -324,7 +324,7 @@ impl RenderEngine {
 
     // ! THIS IS TEMPORARY MESH DEBUGGING !
     {
-      let mut new_mesh = Mesh::new("debug", "tf.webp");
+      let mut new_mesh = Mesh::new("debug");
       new_mesh.push_vertex_vec(&mut vec![
         Vertex {
           position: [-0.0868241, 0.49240386, 0.0],
@@ -735,7 +735,10 @@ impl RenderEngine {
     // * Begin instanced render call.
     match self.meshes.get(mesh_name) {
       Some(mesh) => {
-        let texture_name = mesh.get_default_texture();
+        // ! NOTE: THIS IS WHERE EVERYTHING BROKE!
+        // ! REMINDER: THE PLACEHOLDER HAD TO BE REMOVED!
+        let texture_name = "tf.webp";
+        // let texture_name = mesh.get_default_texture();
         match self.textures.get(texture_name) {
           Some(texture) => {
             // Now activate the used texture's bind group.
