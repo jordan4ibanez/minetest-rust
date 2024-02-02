@@ -5,7 +5,9 @@ use std::{
 
 use tobj::{MTLLoadResult, Material, Mesh};
 
-use crate::file_utilities::{read_file_to_buf_read, read_file_to_string};
+use crate::file_utilities::{
+  read_file_to_buf_read, read_file_to_string_result,
+};
 
 ///
 /// This struct simply holds the Obj model before we convert it into the
@@ -48,17 +50,30 @@ impl ObjLoader {
     // Now if there was an issue, stop everything.
     // !TODO: Maybe in the future we can just return out a result from this.
     // ! But this is currently being written from scratch at the time of this comment.
-    let (models, obj_materials) = match result {
+    let (models, object_materials) = match result {
       Ok(gotten_data) => gotten_data,
       Err(error) => panic!("ObjLoader: {}", error),
     };
+
+    for material in object_materials.unwrap() {
+      let x = material.diffuse_texture.unwrap();
+      println!("the test is: {}", x);
+    }
   }
 
   ///
   /// tobj requires a function to execute instructions to load materials, so we do that.
   ///
   fn material_loader(path: &Path) -> MTLLoadResult {
-    let material_text = read_file_to_string(path.to_str().unwrap());
+    // Ok((vec![], HashMap::new()))
+    let material_text_result = read_file_to_string_result(path.to_str().unwrap());
+
+    let material_text = if material_text_result.is_err() {
+      "".to_string()
+    } else {
+      material_text_result.unwrap()
+    };
+
     tobj::load_mtl_buf(&mut BufReader::new(Cursor::new(material_text)))
   }
 }
