@@ -3,7 +3,7 @@ mod obj_loader;
 use log::error;
 
 use crate::{
-  file_utilities::file_extension_from_path,
+  file_utilities::{file_extension_from_path, file_name_from_path},
   game::client::render_engine::model_loader::obj_loader::ObjLoader,
 };
 
@@ -19,6 +19,7 @@ impl ModelLoader {
   pub fn load_model(path: &str) {
     println!("Hello I am loading hooray!");
 
+    let file_name = file_name_from_path(path);
     let extension = file_extension_from_path(path);
 
     match extension {
@@ -31,8 +32,8 @@ impl ModelLoader {
       }
       _ => {
         error!(
-          "ModelLoader: [{}] is not an integrated model format.",
-          extension
+          "ModelLoader: error loading [{}]. [{}] is not an integrated model format.",
+          file_name, extension
         );
       }
     }
