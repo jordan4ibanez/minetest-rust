@@ -1,4 +1,5 @@
 use std::{
+  convert::Infallible,
   fs::{self, File},
   io::BufReader,
   path::Path,
@@ -62,6 +63,13 @@ pub fn file_extension_from_path(path: &str) -> &str {
 pub fn read_file_to_string(path: &str) -> String {
   panic_if_no_path(path, "String");
   fs::read_to_string(path).unwrap().parse().unwrap()
+}
+
+///
+/// This will attempt to parse the file into a string.
+///
+pub fn read_file_to_string_result(path: &str) -> Result<String, Infallible> {
+  fs::read_to_string(path).unwrap().parse()
 }
 
 ///
