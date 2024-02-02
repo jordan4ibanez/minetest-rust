@@ -1,4 +1,8 @@
-use std::{fs, path::Path};
+use std::{
+  fs::{self, File},
+  io::BufReader,
+  path::Path,
+};
 
 ///
 /// A micro helper function.
@@ -68,4 +72,14 @@ pub fn read_file_to_string(path: &str) -> String {
 pub fn read_file_to_byte_vec(path: &str) -> Vec<u8> {
   panic_if_no_path(path, "bytes");
   fs::read(path).unwrap()
+}
+
+///
+/// This will first check if the file exists.
+///
+/// Next it will automatically parse the file into a BufReader<File>
+///
+pub fn read_file_to_buf_read(path: &str) -> BufReader<File> {
+  panic_if_no_path(path, "BufRead");
+  BufReader::new(File::open(path).unwrap())
 }
