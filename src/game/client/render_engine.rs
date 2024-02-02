@@ -373,7 +373,7 @@ impl RenderEngine {
 
       // ? BEGIN DEBUGGING MODEL LOADER ?
 
-      ModelLoader::load_model("./prototype_models/minetest_sam.gltf");
+      ModelLoader::load_model("./prototype_models/chair.obj");
 
       // ? END DEBUGGING MODEL LOADER ?
     }
