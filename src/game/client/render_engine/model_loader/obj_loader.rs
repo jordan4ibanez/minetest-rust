@@ -1,11 +1,9 @@
 use std::{
-  collections::HashMap,
-  fs::File,
-  io::{BufRead, BufReader, Cursor},
+  io::{BufReader, Cursor},
   path::Path,
 };
 
-use tobj::{LoadError, MTLLoadResult, Material, Mesh};
+use tobj::{MTLLoadResult, Material, Mesh};
 
 use crate::file_utilities::{read_file_to_buf_read, read_file_to_string};
 
@@ -39,12 +37,17 @@ impl ObjLoader {
       ..Default::default()
     };
 
+    // We want to know if there's an issue loading the obj file.
+    // Let it stream a result in.
     let result = tobj::load_obj_buf(
       &mut model_reader,
       &model_load_options,
       ObjLoader::material_loader,
     );
 
+    // Now if there was an issue, stop everything.
+    // !TODO: Maybe in the future we can just return out a result from this.
+    // ! But this is currently being written from scratch at the time of this comment.
     let (models, obj_materials) = match result {
       Ok(gotten_data) => gotten_data,
       Err(error) => panic!("ObjLoader: {}", error),
