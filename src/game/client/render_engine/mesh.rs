@@ -54,6 +54,7 @@ pub struct Mesh {
   vertex_buffer: Option<wgpu::Buffer>,
   index_buffer: Option<wgpu::Buffer>,
   number_of_indices: u32,
+  material_id: u32,
 }
 
 impl Mesh {
@@ -65,6 +66,33 @@ impl Mesh {
       vertex_buffer: None,
       index_buffer: None,
       number_of_indices: 0,
+      material_id: 0,
+    }
+  }
+
+  ///
+  /// New from existing is used explicitly for models.
+  ///
+  /// obj and gltf.
+  ///
+  pub fn new_from_existing(
+    name: &str,
+    vertex_buffer: wgpu::Buffer,
+    index_buffer: wgpu::Buffer,
+    number_of_indices: u32,
+    material_id: u32,
+  ) -> Mesh {
+    // Why yes, this is allocating 2 blank vectors.
+    // If you would like to see why I didn't turn them into an option
+    // feel free to try that.
+    Mesh {
+      name: name.to_owned(),
+      vertex_data: vec![],
+      index_data: vec![],
+      vertex_buffer: Some(vertex_buffer),
+      index_buffer: Some(index_buffer),
+      number_of_indices,
+      material_id,
     }
   }
 
