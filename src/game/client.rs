@@ -242,6 +242,14 @@ impl Client {
       Vec3A::new(1.0, 1.0, 1.0),
     );
 
+    self.render_engine.render_model(
+      "chair.obj",
+      vec!["chair.png".to_string()],
+      Vec3A::new(-2.0, 0.0, 0.0),
+      Vec3A::new(0.0, -self.spin_test as f32, 0.0),
+      Vec3A::new(1.0, 1.0, 1.0),
+    );
+
     self.render_engine.process_not_instanced_render_calls();
     self.render_engine.submit_render();
 
