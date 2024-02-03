@@ -35,6 +35,8 @@ https://discord.gg/Z2wCscTB4F
 - 
 - rand - For doing random things.
 
+- ahash - EXTREMELY fast hashmaps.
+
 
 ##### Packages to be implemented:
 - rusqlite - SQLite3 database.
