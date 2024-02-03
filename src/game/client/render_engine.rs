@@ -11,12 +11,9 @@ mod render_call;
 mod texture;
 mod trs_projection_data;
 
-use std::{
-  collections::{HashMap, VecDeque},
-  iter,
-  mem::swap,
-};
+use std::{collections::VecDeque, iter, mem::swap};
 
+use ahash::AHashMap;
 use glam::{UVec2, Vec3A};
 use log::error;
 
@@ -81,13 +78,13 @@ pub struct RenderEngine {
   render_queue: VecDeque<RenderCall>,
 
   // Instanced render queue and buffer.
-  instanced_render_queue: HashMap<String, Vec<InstancedRenderData>>,
+  instanced_render_queue: AHashMap<String, Vec<InstancedRenderData>>,
   instance_buffer: Option<wgpu::Buffer>,
   instance_trigger: InstanceTrigger,
 
   // Containers for wgpu data.
-  meshes: HashMap<String, Mesh>,
-  textures: HashMap<String, Texture>,
+  meshes: AHashMap<String, Mesh>,
+  textures: AHashMap<String, Texture>,
 
   mesh_trs_uniform: MeshTRSUniform,
 
@@ -306,13 +303,13 @@ impl RenderEngine {
       render_queue: VecDeque::new(),
 
       // Instanced render queue and buffer.
-      instanced_render_queue: HashMap::new(),
+      instanced_render_queue: AHashMap::new(),
       instance_buffer: None,
       instance_trigger,
 
       // Containers for wgpu data.
-      meshes: HashMap::new(),
-      textures: HashMap::new(),
+      meshes: AHashMap::new(),
+      textures: AHashMap::new(),
 
       mesh_trs_uniform,
 
@@ -796,8 +793,8 @@ impl RenderEngine {
   ///
   /// Completely wipes out the instanced render queue and returns the current data to you.
   ///
-  fn take_instanced_data(&mut self) -> HashMap<String, Vec<InstancedRenderData>> {
-    let mut temporary = HashMap::new();
+  fn take_instanced_data(&mut self) -> AHashMap<String, Vec<InstancedRenderData>> {
+    let mut temporary = AHashMap::new();
     swap(&mut self.instanced_render_queue, &mut temporary);
     temporary
   }
