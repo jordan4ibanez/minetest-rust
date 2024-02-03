@@ -1026,6 +1026,7 @@ dependencies = [
 name = "minetest-rust"
 version = "0.0.1"
 dependencies = [
+ "ahash",
  "bytemuck",
  "clap",
  "configparser",

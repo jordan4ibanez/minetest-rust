@@ -20,6 +20,7 @@ unused_variables = "allow"
 # unwrap_used = "forbid"
 
 [dependencies]
+ahash = "*"
 bytemuck = { version = "*", features = ["derive"] }
 clap = { version = "*", features = ["derive"] }
 configparser = "*"
@@ -27,7 +28,11 @@ ctrlc = { version = "*", features = ["termination"] }
 env_logger = "*"
 glam = { version = "*", features = ["approx", "bytemuck", "rand", "serde"] }
 gltf = "*"
-image = { version = "*", default-features = false, features = ["png", "jpeg", "webp"] }
+image = { version = "*", default-features = false, features = [
+  "png",
+  "jpeg",
+  "webp",
+] }
 log = "*"
 message-io = "*"
 mlua = { version = "*", features = ["luau-jit"] }
