@@ -390,6 +390,14 @@ impl RenderEngine {
         .models
         .insert(chair_model.name.clone(), chair_model);
 
+      let chair_texture = Texture::new(
+        "prototype_textures/chair.png",
+        &new_render_engine.device,
+        &new_render_engine.queue,
+      );
+
+      new_render_engine.store_texture(&chair_texture.get_name().clone(), chair_texture);
+
       // ? END DEBUGGING MODEL LOADER ?
     }
     // ! END TEMPORARY MESH DEBUGGING !
