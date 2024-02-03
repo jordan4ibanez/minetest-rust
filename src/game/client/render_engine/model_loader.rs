@@ -16,7 +16,11 @@ use crate::{
 pub struct ModelLoader {}
 
 impl ModelLoader {
-  pub fn load_model(path: &str) {
+  pub fn load_model(
+    path: &str,
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+  ) {
     println!("Hello I am loading hooray!");
 
     let file_name = file_name_from_path(path);
@@ -28,7 +32,7 @@ impl ModelLoader {
       }
       "obj" => {
         println!("ModelLoader: this is an OBJ model file.");
-        ObjLoader::load(path);
+        ObjLoader::load(path, device, queue);
       }
       _ => {
         error!(

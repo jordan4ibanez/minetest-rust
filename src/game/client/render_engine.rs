@@ -373,7 +373,7 @@ impl RenderEngine {
 
       // ? BEGIN DEBUGGING MODEL LOADER ?
 
-      ModelLoader::load_model("./prototype_models/chair.obj");
+      ModelLoader::load_model("./prototype_models/chair.obj", &device, &queue);
 
       // ? END DEBUGGING MODEL LOADER ?
     }
