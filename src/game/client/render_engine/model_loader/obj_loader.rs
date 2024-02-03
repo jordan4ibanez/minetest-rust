@@ -1,9 +1,9 @@
 use std::path::Path;
 
 use ahash::AHashMap;
-use tobj::{LoadError, MTLLoadResult, Material, Mesh};
+use tobj::{MTLLoadResult, Material, Mesh};
 
-use crate::file_utilities::{read_file_to_buf_read, read_file_to_string_result};
+use crate::file_utilities::read_path_to_buf_read;
 
 ///
 /// This struct simply holds the Obj model before we convert it into the
@@ -26,7 +26,7 @@ impl ObjLoader {
     println!("Obj loader is working");
 
     // The buffer we're going to read the model into.
-    let mut model_reader = read_file_to_buf_read(path);
+    let mut model_reader = read_path_to_buf_read(path);
 
     // Model loading options, we just want the basics.
     let model_load_options = tobj::LoadOptions {

@@ -87,7 +87,7 @@ pub fn read_file_to_byte_vec(path: &str) -> Vec<u8> {
 ///
 /// Next it will automatically parse the file into a BufReader<File>
 ///
-pub fn read_file_to_buf_read(path: &str) -> BufReader<File> {
+pub fn read_path_to_buf_read(path: &str) -> BufReader<File> {
   panic_if_no_path(path, "BufRead");
   BufReader::new(File::open(path).unwrap())
 }
