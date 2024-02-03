@@ -7,6 +7,8 @@ use crate::{
   game::client::render_engine::model_loader::obj_loader::ObjLoader,
 };
 
+use super::model::Model;
+
 ///
 /// Load a model up without having to worry about file extensions.
 ///
@@ -16,11 +18,7 @@ use crate::{
 pub struct ModelLoader {}
 
 impl ModelLoader {
-  pub fn load_model(
-    path: &str,
-    device: &wgpu::Device,
-    queue: &wgpu::Queue,
-  ) {
+  pub fn load_model(path: &str, device: &wgpu::Device, queue: &wgpu::Queue) -> Option<Model> {
     println!("Hello I am loading hooray!");
 
     let file_name = file_name_from_path(path);
@@ -29,16 +27,18 @@ impl ModelLoader {
     match extension {
       "gltf" => {
         println!("ModelLoader: this is a GLTF model file.");
+        None
       }
       "obj" => {
         println!("ModelLoader: this is an OBJ model file.");
-        ObjLoader::load(path, device, queue);
+        Some(ObjLoader::load(path, device, queue))
       }
       _ => {
         error!(
           "ModelLoader: error loading [{}]. [{}] is not an integrated model format.",
           file_name, extension
         );
+        None
       }
     }
 
