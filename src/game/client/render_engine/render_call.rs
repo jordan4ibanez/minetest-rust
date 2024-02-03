@@ -70,6 +70,8 @@ impl RenderCall {
 }
 
 ///
+/// ! fixme: this was very rushed.
+///
 /// Unbatched render call struct.
 ///
 /// If you want to batch it, see BatchRenderCall.
