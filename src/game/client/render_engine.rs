@@ -671,50 +671,60 @@ impl RenderEngine {
       }
     }
 
-    while !self.mesh_render_queue.is_empty() {
-      let not_instanced_render_call = self.mesh_render_queue.pop_front().unwrap();
+    // * Begin not instanced render calls. [MODEL]
+    // ! fixme: this is truly horrendous, this should have more style and safety than this.
+    while !self.model_render_queue.is_empty() {
+      let not_instanced_render_call = self.model_render_queue.pop_front().unwrap();
 
       let mesh_name = not_instanced_render_call.get_mesh_name();
 
-      match self.meshes.get(mesh_name) {
-        Some(mesh) => {
-          let texture_name = not_instanced_render_call.get_texture_name();
+      match self.models.get(mesh_name) {
+        Some(model) => {
+          let meshes = &model.meshes;
+          let texture_names = not_instanced_render_call.get_texture_name();
 
-          match self.textures.get(texture_name) {
-            Some(texture) => {
-              // Now activate the used texture's bind group.
-              render_pass.set_bind_group(0, texture.get_wgpu_diffuse_bind_group(), &[]);
+          // todo: in the future make this just insert some default texture.
+          if meshes.len() != texture_names.len() {
+            error!("RenderEngine: Attempted not instanced render on model [{}] with unmatched texture to model buffers.", model.name);
+          }
 
-              self
-                .mesh_trs_uniform
-                .set_translation(not_instanced_render_call.get_translation());
-              self
-                .mesh_trs_uniform
-                .set_rotation(not_instanced_render_call.get_rotation());
-              self
-                .mesh_trs_uniform
-                .set_scale(not_instanced_render_call.get_scale());
+          for (mesh, texture_name) in meshes.iter().zip(texture_names) {
+            match self.textures.get(texture_name) {
+              Some(texture) => {
+                // Now activate the used texture's bind group.
+                render_pass.set_bind_group(0, texture.get_wgpu_diffuse_bind_group(), &[]);
 
-              self
-                .mesh_trs_uniform
-                .build_mesh_projection_matrix(&self.device, &self.queue);
+                self
+                  .mesh_trs_uniform
+                  .set_translation(not_instanced_render_call.get_translation());
+                self
+                  .mesh_trs_uniform
+                  .set_rotation(not_instanced_render_call.get_rotation());
+                self
+                  .mesh_trs_uniform
+                  .set_scale(not_instanced_render_call.get_scale());
 
-              // Now we're going to bind the pipeline to the Mesh and draw it.
+                self
+                  .mesh_trs_uniform
+                  .build_mesh_projection_matrix(&self.device, &self.queue);
 
-              render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
-              render_pass.set_vertex_buffer(1, self.instance_buffer.as_ref().unwrap().slice(..));
+                // Now we're going to bind the pipeline to the Mesh and draw it.
 
-              render_pass.set_index_buffer(
-                mesh.get_wgpu_index_buffer().slice(..),
-                wgpu::IndexFormat::Uint32,
-              );
+                render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
+                render_pass.set_vertex_buffer(1, self.instance_buffer.as_ref().unwrap().slice(..));
 
-              render_pass.draw_indexed(0..mesh.get_number_of_indices(), 0, 0..1);
+                render_pass.set_index_buffer(
+                  mesh.get_wgpu_index_buffer().slice(..),
+                  wgpu::IndexFormat::Uint32,
+                );
+
+                render_pass.draw_indexed(0..mesh.get_number_of_indices(), 0, 0..1);
+              }
+              None => error!(
+                "render_engine: {} is not a stored Texture. [not instanced]",
+                texture_name
+              ),
             }
-            None => error!(
-              "render_engine: {} is not a stored Texture. [not instanced]",
-              texture_name
-            ),
           }
         }
         None => error!(
