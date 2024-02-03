@@ -85,14 +85,14 @@ pub struct ModelRenderCall {
 impl ModelRenderCall {
   pub fn new(
     mesh_name: &str,
-    texture_name: &str,
+    texture_names: Vec<String>,
     translation: Vec3A,
     rotation: Vec3A,
     scale: Vec3A,
   ) -> Self {
-    RenderCall {
+    ModelRenderCall {
       mesh_name: mesh_name.to_owned(),
-      texture_name: texture_name.to_owned(),
+      texture_names,
       translation,
       rotation,
       scale,
@@ -102,15 +102,15 @@ impl ModelRenderCall {
   ///
   /// Get the RenderCall's mesh name.
   ///
-  pub fn get_mesh_names(&self) -> &Vec<String> {
+  pub fn get_mesh_name(&self) -> &String {
     &self.mesh_name
   }
 
   ///
   /// Get the texture that will be used for this RenderCall.
   ///
-  pub fn get_texture_name(&self) -> &String {
-    &self.texture_name
+  pub fn get_texture_name(&self) -> &Vec<String> {
+    &self.texture_names
   }
 
   ///
