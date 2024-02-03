@@ -115,7 +115,7 @@ impl ObjLoader {
 
     // Some nice debug info.
     println!(
-      "ObjLoader: Model [{}] was created with [{}] texture buffers.",
+      "ObjLoader: Model [{}] was created with [{}] texture buffer(s).",
       file_name, number_of_texture_buffers
     );
 
