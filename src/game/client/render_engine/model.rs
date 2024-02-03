@@ -9,5 +9,5 @@ pub struct Model {
   pub number_of_texture_buffers: u32,
   // todo: use this to lockout the model from changing and be readonly.
   // todo: You should have to completely regenerate a new model.
-  lock: bool,
+  pub lock: bool,
 }
