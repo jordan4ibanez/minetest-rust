@@ -114,6 +114,7 @@ impl ObjLoader {
     let number_of_texture_buffers = meshes.len() as u32;
 
     Model {
+      name: file_name,
       meshes,
       number_of_texture_buffers,
       lock: false,
