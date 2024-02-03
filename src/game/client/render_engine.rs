@@ -379,11 +379,16 @@ impl RenderEngine {
 
       // ? BEGIN DEBUGGING MODEL LOADER ?
 
-      ModelLoader::load_model(
+      let chair_model = ModelLoader::load_model(
         "./prototype_models/chair.obj",
         &new_render_engine.device,
         &new_render_engine.queue,
-      );
+      )
+      .unwrap();
+
+      new_render_engine
+        .models
+        .insert(chair_model.name.clone(), chair_model);
 
       // ? END DEBUGGING MODEL LOADER ?
     }
