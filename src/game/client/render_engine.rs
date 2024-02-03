@@ -32,7 +32,7 @@ use crate::{
 
 use self::{
   camera::Camera, color_uniform::ColorUniform, depth_buffer::DepthBuffer,
-  instanced_render_matrix::InstancedRenderData, mesh_trs_uniform::MeshTRSUniform,
+  instanced_render_matrix::InstancedRenderData, mesh_trs_uniform::MeshTRSUniform, model::Model,
   render_call::RenderCall,
 };
 
@@ -85,6 +85,8 @@ pub struct RenderEngine {
   // Containers for wgpu data.
   meshes: AHashMap<String, Mesh>,
   textures: AHashMap<String, Texture>,
+
+  models: AHashMap<String, Model>,
 
   mesh_trs_uniform: MeshTRSUniform,
 
@@ -310,6 +312,7 @@ impl RenderEngine {
       // Containers for wgpu data.
       meshes: AHashMap::new(),
       textures: AHashMap::new(),
+      models: AHashMap::new(),
 
       mesh_trs_uniform,
 
