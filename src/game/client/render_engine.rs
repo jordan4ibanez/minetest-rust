@@ -955,6 +955,26 @@ impl RenderEngine {
   }
 
   ///
+  /// Render a model, not instanced.
+  ///
+  pub fn render_model(
+    &mut self,
+    model_name: &str,
+    texture_names: Vec<String>,
+    translation: Vec3A,
+    rotation: Vec3A,
+    scale: Vec3A,
+  ) {
+    self.model_render_queue.push_back(ModelRenderCall::new(
+      model_name,
+      texture_names,
+      translation,
+      rotation,
+      scale,
+    ))
+  }
+
+  ///
   /// Push one instance call into the instance queue.
   ///
   /// This is less efficient than render_mesh_instanced because
