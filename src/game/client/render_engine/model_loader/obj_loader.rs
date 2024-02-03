@@ -113,6 +113,12 @@ impl ObjLoader {
 
     let number_of_texture_buffers = meshes.len() as u32;
 
+    // Some nice debug info.
+    println!(
+      "ObjLoader: Model [{}] was created with [{}] texture buffers.",
+      file_name, number_of_texture_buffers
+    );
+
     Model {
       name: file_name,
       meshes,
