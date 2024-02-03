@@ -1,13 +1,9 @@
-use std::{
-  io::{BufReader, Cursor},
-  path::Path,
-};
+use std::path::Path;
 
-use tobj::{MTLLoadResult, Material, Mesh};
+use ahash::AHashMap;
+use tobj::{LoadError, MTLLoadResult, Material, Mesh};
 
-use crate::file_utilities::{
-  read_file_to_buf_read, read_file_to_string_result,
-};
+use crate::file_utilities::{read_file_to_buf_read, read_file_to_string_result};
 
 ///
 /// This struct simply holds the Obj model before we convert it into the
@@ -64,16 +60,9 @@ impl ObjLoader {
   ///
   /// tobj requires a function to execute instructions to load materials, so we do that.
   ///
+  /// And by do that, I mean, do absolutely nothing but allocate to satisfy the return type.
+  ///
   fn material_loader(path: &Path) -> MTLLoadResult {
-    // Ok((vec![], HashMap::new()))
-    let material_text_result = read_file_to_string_result(path.to_str().unwrap());
-
-    let material_text = if material_text_result.is_err() {
-      "".to_string()
-    } else {
-      material_text_result.unwrap()
-    };
-
-    tobj::load_mtl_buf(&mut BufReader::new(Cursor::new(material_text)))
+    Ok((vec![], AHashMap::new()))
   }
 }
