@@ -40,7 +40,7 @@ impl ObjLoader {
     let result = tobj::load_obj_buf(
       &mut model_reader,
       &model_load_options,
-      ObjLoader::material_loader,
+      ObjLoader::fake_material_loader,
     );
 
     // Now if there was an issue, stop everything.
@@ -50,8 +50,6 @@ impl ObjLoader {
       Ok(gotten_data) => gotten_data,
       Err(error) => panic!("ObjLoader: {}", error),
     };
-
-    
   }
 
   ///
@@ -59,7 +57,9 @@ impl ObjLoader {
   ///
   /// And by do that, I mean, do absolutely nothing but allocate to satisfy the return type.
   ///
-  fn material_loader(path: &Path) -> MTLLoadResult {
+  /// This will go out of scope and be freed pretty much immediately.
+  ///
+  fn fake_material_loader(path: &Path) -> MTLLoadResult {
     Ok((vec![], AHashMap::new()))
   }
 }
