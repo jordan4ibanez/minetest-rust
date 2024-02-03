@@ -46,15 +46,12 @@ impl ObjLoader {
     // Now if there was an issue, stop everything.
     // !TODO: Maybe in the future we can just return out a result from this.
     // ! But this is currently being written from scratch at the time of this comment.
-    let (models, object_materials) = match result {
+    let (models, _) = match result {
       Ok(gotten_data) => gotten_data,
       Err(error) => panic!("ObjLoader: {}", error),
     };
 
-    for material in object_materials.unwrap() {
-      let x = material.diffuse_texture.unwrap();
-      println!("the test is: {}", x);
-    }
+    
   }
 
   ///
