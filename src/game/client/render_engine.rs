@@ -31,9 +31,13 @@ use crate::{
 };
 
 use self::{
-  camera::Camera, color_uniform::ColorUniform, depth_buffer::DepthBuffer,
-  instanced_render_matrix::InstancedRenderData, mesh_trs_uniform::MeshTRSUniform, model::Model,
-  render_call::RenderCall,
+  camera::Camera,
+  color_uniform::ColorUniform,
+  depth_buffer::DepthBuffer,
+  instanced_render_matrix::InstancedRenderData,
+  mesh_trs_uniform::MeshTRSUniform,
+  model::Model,
+  render_call::{ModelRenderCall, RenderCall},
 };
 
 use super::window_handler::WindowHandler;
@@ -75,7 +79,8 @@ pub struct RenderEngine {
   clear_color: wgpu::Color,
 
   // Not instanced render queue. (Individual render calls)
-  render_queue: VecDeque<RenderCall>,
+  mesh_render_queue: VecDeque<RenderCall>,
+  model_render_queue: VecDeque<ModelRenderCall>,
 
   // Instanced render queue and buffer.
   instanced_render_queue: AHashMap<String, Vec<InstancedRenderData>>,
@@ -302,7 +307,8 @@ impl RenderEngine {
       clear_color,
 
       // Not instanced render queue. (Individual render calls)
-      render_queue: VecDeque::new(),
+      mesh_render_queue: VecDeque::new(),
+      model_render_queue: VecDeque::new(),
 
       // Instanced render queue and buffer.
       instanced_render_queue: AHashMap::new(),
@@ -611,9 +617,62 @@ impl RenderEngine {
     // Disable instancing in shader.
     self.instance_trigger.trigger_off(&self.queue);
 
-    // * Begin not instanced render calls.
-    while !self.render_queue.is_empty() {
-      let not_instanced_render_call = self.render_queue.pop_front().unwrap();
+    // * Begin not instanced render calls. [MESH]
+    while !self.mesh_render_queue.is_empty() {
+      let not_instanced_render_call = self.mesh_render_queue.pop_front().unwrap();
+
+      let mesh_name = not_instanced_render_call.get_mesh_name();
+
+      match self.meshes.get(mesh_name) {
+        Some(mesh) => {
+          let texture_name = not_instanced_render_call.get_texture_name();
+
+          match self.textures.get(texture_name) {
+            Some(texture) => {
+              // Now activate the used texture's bind group.
+              render_pass.set_bind_group(0, texture.get_wgpu_diffuse_bind_group(), &[]);
+
+              self
+                .mesh_trs_uniform
+                .set_translation(not_instanced_render_call.get_translation());
+              self
+                .mesh_trs_uniform
+                .set_rotation(not_instanced_render_call.get_rotation());
+              self
+                .mesh_trs_uniform
+                .set_scale(not_instanced_render_call.get_scale());
+
+              self
+                .mesh_trs_uniform
+                .build_mesh_projection_matrix(&self.device, &self.queue);
+
+              // Now we're going to bind the pipeline to the Mesh and draw it.
+
+              render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
+              render_pass.set_vertex_buffer(1, self.instance_buffer.as_ref().unwrap().slice(..));
+
+              render_pass.set_index_buffer(
+                mesh.get_wgpu_index_buffer().slice(..),
+                wgpu::IndexFormat::Uint32,
+              );
+
+              render_pass.draw_indexed(0..mesh.get_number_of_indices(), 0, 0..1);
+            }
+            None => error!(
+              "render_engine: {} is not a stored Texture. [not instanced]",
+              texture_name
+            ),
+          }
+        }
+        None => error!(
+          "render_engine: {} is not a stored Mesh. [not instanced]",
+          mesh_name
+        ),
+      }
+    }
+
+    while !self.mesh_render_queue.is_empty() {
+      let not_instanced_render_call = self.mesh_render_queue.pop_front().unwrap();
 
       let mesh_name = not_instanced_render_call.get_mesh_name();
 
@@ -886,7 +945,7 @@ impl RenderEngine {
     rotation: Vec3A,
     scale: Vec3A,
   ) {
-    self.render_queue.push_back(RenderCall::new(
+    self.mesh_render_queue.push_back(RenderCall::new(
       mesh_name,
       texture_name,
       translation,
