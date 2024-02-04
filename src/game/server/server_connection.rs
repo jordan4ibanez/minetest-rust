@@ -1,5 +1,6 @@
-use std::{collections::HashMap, net::ToSocketAddrs, time::Duration};
+use std::{net::ToSocketAddrs, time::Duration};
 
+use ahash::AHashMap;
 use message_io::{
   events::EventReceiver,
   network::{Endpoint, Transport},
@@ -18,7 +19,7 @@ pub struct ServerConnection {
   task: NodeTask,
   handler: NodeHandler<()>,
   event_receiver: EventReceiver<StoredNodeEvent<()>>,
-  pub clients: HashMap<Endpoint, String>,
+  pub clients: AHashMap<Endpoint, String>,
 
   // Multiple shutdown requests from valid endpoints can be sent in the same tick.
   // We want to process them all.
@@ -58,7 +59,7 @@ impl ServerConnection {
       task,
       handler,
       event_receiver,
-      clients: HashMap::new(),
+      clients: AHashMap::new(),
 
       shutdown_requests: vec![],
     }

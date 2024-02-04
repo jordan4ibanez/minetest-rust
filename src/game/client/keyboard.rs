@@ -1,13 +1,13 @@
-use std::collections::HashMap;
+use ahash::AHashMap;
 
 pub struct KeyboardController {
-  keys: HashMap<String, bool>,
+  keys: AHashMap<String, bool>,
 }
 
 impl KeyboardController {
   pub fn new() -> Self {
     KeyboardController {
-      keys: HashMap::new(),
+      keys: AHashMap::new(),
     }
   }
 

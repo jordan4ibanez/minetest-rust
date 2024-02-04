@@ -59,7 +59,7 @@ pub struct RenderEngine {
   adapter: wgpu::Adapter,
   device: wgpu::Device,
   queue: wgpu::Queue,
-  //todo: replace shader with a hashmap of shaders.
+  //todo: replace shader with a AHashMap of shaders.
   shader: wgpu::ShaderModule,
 
   render_pipeline_layout: wgpu::PipelineLayout,
