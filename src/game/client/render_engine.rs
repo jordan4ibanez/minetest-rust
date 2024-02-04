@@ -473,21 +473,28 @@ impl RenderEngine {
   ///
   /// This simply sets everything up.
   ///
-  pub fn initialize_render(&mut self) {
+  pub fn initialize_render(&mut self) {}
+
+  ///
+  /// Internal only render pass generator.
+  ///
+  fn begin_new_render_pass(
+    &mut self,
+    render_pass_name: &str,
+    clear_color: bool,
+    clear_depth: bool,
+  ) -> wgpu::RenderPass<'_> {
+    // Need a new command encoder to write the new data to.
+    // ? note: This is required because we're updating buffers.
+    // ? They will overwrite if we try to reuse this same encoder.
+    // ? So please don't try to do that because you're going to have a bad time.
     self.command_encoder = Some(self.device.create_command_encoder(
       &wgpu::CommandEncoderDescriptor {
         label: Some("minetest_command_encoder"),
       },
     ));
-  }
 
-  ///
-  /// You can clear the depth buffer and the color buffer with this.
-  ///
-  /// One or the other, or both. Or none, if you're feeling ridiculous.
-  ///
-  pub fn clear_buffers(&mut self, depth: bool, color: bool) {
-    // Do 3 very basic checks before attempting to render.
+    // Do 4 very basic checks before attempting to render.
     if self.output.is_none() {
       panic!("RenderEngine: attempted to render with no output!");
     }
@@ -504,34 +511,33 @@ impl RenderEngine {
       panic!("RenderEngine: attempted to render with no depth buffer!");
     }
 
-    let clear_color = if color {
+    let color_operation = if clear_color {
       wgpu::LoadOp::Clear(self.clear_color)
     } else {
       wgpu::LoadOp::Load
     };
 
-    let clear_depth = if depth {
+    let depth_operation = if clear_depth {
       wgpu::LoadOp::Clear(1.0)
     } else {
       wgpu::LoadOp::Load
     };
 
-    // Begin a wgpu render pass
-    let mut render_pass =
+    let mut new_render_pass =
       self
         .command_encoder
         .as_mut()
         .unwrap()
         .begin_render_pass(&wgpu::RenderPassDescriptor {
           // The label of this render pass.
-          label: Some("minetest_instanced_render_pass"),
+          label: Some(render_pass_name),
 
           // color attachments is a array of pipeline render pass color attachments.
           color_attachments: &[Some(wgpu::RenderPassColorAttachment {
             view: self.texture_view.as_ref().unwrap(),
             resolve_target: None,
             ops: wgpu::Operations {
-              load: clear_color,
+              load: color_operation,
               store: wgpu::StoreOp::Store,
             },
           })],
@@ -539,7 +545,7 @@ impl RenderEngine {
           depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
             view: self.depth_buffer.as_ref().unwrap().get_view(),
             depth_ops: Some(wgpu::Operations {
-              load: clear_depth,
+              load: depth_operation,
               store: wgpu::StoreOp::Store,
             }),
             stencil_ops: None,
@@ -548,7 +554,19 @@ impl RenderEngine {
           timestamp_writes: None,
         });
 
-    render_pass.set_pipeline(&self.render_pipeline);
+    new_render_pass.set_pipeline(&self.render_pipeline);
+
+    new_render_pass
+  }
+
+  ///
+  /// You can clear the depth buffer and the color buffer with this.
+  ///
+  /// One or the other, or both. Or none, if you're feeling ridiculous.
+  ///
+  pub fn clear_buffers(&mut self, depth: bool, color: bool) {
+    // Begin a wgpu render pass
+    let render_pass = self.begin_new_render_pass("clear_render_pass", depth, color);
   }
 
   ///
