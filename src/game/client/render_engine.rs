@@ -701,6 +701,9 @@ impl RenderEngine {
     }
   }
 
+  ///
+  /// Processes the next available render call in the Model queue.
+  ///
   fn process_not_instanced_model_render_call(&mut self) -> bool {
     // * Begin not instanced render calls. [MODEL]
     // ! fixme: this is truly horrendous, this should have more style and safety than this.
@@ -770,6 +773,7 @@ impl RenderEngine {
             error!("RenderEngine: Attempted not instanced render on model [{}] with unmatched texture to model buffers.", model.name);
           }
 
+          // We want to iterate them at the same time, zip it.
           for (mesh, texture_name) in meshes.iter().zip(texture_names) {
             match self.textures.get(texture_name) {
               Some(texture) => {
@@ -817,6 +821,17 @@ impl RenderEngine {
     }
     // Return if we have another.
     self.model_render_queue.is_empty()
+  }
+
+  ///
+  /// Process and run all Model render calls.
+  ///
+  pub fn process_not_instanced_model_render_calls(&mut self) {
+    while !self.model_render_queue.is_empty() {
+      self.initialize_render();
+      self.process_not_instanced_model_render_call();
+      self.submit_render();
+    }
   }
 
   ///
