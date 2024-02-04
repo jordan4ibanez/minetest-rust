@@ -482,12 +482,12 @@ impl RenderEngine {
   }
 
   ///
-  /// You can clear the depth buffer and the color buffer with this.
+  /// Internal raw command to clear the buffers.
   ///
-  /// One or the other, or both. Or none, if you're feeling ridiculous.
+  /// Done like this because polonius wasn't out when this was written.
   ///
-  pub fn clear_buffers(&mut self, depth: bool, color: bool) {
-    // Do 3 very basic checks before attempting to render.
+  fn clear_buffers_raw_command(&mut self, depth: bool, color: bool) {
+    // Do 4 very basic checks before attempting to render.
     if self.output.is_none() {
       panic!("RenderEngine: attempted to render with no output!");
     }
@@ -552,13 +552,24 @@ impl RenderEngine {
   }
 
   ///
+  /// You can clear the depth buffer and the color buffer with this.
+  ///
+  /// One or the other, or both. Or none, if you're feeling ridiculous.
+  ///
+  pub fn clear_buffers(&mut self, depth: bool, color: bool) {
+    self.initialize_render();
+    self.clear_buffers_raw_command(true, true);
+    self.submit_render();
+  }
+
+  ///
   /// Run the render procedure on the RenderEngine.
   ///
   /// This flushes out all not instanced draw calls and actively runs them.
   ///
   /// ! This is still a prototype !
   ///
-  pub fn process_not_instanced_render_calls(&mut self) {
+  fn process_not_instanced_mesh_render_call(&mut self) {
     // Do 3 very basic checks before attempting to render.
     if self.output.is_none() {
       panic!("RenderEngine: attempted to render with no output!");
@@ -576,62 +587,62 @@ impl RenderEngine {
       panic!("RenderEngine: attempted to render with no depth buffer!");
     }
 
-    // Begin a wgpu render pass
-    let mut render_pass =
-      self
-        .command_encoder
-        .as_mut()
-        .unwrap()
-        .begin_render_pass(&wgpu::RenderPassDescriptor {
-          // The label of this render pass.
-          label: Some("minetest_not_instanced_render_pass"),
-
-          // color attachments is a array of pipeline render pass color attachments.
-          color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-            view: self.texture_view.as_ref().unwrap(),
-            resolve_target: None,
-            ops: wgpu::Operations {
-              load: wgpu::LoadOp::Load,
-              store: wgpu::StoreOp::Store,
-            },
-          })],
-
-          depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
-            view: self.depth_buffer.as_ref().unwrap().get_view(),
-            depth_ops: Some(wgpu::Operations {
-              load: wgpu::LoadOp::Load,
-              store: wgpu::StoreOp::Store,
-            }),
-            stencil_ops: None,
-          }),
-          occlusion_query_set: None,
-          timestamp_writes: None,
-        });
-
-    render_pass.set_pipeline(&self.render_pipeline);
-
-    // Activate the camera's bind group.
-    render_pass.set_bind_group(1, self.camera.get_bind_group(), &[]);
-
-    // Activate the color bind group.
-    render_pass.set_bind_group(2, self.color_uniform.get_bind_group(), &[]);
-
-    // We set the instance buffer to be nothing for not instanced render calls.
-    // This blank_data must match our lifetime.
-    let blank_data = InstancedRenderData::get_blank_data();
-    self.instance_buffer = Some(self.device.create_buffer_init(
-      &wgpu::util::BufferInitDescriptor {
-        label: Some("Instance Buffer"),
-        contents: bytemuck::cast_slice(&blank_data),
-        usage: wgpu::BufferUsages::VERTEX,
-      },
-    ));
-
-    // Disable instancing in shader.
-    self.instance_trigger.trigger_off(&self.queue);
-
     // * Begin not instanced render calls. [MESH]
     while !self.mesh_render_queue.is_empty() {
+      // Begin a wgpu render pass
+      let mut render_pass =
+        self
+          .command_encoder
+          .as_mut()
+          .unwrap()
+          .begin_render_pass(&wgpu::RenderPassDescriptor {
+            // The label of this render pass.
+            label: Some("minetest_not_instanced_render_pass"),
+
+            // color attachments is a array of pipeline render pass color attachments.
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+              view: self.texture_view.as_ref().unwrap(),
+              resolve_target: None,
+              ops: wgpu::Operations {
+                load: wgpu::LoadOp::Load,
+                store: wgpu::StoreOp::Store,
+              },
+            })],
+
+            depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+              view: self.depth_buffer.as_ref().unwrap().get_view(),
+              depth_ops: Some(wgpu::Operations {
+                load: wgpu::LoadOp::Load,
+                store: wgpu::StoreOp::Store,
+              }),
+              stencil_ops: None,
+            }),
+            occlusion_query_set: None,
+            timestamp_writes: None,
+          });
+
+      render_pass.set_pipeline(&self.render_pipeline);
+
+      // Activate the camera's bind group.
+      render_pass.set_bind_group(1, self.camera.get_bind_group(), &[]);
+
+      // Activate the color bind group.
+      render_pass.set_bind_group(2, self.color_uniform.get_bind_group(), &[]);
+
+      // We set the instance buffer to be nothing for not instanced render calls.
+      // This blank_data must match our lifetime.
+      let blank_data = InstancedRenderData::get_blank_data();
+      self.instance_buffer = Some(self.device.create_buffer_init(
+        &wgpu::util::BufferInitDescriptor {
+          label: Some("Instance Buffer"),
+          contents: bytemuck::cast_slice(&blank_data),
+          usage: wgpu::BufferUsages::VERTEX,
+        },
+      ));
+
+      // Disable instancing in shader.
+      self.instance_trigger.trigger_off(&self.queue);
+
       let not_instanced_render_call = self.mesh_render_queue.pop_front().unwrap();
 
       let mesh_name = not_instanced_render_call.get_mesh_name();
@@ -683,10 +694,63 @@ impl RenderEngine {
         ),
       }
     }
+  }
 
+  fn process_not_instanced_model_render_call(&mut self) -> bool {
     // * Begin not instanced render calls. [MODEL]
     // ! fixme: this is truly horrendous, this should have more style and safety than this.
-    while !self.model_render_queue.is_empty() {
+    if !self.model_render_queue.is_empty() {
+      // Begin a wgpu render pass
+      let mut render_pass =
+        self
+          .command_encoder
+          .as_mut()
+          .unwrap()
+          .begin_render_pass(&wgpu::RenderPassDescriptor {
+            // The label of this render pass.
+            label: Some("minetest_not_instanced_render_pass"),
+
+            // color attachments is a array of pipeline render pass color attachments.
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+              view: self.texture_view.as_ref().unwrap(),
+              resolve_target: None,
+              ops: wgpu::Operations {
+                load: wgpu::LoadOp::Load,
+                store: wgpu::StoreOp::Store,
+              },
+            })],
+
+            depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+              view: self.depth_buffer.as_ref().unwrap().get_view(),
+              depth_ops: Some(wgpu::Operations {
+                load: wgpu::LoadOp::Load,
+                store: wgpu::StoreOp::Store,
+              }),
+              stencil_ops: None,
+            }),
+            occlusion_query_set: None,
+            timestamp_writes: None,
+          });
+
+      render_pass.set_pipeline(&self.render_pipeline);
+
+      // Activate the camera's bind group.
+      render_pass.set_bind_group(1, self.camera.get_bind_group(), &[]);
+
+      // Activate the color bind group.
+      render_pass.set_bind_group(2, self.color_uniform.get_bind_group(), &[]);
+
+      // We set the instance buffer to be nothing for not instanced render calls.
+      // This blank_data must match our lifetime.
+      let blank_data = InstancedRenderData::get_blank_data();
+      self.instance_buffer = Some(self.device.create_buffer_init(
+        &wgpu::util::BufferInitDescriptor {
+          label: Some("Instance Buffer"),
+          contents: bytemuck::cast_slice(&blank_data),
+          usage: wgpu::BufferUsages::VERTEX,
+        },
+      ));
+
       let not_instanced_render_call = self.model_render_queue.pop_front().unwrap();
 
       let mesh_name = not_instanced_render_call.get_mesh_name();
@@ -746,6 +810,8 @@ impl RenderEngine {
         ),
       }
     }
+    // Return if we have another.
+    self.model_render_queue.is_empty()
   }
 
   ///
@@ -902,7 +968,7 @@ impl RenderEngine {
   ///
   /// Submits all commands into wgpu.
   ///
-  pub fn submit_render(&mut self) {
+  fn submit_render(&mut self) {
     // Let's swap the command encoder out into a local variable.
     // It has now become flushed into None.
     let mut final_encoder: Option<CommandEncoder> = None;
