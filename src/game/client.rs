@@ -223,11 +223,10 @@ impl Client {
     self.render_engine.generate_frame_buffer();
 
     // Clear it, it contains old data.
-    self.render_engine.initialize_render();
-    self.render_engine.clear_buffers(true, true);
-    self.render_engine.submit_render();
 
-    // ? Begin rendering calls.
+    self.render_engine.clear_buffers(true, true);
+
+    // ? Begin rendering.
 
     self.render_engine.initialize_render();
 
@@ -242,13 +241,6 @@ impl Client {
       Vec3A::new(1.0, 1.0, 1.0),
     );
 
-    self.render_engine.process_not_instanced_render_calls();
-    self.render_engine.submit_render();
-
-    // ! NOTE: It's pretty obvious what the problem is, unfortunately. Going to have to make this shoot off a new queue everytime (probably)
-
-    self.render_engine.initialize_render();
-
     self.render_engine.render_model(
       "chair.obj",
       vec!["chair.png".to_string()],
@@ -258,7 +250,6 @@ impl Client {
     );
 
     self.render_engine.process_not_instanced_render_calls();
-    self.render_engine.submit_render();
 
     // * Begin instanced.
 
