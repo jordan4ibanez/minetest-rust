@@ -1115,12 +1115,12 @@ impl RenderEngine {
   }
 
   ///
-  /// Push one instance call into the instance queue.
+  /// Push one instance call into the Mesh instance queue.
   ///
   /// This is less efficient than render_mesh_instanced because
   /// it needs to check if the key exists every time.
   ///
-  /// If this model instance has already been called, it ignores your texture.
+  /// If this Mesh instance has already been called, it ignores your texture.
   ///
   pub fn render_mesh_instanced_single(
     &mut self,
@@ -1141,9 +1141,9 @@ impl RenderEngine {
   }
 
   ///
-  /// Push multiple instance calls into the instance queue.
+  /// Push multiple Mesh instance calls into the instance queue.
   ///
-  /// If this model instance has already been called, it ignores your texture.
+  /// If this Mesh instance has already been called, it ignores your texture.
   ///
   pub fn render_mesh_instanced(
     &mut self,
@@ -1161,11 +1161,52 @@ impl RenderEngine {
     current_mesh_instance_render_data.push(instancing);
   }
 
-  // pub fn render_model_instanced_single(
-  //   &mut self,
-  //   model_name: &str,
+  ///
+  /// Push one instance call into the Model instance queue.
+  ///
+  /// This is less efficient than render_model_instanced because
+  /// it needs to check if the key exists every time.
+  ///
+  /// If this Model instance has already been called, it ignores your texture.
+  ///
+  pub fn render_model_instanced_single(
+    &mut self,
+    model_name: &str,
+    texture_names: &[String],
+    translation: Vec3A,
+    rotation: Vec3A,
+    scale: Vec3A,
+  ) {
+    // If the key does not exist, we create it.
+    let current_model_instance_render_data = self
+      .instanced_model_render_queue
+      .entry(model_name.to_string())
+      .or_insert(InstancedModelRenderData::new(texture_names));
 
-  // )
+    // Now push one into the struct.
+    current_model_instance_render_data.push_single(translation, rotation, scale);
+  }
+
+  ///
+  /// Push multiple Mesh instance calls into the instance queue.
+  ///
+  /// If this Model instance has already been called, it ignores your texture.
+  ///
+  pub fn render_model_instanced(
+    &mut self,
+    model_name: &str,
+    texture_names: &[String],
+    instancing: &Vec<InstanceMatrix>,
+  ) {
+    // If the key does not exist, we create it.
+    let current_model_instance_render_data = self
+      .instanced_model_render_queue
+      .entry(model_name.to_string())
+      .or_insert(InstancedModelRenderData::new(texture_names));
+
+    // Now extend multiple into the struct.
+    current_model_instance_render_data.push(instancing);
+  }
 
   ///
   /// Grab the Camera mutably to do things with it.
