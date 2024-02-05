@@ -781,6 +781,9 @@ impl RenderEngine {
           error!("RenderEngine: Attempted not instanced render on model [{}] with unmatched texture to model buffers.
           Required: [{}]
           Received: [{}]", model.name, meshes_length, textures_length);
+
+          // Do not attempt to do this.
+          return;
         }
 
         // We want to iterate them at the same time, zip it.
@@ -938,6 +941,7 @@ impl RenderEngine {
                 usage: wgpu::BufferUsages::VERTEX,
               },
             ));
+
             self
               .mesh_trs_uniform
               .build_mesh_projection_matrix(&self.device, &self.queue);
