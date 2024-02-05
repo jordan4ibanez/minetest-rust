@@ -15,7 +15,7 @@ https://discord.gg/Z2wCscTB4F
 -----
 
 ## Required external dependencies.
-
+- Rust - It's written in Rust. Shocking I know. Get it [here.](https://www.rust-lang.org/learn/get-started)
 - cmake - Install with your linux package manager. On Windows get it [here.](https://cmake.org/) (just keep clicking next on install to get all defaults.)
 - gcc - Install with your linux package manager. On Windows it seems to come with it's own compiler in the Visual Studio required toolchain install for Rust. This is for SDL2.
 
