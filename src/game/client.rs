@@ -235,7 +235,7 @@ impl Client {
     // Not instanced.
     self.render_engine.render_mesh(
       "debug",
-      "tf.webp",
+      "tf.png",
       Vec3A::new(-1.0, 0.0, 0.0),
       Vec3A::new(0.0, -self.spin_test as f32, 0.0),
       Vec3A::new(1.0, 1.0, 1.0),
