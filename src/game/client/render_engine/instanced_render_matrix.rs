@@ -141,4 +141,39 @@ impl InstancedModelRenderData {
       textures: textures.to_vec(),
     }
   }
+
+  ///
+  /// Push one new piece of instance data into the container.
+  ///
+  /// This is less efficient than push.
+  ///
+  /// Simply added to be more modular.
+  ///
+  pub fn push_single(&mut self, translation: Vec3A, rotation: Vec3A, scale: Vec3A) {
+    self
+      .matrices
+      .push(InstanceMatrix::new(translation, rotation, scale));
+  }
+
+  ///
+  /// Push new instance data into the container.
+  ///  
+  pub fn push(&mut self, instancing: &Vec<InstanceMatrix>) {
+    self.matrices.extend(instancing);
+  }
+
+  ///
+  /// When the RenderEngine is finally ready, it will borrow the data and complete
+  /// the usecase for this struct.
+  ///
+  pub fn borrow_data(&self) -> &Vec<InstanceMatrix> {
+    &self.matrices
+  }
+
+  ///
+  /// Borrow the Texture names for rendering.
+  ///
+  pub fn borrow_texture_names(&self) -> &Vec<String> {
+    &self.textures
+  }
 }
