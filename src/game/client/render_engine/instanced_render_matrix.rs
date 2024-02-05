@@ -125,26 +125,20 @@ impl InstancedMeshRenderData {
 }
 
 ///
-/// A InstancedRenderUniform is an instanced render call optimized to draw
-/// many instances of the same mesh at once. This is much faster than regular RenderCall when
-/// attempting to draw things like items and mobs, so please use it as so.
+/// Instance data for rendering Models.
 ///
-/// * This may look like TRSProjectionData, but it's not.
+/// It's first come first server, data can be added, but not removed.
 ///
 pub struct InstancedModelRenderData {
   matrices: Vec<InstanceMatrix>,
+  textures: Vec<String>,
 }
 
 impl InstancedModelRenderData {
-  pub fn new(translation: Vec3A, rotation: Vec3A, scale: Vec3A) -> Self {
-    InstancedModelRenderData { matrices: vec![] }
-  }
-
-  pub fn get_wgpu_descriptor() -> wgpu::VertexBufferLayout<'static> {
-    InstanceMatrix::get_wgpu_descriptor()
-  }
-
-  pub fn get_blank_data() -> Vec<f32> {
-    InstanceMatrix::get_blank_data()
+  pub fn new(textures: &[String]) -> Self {
+    InstancedModelRenderData {
+      matrices: vec![],
+      textures: textures.to_vec(),
+    }
   }
 }
