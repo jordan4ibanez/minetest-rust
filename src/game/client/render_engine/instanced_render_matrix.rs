@@ -11,21 +11,21 @@ use glam::{Mat4, Quat, Vec3A};
 ///
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
-pub struct InstancedRenderData {
+pub struct InstancedMeshRenderData {
   matrix: [[f32; 4]; 4],
 }
 
-impl InstancedRenderData {
+impl InstancedMeshRenderData {
   pub fn new(translation: Vec3A, rotation: Vec3A, scale: Vec3A) -> Self {
     let rotation = Quat::from_euler(glam::EulerRot::XYZ, rotation.x, rotation.y, rotation.z);
     let matrix = Mat4::from_scale_rotation_translation(scale.into(), rotation, translation.into())
       .to_cols_array_2d();
-    InstancedRenderData { matrix }
+    InstancedMeshRenderData { matrix }
   }
 
   pub fn get_wgpu_descriptor() -> wgpu::VertexBufferLayout<'static> {
     wgpu::VertexBufferLayout {
-      array_stride: size_of::<InstancedRenderData>() as wgpu::BufferAddress,
+      array_stride: size_of::<InstancedMeshRenderData>() as wgpu::BufferAddress,
       // We need to switch from using a step mode of Vertex to Instance
       // This means that our shaders will only change to use the next
       // instance when the shader starts processing a new instance
@@ -63,5 +63,30 @@ impl InstancedRenderData {
     vec![
       0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     ]
+  }
+}
+
+///
+/// A InstancedRenderUniform is an instanced render call optimized to draw
+/// many instances of the same mesh at once. This is much faster than regular RenderCall when
+/// attempting to draw things like items and mobs, so please use it as so.
+///
+/// * This may look like TRSProjectionData, but it's not.
+///
+pub struct InstancedModelRenderData {
+  matrices: Vec<InstancedMeshRenderData>,
+}
+
+impl InstancedModelRenderData {
+  pub fn new(translation: Vec3A, rotation: Vec3A, scale: Vec3A) -> Self {
+    InstancedModelRenderData { matrices: vec![] }
+  }
+
+  pub fn get_wgpu_descriptor() -> wgpu::VertexBufferLayout<'static> {
+    InstancedMeshRenderData::get_wgpu_descriptor()
+  }
+
+  pub fn get_blank_data() -> Vec<f32> {
+    InstancedMeshRenderData::get_blank_data()
   }
 }
