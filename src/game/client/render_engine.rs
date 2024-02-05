@@ -398,6 +398,27 @@ impl RenderEngine {
 
       new_render_engine.store_texture(&chair_texture.get_name().clone(), chair_texture);
 
+      // ! SNOWMAN
+
+      let snowman = ModelLoader::load_model(
+        "./prototype_models/snowman.obj",
+        &new_render_engine.device,
+        &new_render_engine.queue,
+      )
+      .unwrap();
+
+      new_render_engine
+        .models
+        .insert(snowman.name.clone(), snowman);
+
+      let snowman_texture = Texture::new(
+        "./prototype_textures/snowman.png",
+        &new_render_engine.device,
+        &new_render_engine.queue,
+      );
+
+      new_render_engine.store_texture(&snowman_texture.get_name().clone(), snowman_texture);
+
       // ? END DEBUGGING MODEL LOADER ?
     }
     // ! END TEMPORARY MESH DEBUGGING !
