@@ -850,10 +850,10 @@ impl RenderEngine {
   }
 
   ///
-  /// Process out a batched Mesh render call.
+  /// Process out an instanced Mesh render call.
   ///
   /// Due to the implementation nature, this needs to be run on each
-  /// mesh in sequence.
+  /// Mesh in sequence.
   ///
   fn process_instanced_mesh_render_call(
     &mut self,
