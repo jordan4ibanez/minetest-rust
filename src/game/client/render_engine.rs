@@ -82,8 +82,8 @@ pub struct RenderEngine {
   mesh_render_queue: VecDeque<RenderCall>,
   model_render_queue: VecDeque<ModelRenderCall>,
 
-  // Instanced render queue and buffer.
-  instanced_render_queue: AHashMap<String, Vec<InstancedRenderData>>,
+  // Instanced render queues and buffer.
+  instanced_mesh_render_queue: AHashMap<String, Vec<InstancedRenderData>>,
   instance_buffer: Option<wgpu::Buffer>,
   instance_trigger: InstanceTrigger,
 
@@ -310,8 +310,8 @@ impl RenderEngine {
       mesh_render_queue: VecDeque::new(),
       model_render_queue: VecDeque::new(),
 
-      // Instanced render queue and buffer.
-      instanced_render_queue: AHashMap::new(),
+      // Instanced render queues and buffer.
+      instanced_mesh_render_queue: AHashMap::new(),
       instance_buffer: None,
       instance_trigger,
 
@@ -994,20 +994,20 @@ impl RenderEngine {
   }
 
   ///
-  /// Completely wipes out the instanced render queue and returns the current data to you.
+  /// Completely wipes out the instanced Mesh render queue and returns the current data to you.
   ///
-  fn take_instanced_data(&mut self) -> AHashMap<String, Vec<InstancedRenderData>> {
+  fn take_mesh_instanced_data(&mut self) -> AHashMap<String, Vec<InstancedRenderData>> {
     let mut temporary = AHashMap::new();
-    swap(&mut self.instanced_render_queue, &mut temporary);
+    swap(&mut self.instanced_mesh_render_queue, &mut temporary);
     temporary
   }
 
   ///
-  /// Process and submit all the instanced render calls.
+  /// Process and submit all the instanced Mesh render calls.
   ///
   pub fn process_instanced_render_calls(&mut self) {
     // ! This is an absolute brute force method. Perhaps there's a more elegant way?
-    let instanced_key_value_set = self.take_instanced_data();
+    let instanced_key_value_set = self.take_mesh_instanced_data();
 
     // Iterate through all the instanced data.
     for (mesh_name, instance_data) in instanced_key_value_set {
@@ -1130,7 +1130,7 @@ impl RenderEngine {
   ) {
     // If the key does not exist, we create it.
     let current_vec = self
-      .instanced_render_queue
+      .instanced_mesh_render_queue
       .entry(mesh_name.to_string())
       .or_default();
 
@@ -1144,7 +1144,7 @@ impl RenderEngine {
   pub fn render_mesh_instanced(&mut self, mesh_name: &str, instancing: &Vec<InstancedRenderData>) {
     // If the key does not exist, we create it.
     let current_vec = self
-      .instanced_render_queue
+      .instanced_mesh_render_queue
       .entry(mesh_name.to_string())
       .or_default();
 
