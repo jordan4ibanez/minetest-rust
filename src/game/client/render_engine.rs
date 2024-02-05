@@ -729,7 +729,7 @@ impl RenderEngine {
   ///
   fn process_not_instanced_model_render_call(&mut self) {
     // * Begin not instanced render calls. [MODEL]
-    // ! fixme: this is truly horrendous, this should have more style and safety than this.
+    // ? note: if you can find a way to draw all this in one render pass, open a PR immediately.
     // Begin a wgpu render pass
     let mut render_pass =
       self
