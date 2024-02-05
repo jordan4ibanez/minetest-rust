@@ -111,9 +111,16 @@ impl InstancedMeshRenderData {
   ///
   /// When the RenderEngine is finally ready, it will borrow the data and complete
   /// the usecase for this struct.
-  /// 
+  ///
   pub fn borrow_data(&self) -> &Vec<InstanceMatrix> {
     &self.matrices
+  }
+
+  ///
+  /// Borrow the texture name for rendering.
+  ///
+  pub fn borrow_texture_name(&self) -> &String {
+    &self.texture
   }
 }
 
