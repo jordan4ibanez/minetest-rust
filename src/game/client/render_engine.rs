@@ -858,6 +858,7 @@ impl RenderEngine {
   fn process_instanced_mesh_render_call(
     &mut self,
     mesh_name: &String,
+    texture_name: &String,
     instance_data: &Vec<InstanceMatrix>,
   ) {
     // Do 4 very basic checks before attempting to render.
@@ -923,11 +924,6 @@ impl RenderEngine {
     // * Begin instanced render call.
     match self.meshes.get(mesh_name) {
       Some(mesh) => {
-        // ! NOTE: THIS IS WHERE EVERYTHING BROKE!
-        // ! REMINDER: THE PLACEHOLDER HAD TO BE REMOVED!
-        error!("fix the tf.webp placeholder");
-        let texture_name = "tf.webp";
-        // let texture_name = mesh.get_default_texture();
         match self.textures.get(texture_name) {
           Some(texture) => {
             // Now activate the used texture's bind group.
@@ -996,7 +992,11 @@ impl RenderEngine {
     // Iterate through all the instanced data.
     for (mesh_name, instance_data) in instanced_key_value_set {
       self.initialize_render();
-      self.process_instanced_mesh_render_call(&mesh_name, instance_data.borrow_data());
+      self.process_instanced_mesh_render_call(
+        &mesh_name,
+        instance_data.borrow_texture_name(),
+        instance_data.borrow_data(),
+      );
       self.submit_render();
     }
   }
