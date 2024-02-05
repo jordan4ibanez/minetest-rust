@@ -34,7 +34,7 @@ use self::{
   camera::Camera,
   color_uniform::ColorUniform,
   depth_buffer::DepthBuffer,
-  instanced_render_matrix::InstancedRenderData,
+  instanced_render_matrix::{InstancedMeshRenderData, InstancedModelRenderData},
   mesh_trs_uniform::MeshTRSUniform,
   model::Model,
   render_call::{ModelRenderCall, RenderCall},
@@ -83,7 +83,8 @@ pub struct RenderEngine {
   model_render_queue: VecDeque<ModelRenderCall>,
 
   // Instanced render queues and buffer.
-  instanced_mesh_render_queue: AHashMap<String, Vec<InstancedRenderData>>,
+  instanced_mesh_render_queue: AHashMap<String, Vec<InstancedMeshRenderData>>,
+  instanced_model_render_queue: AHashMap<String, InstancedModelRenderData>,
   instance_buffer: Option<wgpu::Buffer>,
   instance_trigger: InstanceTrigger,
 
@@ -201,7 +202,7 @@ impl RenderEngine {
       vertex: wgpu::VertexState {
         buffers: &[
           Mesh::get_wgpu_descriptor(),
-          InstancedRenderData::get_wgpu_descriptor(),
+          InstancedMeshRenderData::get_wgpu_descriptor(),
         ],
         module: &shader,
         entry_point: "vs_main",
@@ -312,6 +313,7 @@ impl RenderEngine {
 
       // Instanced render queues and buffer.
       instanced_mesh_render_queue: AHashMap::new(),
+      instanced_model_render_queue: AHashMap::new(),
       instance_buffer: None,
       instance_trigger,
 
@@ -649,7 +651,7 @@ impl RenderEngine {
 
     // We set the instance buffer to be nothing for not instanced render calls.
     // This blank_data must match our lifetime.
-    let blank_data = InstancedRenderData::get_blank_data();
+    let blank_data = InstancedMeshRenderData::get_blank_data();
     self.instance_buffer = Some(self.device.create_buffer_init(
       &wgpu::util::BufferInitDescriptor {
         label: Some("instance_buffer"),
@@ -772,7 +774,7 @@ impl RenderEngine {
 
     // We set the instance buffer to be nothing for not instanced render calls.
     // This blank_data must match our lifetime.
-    let blank_data = InstancedRenderData::get_blank_data();
+    let blank_data = InstancedMeshRenderData::get_blank_data();
     self.instance_buffer = Some(self.device.create_buffer_init(
       &wgpu::util::BufferInitDescriptor {
         label: Some("instance_buffer"),
@@ -874,7 +876,7 @@ impl RenderEngine {
   fn process_instanced_mesh_render_call(
     &mut self,
     mesh_name: &String,
-    instance_data: &Vec<InstancedRenderData>,
+    instance_data: &Vec<InstancedMeshRenderData>,
   ) {
     // Do 4 very basic checks before attempting to render.
     if self.output.is_none() {
@@ -996,7 +998,7 @@ impl RenderEngine {
   ///
   /// Completely wipes out the instanced Mesh render queue and returns the current data to you.
   ///
-  fn take_mesh_instanced_data(&mut self) -> AHashMap<String, Vec<InstancedRenderData>> {
+  fn take_mesh_instanced_data(&mut self) -> AHashMap<String, Vec<InstancedMeshRenderData>> {
     let mut temporary = AHashMap::new();
     swap(&mut self.instanced_mesh_render_queue, &mut temporary);
     temporary
@@ -1142,13 +1144,17 @@ impl RenderEngine {
       .or_default();
 
     // Now push one into the vector.
-    current_vec.push(InstancedRenderData::new(translation, rotation, scale));
+    current_vec.push(InstancedMeshRenderData::new(translation, rotation, scale));
   }
 
   ///
   /// Push multiple instance calls into the instance queue.
   ///
-  pub fn render_mesh_instanced(&mut self, mesh_name: &str, instancing: &Vec<InstancedRenderData>) {
+  pub fn render_mesh_instanced(
+    &mut self,
+    mesh_name: &str,
+    instancing: &Vec<InstancedMeshRenderData>,
+  ) {
     // If the key does not exist, we create it.
     let current_vec = self
       .instanced_mesh_render_queue
