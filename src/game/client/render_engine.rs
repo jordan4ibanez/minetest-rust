@@ -78,7 +78,7 @@ pub struct RenderEngine {
   size: UVec2,
   clear_color: wgpu::Color,
 
-  // Not instanced render queue. (Individual render calls)
+  // Not instanced render queues. (Individual render calls)
   mesh_render_queue: VecDeque<RenderCall>,
   model_render_queue: VecDeque<ModelRenderCall>,
 
@@ -306,7 +306,7 @@ impl RenderEngine {
       size: UVec2::new(width, height),
       clear_color,
 
-      // Not instanced render queue. (Individual render calls)
+      // Not instanced render queues. (Individual render calls)
       mesh_render_queue: VecDeque::new(),
       model_render_queue: VecDeque::new(),
 
