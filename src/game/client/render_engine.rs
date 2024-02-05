@@ -371,13 +371,7 @@ impl RenderEngine {
       // * It's now owned by the render engine.
       new_render_engine.store_mesh(&new_mesh.get_name().clone(), new_mesh);
 
-      let new_texture = Texture::new(
-        "prototype_textures/tf.webp",
-        &new_render_engine.device,
-        &new_render_engine.queue,
-      );
-
-      new_render_engine.store_texture(&new_texture.get_name().clone(), new_texture);
+      new_render_engine.create_texture("./prototype_textures/tf.png");
 
       // ? BEGIN DEBUGGING MODEL LOADER ?
 
@@ -394,13 +388,7 @@ impl RenderEngine {
         .models
         .insert(chair_model.name.clone(), chair_model);
 
-      let chair_texture = Texture::new(
-        "prototype_textures/chair.png",
-        &new_render_engine.device,
-        &new_render_engine.queue,
-      );
-
-      new_render_engine.store_texture(&chair_texture.get_name().clone(), chair_texture);
+      new_render_engine.create_texture("./prototype_textures/chair.png");
 
       // ! SNOWMAN
 
@@ -415,13 +403,7 @@ impl RenderEngine {
         .models
         .insert(snowman.name.clone(), snowman);
 
-      let snowman_texture = Texture::new(
-        "./prototype_textures/snowman.png",
-        &new_render_engine.device,
-        &new_render_engine.queue,
-      );
-
-      new_render_engine.store_texture(&snowman_texture.get_name().clone(), snowman_texture);
+      new_render_engine.create_texture("./prototype_textures/snowman.png");
 
       // ? END DEBUGGING MODEL LOADER ?
     }
@@ -1078,9 +1060,17 @@ impl RenderEngine {
   }
 
   ///
+  /// Automatically create a texture in the RenderEngine from a path.
+  ///
+  pub fn create_texture(&mut self, path: &str) {
+    self.store_texture(Texture::new(path, &self.device, &self.queue));
+  }
+
+  ///
   /// Store a Texture into the render engine for usage.
   ///
-  pub fn store_texture(&mut self, name: &str, texture: Texture) {
+  fn store_texture(&mut self, texture: Texture) {
+    let name = texture.get_name().clone();
     self.textures.insert(name.to_owned(), texture);
   }
 
