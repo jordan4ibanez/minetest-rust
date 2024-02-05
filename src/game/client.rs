@@ -249,6 +249,21 @@ impl Client {
       Vec3A::new(1.0, 1.0, 1.0),
     );
 
+    let snowman_texture = "snowman.png".to_string();
+    self.render_engine.render_model(
+      "snowman.obj",
+      vec![
+        snowman_texture.clone(),
+        snowman_texture.clone(),
+        snowman_texture.clone(),
+        snowman_texture.clone(),
+        snowman_texture.clone(),
+      ],
+      Vec3A::new(-3.0, 0.0, 0.0),
+      Vec3A::new(0.0, -self.spin_test as f32, 0.0),
+      Vec3A::new(1.0, 1.0, 1.0),
+    );
+
     self.render_engine.process_not_instanced_render_calls();
 
     // * Begin instanced.
