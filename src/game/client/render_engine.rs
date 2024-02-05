@@ -416,7 +416,7 @@ impl RenderEngine {
       // Update internal size
       self.size = *new_size;
 
-      println!("RenderEngine: SURFACE UPDATE! {:?}", self.size);
+      // println!("RenderEngine: SURFACE UPDATE! {:?}", self.size);
 
       // Now update the config.
       self.config.width = self.size.x;
@@ -524,7 +524,7 @@ impl RenderEngine {
         .unwrap()
         .begin_render_pass(&wgpu::RenderPassDescriptor {
           // The label of this render pass.
-          label: Some("minetest_instanced_render_pass"),
+          label: Some("minetest_clear_buffers_render_pass"),
 
           // color attachments is a array of pipeline render pass color attachments.
           color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -566,7 +566,7 @@ impl RenderEngine {
   /// Processes the next available render call in the Mesh queue.
   ///
   fn process_not_instanced_mesh_render_call(&mut self) {
-    // Do 3 very basic checks before attempting to render.
+    // Do 4 very basic checks before attempting to render.
     if self.output.is_none() {
       panic!("RenderEngine: attempted to render with no output!");
     }
@@ -592,7 +592,7 @@ impl RenderEngine {
         .unwrap()
         .begin_render_pass(&wgpu::RenderPassDescriptor {
           // The label of this render pass.
-          label: Some("minetest_not_instanced_render_pass"),
+          label: Some("minetest_not_instanced_mesh_render_pass"),
 
           // color attachments is a array of pipeline render pass color attachments.
           color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -629,7 +629,7 @@ impl RenderEngine {
     let blank_data = InstancedRenderData::get_blank_data();
     self.instance_buffer = Some(self.device.create_buffer_init(
       &wgpu::util::BufferInitDescriptor {
-        label: Some("Instance Buffer"),
+        label: Some("instance_buffer"),
         contents: bytemuck::cast_slice(&blank_data),
         usage: wgpu::BufferUsages::VERTEX,
       },
@@ -752,7 +752,7 @@ impl RenderEngine {
     let blank_data = InstancedRenderData::get_blank_data();
     self.instance_buffer = Some(self.device.create_buffer_init(
       &wgpu::util::BufferInitDescriptor {
-        label: Some("Instance Buffer"),
+        label: Some("instance_buffer"),
         contents: bytemuck::cast_slice(&blank_data),
         usage: wgpu::BufferUsages::VERTEX,
       },
@@ -839,17 +839,17 @@ impl RenderEngine {
   }
 
   ///
-  /// Process out a batched render call.
+  /// Process out a batched Mesh render call.
   ///
   /// Due to the implementation nature, this needs to be run on each
   /// mesh in sequence.
   ///
-  fn process_instanced_render_call(
+  fn process_instanced_mesh_render_call(
     &mut self,
     mesh_name: &String,
     instance_data: &Vec<InstancedRenderData>,
   ) {
-    // Do 3 very basic checks before attempting to render.
+    // Do 4 very basic checks before attempting to render.
     if self.output.is_none() {
       panic!("RenderEngine: attempted to render with no output!");
     }
@@ -874,7 +874,7 @@ impl RenderEngine {
         .unwrap()
         .begin_render_pass(&wgpu::RenderPassDescriptor {
           // The label of this render pass.
-          label: Some("minetest_instanced_render_pass"),
+          label: Some("minetest_instanced_mesh_render_pass"),
 
           // color attachments is a array of pipeline render pass color attachments.
           color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -914,6 +914,7 @@ impl RenderEngine {
       Some(mesh) => {
         // ! NOTE: THIS IS WHERE EVERYTHING BROKE!
         // ! REMINDER: THE PLACEHOLDER HAD TO BE REMOVED!
+        error!("fix the tf.webp placeholder");
         let texture_name = "tf.webp";
         // let texture_name = mesh.get_default_texture();
         match self.textures.get(texture_name) {
@@ -925,7 +926,7 @@ impl RenderEngine {
 
             self.instance_buffer = Some(self.device.create_buffer_init(
               &wgpu::util::BufferInitDescriptor {
-                label: Some("Instance Buffer"),
+                label: Some("instance_buffer"),
                 contents: bytemuck::cast_slice(instance_data),
                 usage: wgpu::BufferUsages::VERTEX,
               },
@@ -984,7 +985,7 @@ impl RenderEngine {
     // Iterate through all the instanced data.
     for (mesh_name, instance_data) in instanced_key_value_set {
       self.initialize_render();
-      self.process_instanced_render_call(&mesh_name, &instance_data);
+      self.process_instanced_mesh_render_call(&mesh_name, &instance_data);
       self.submit_render();
     }
   }
