@@ -67,6 +67,49 @@ impl InstanceMatrix {
 }
 
 ///
+/// Holds instancing data for a Mesh.
+///
+/// Works on a first come first serve basis.
+///
+/// You can add. But you cannot remove.
+///
+/// Once the Texture is set, it cannot be changed.
+///
+pub struct InstancedMeshRenderData {
+  matrices: Vec<InstanceMatrix>,
+  texture: String,
+}
+
+impl InstancedMeshRenderData {
+  pub fn new(texture: &str) -> Self {
+    InstancedMeshRenderData {
+      matrices: vec![],
+      texture: texture.to_owned(),
+    }
+  }
+
+  ///
+  /// Push one new piece of instance data into the container.
+  ///
+  /// This is less efficient than push.
+  ///
+  /// Simply added to be more modular.
+  ///
+  pub fn push_single(&mut self, translation: Vec3A, rotation: Vec3A, scale: Vec3A) {
+    self
+      .matrices
+      .push(InstanceMatrix::new(translation, rotation, scale));
+  }
+
+  ///
+  /// Push new instance data into the container.
+  ///  
+  pub fn push(&mut self, instancing: &Vec<InstanceMatrix>) {
+    self.matrices.extend(instancing);
+  }
+}
+
+///
 /// A InstancedRenderUniform is an instanced render call optimized to draw
 /// many instances of the same mesh at once. This is much faster than regular RenderCall when
 /// attempting to draw things like items and mobs, so please use it as so.
