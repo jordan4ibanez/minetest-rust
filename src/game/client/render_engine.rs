@@ -989,7 +989,7 @@ impl RenderEngine {
   ///
   /// Process and submit all the instanced Mesh render calls.
   ///
-  pub fn process_instanced_render_calls(&mut self) {
+  pub fn process_instanced_mesh_render_calls(&mut self) {
     // ! This is an absolute brute force method. Perhaps there's a more elegant way?
     let instanced_key_value_set = self.take_mesh_instanced_data();
 
