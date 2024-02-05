@@ -767,7 +767,7 @@ impl RenderEngine {
 
     let not_instanced_render_call = self.model_render_queue.pop_front().unwrap();
 
-    let mesh_name = not_instanced_render_call.get_mesh_name();
+    let mesh_name = not_instanced_render_call.get_model_name();
 
     match self.models.get(mesh_name) {
       Some(model) => {
