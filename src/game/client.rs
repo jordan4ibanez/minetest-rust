@@ -282,7 +282,7 @@ impl Client {
 
     self
       .render_engine
-      .render_mesh_instanced("debug", &instancing);
+      .render_mesh_instanced("debug", "tf.png", &instancing);
 
     self.render_engine.process_instanced_render_calls();
 

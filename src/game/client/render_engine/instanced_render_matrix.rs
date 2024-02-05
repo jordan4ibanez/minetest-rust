@@ -107,6 +107,14 @@ impl InstancedMeshRenderData {
   pub fn push(&mut self, instancing: &Vec<InstanceMatrix>) {
     self.matrices.extend(instancing);
   }
+
+  ///
+  /// When the RenderEngine is finally ready, it will borrow the data and complete
+  /// the usecase for this struct.
+  /// 
+  pub fn borrow_data(&self) -> &Vec<InstanceMatrix> {
+    &self.matrices
+  }
 }
 
 ///

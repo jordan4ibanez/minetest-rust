@@ -34,7 +34,7 @@ use self::{
   camera::Camera,
   color_uniform::ColorUniform,
   depth_buffer::DepthBuffer,
-  instanced_render_matrix::{InstanceMatrix, InstancedModelRenderData},
+  instanced_render_matrix::{InstanceMatrix, InstancedMeshRenderData, InstancedModelRenderData},
   mesh_trs_uniform::MeshTRSUniform,
   model::Model,
   render_call::{ModelRenderCall, RenderCall},
@@ -83,7 +83,7 @@ pub struct RenderEngine {
   model_render_queue: VecDeque<ModelRenderCall>,
 
   // Instanced render queues and buffer.
-  instanced_mesh_render_queue: AHashMap<String, Vec<InstanceMatrix>>,
+  instanced_mesh_render_queue: AHashMap<String, InstancedMeshRenderData>,
   instanced_model_render_queue: AHashMap<String, InstancedModelRenderData>,
   instance_buffer: Option<wgpu::Buffer>,
   instance_trigger: InstanceTrigger,
@@ -998,7 +998,7 @@ impl RenderEngine {
   ///
   /// Completely wipes out the instanced Mesh render queue and returns the current data to you.
   ///
-  fn take_mesh_instanced_data(&mut self) -> AHashMap<String, Vec<InstanceMatrix>> {
+  fn take_mesh_instanced_data(&mut self) -> AHashMap<String, InstancedMeshRenderData> {
     let mut temporary = AHashMap::new();
     swap(&mut self.instanced_mesh_render_queue, &mut temporary);
     temporary
@@ -1014,7 +1014,7 @@ impl RenderEngine {
     // Iterate through all the instanced data.
     for (mesh_name, instance_data) in instanced_key_value_set {
       self.initialize_render();
-      self.process_instanced_mesh_render_call(&mesh_name, &instance_data);
+      self.process_instanced_mesh_render_call(&mesh_name, instance_data.borrow_data());
       self.submit_render();
     }
   }
@@ -1135,32 +1135,40 @@ impl RenderEngine {
   pub fn render_mesh_instanced_single(
     &mut self,
     mesh_name: &str,
+    texture_name: &str,
     translation: Vec3A,
     rotation: Vec3A,
     scale: Vec3A,
   ) {
     // If the key does not exist, we create it.
-    let current_vec = self
+    let current_mesh_instance_render_data = self
       .instanced_mesh_render_queue
       .entry(mesh_name.to_string())
-      .or_default();
+      .or_insert(InstancedMeshRenderData::new(texture_name));
 
-    // Now push one into the vector.
-    current_vec.push(InstanceMatrix::new(translation, rotation, scale));
+    // Now push one into the struct.
+    current_mesh_instance_render_data.push_single(translation, rotation, scale);
   }
 
   ///
   /// Push multiple instance calls into the instance queue.
   ///
-  pub fn render_mesh_instanced(&mut self, mesh_name: &str, instancing: &Vec<InstanceMatrix>) {
+  /// If this model instance has already been called, it ignores your texture.
+  ///
+  pub fn render_mesh_instanced(
+    &mut self,
+    mesh_name: &str,
+    texture_name: &str,
+    instancing: &Vec<InstanceMatrix>,
+  ) {
     // If the key does not exist, we create it.
-    let current_vec = self
+    let current_mesh_instance_render_data = self
       .instanced_mesh_render_queue
       .entry(mesh_name.to_string())
-      .or_default();
+      .or_insert(InstancedMeshRenderData::new(texture_name));
 
-    // Now extend multiple into the vector.
-    current_vec.extend(instancing);
+    // Now extend multiple into the struct.
+    current_mesh_instance_render_data.push(instancing);
   }
 
   // pub fn render_model_instanced_single(
