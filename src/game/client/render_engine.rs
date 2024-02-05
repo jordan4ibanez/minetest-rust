@@ -772,7 +772,7 @@ impl RenderEngine {
     match self.models.get(mesh_name) {
       Some(model) => {
         let meshes = &model.meshes;
-        let texture_names = not_instanced_render_call.get_texture_name();
+        let texture_names = not_instanced_render_call.get_texture_names();
 
         // todo: in the future make this just insert some default texture.
         let meshes_length = meshes.len();
