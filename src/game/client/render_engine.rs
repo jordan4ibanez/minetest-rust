@@ -379,6 +379,8 @@ impl RenderEngine {
 
       // ? BEGIN DEBUGGING MODEL LOADER ?
 
+      // ! CHAIR
+
       let chair_model = ModelLoader::load_model(
         "./prototype_models/chair.obj",
         &new_render_engine.device,
@@ -789,8 +791,12 @@ impl RenderEngine {
         let texture_names = not_instanced_render_call.get_texture_name();
 
         // todo: in the future make this just insert some default texture.
+        let meshes_length = meshes.len();
+        let textures_length = texture_names.len();
         if meshes.len() != texture_names.len() {
-          error!("RenderEngine: Attempted not instanced render on model [{}] with unmatched texture to model buffers.", model.name);
+          error!("RenderEngine: Attempted not instanced render on model [{}] with unmatched texture to model buffers.
+          Required: [{}]
+          Received: [{}]", model.name, meshes_length, textures_length);
         }
 
         // We want to iterate them at the same time, zip it.
