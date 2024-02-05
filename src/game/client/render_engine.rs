@@ -1069,6 +1069,13 @@ impl RenderEngine {
   }
 
   ///
+  /// Store a Model into the render engine for usage.
+  ///
+  pub fn store_model(&mut self, name: &str, model: Model) {
+    self.models.insert(name.to_owned(), model);
+  }
+
+  ///
   /// Store a Texture into the render engine for usage.
   ///
   pub fn store_texture(&mut self, name: &str, texture: Texture) {
