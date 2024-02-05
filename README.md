@@ -14,6 +14,13 @@ https://discord.gg/Z2wCscTB4F
 
 -----
 
+## Required external dependencies.
+
+- cmake - Install with your linux package manager. On Windows get it [here.](https://cmake.org/) (just keep clicking next on install to get all defaults.)
+- gcc - Install with your linux package manager. On Windows it seems to come with it's own compiler in the Visual Studio required toolchain install for Rust. This is for SDL2.
+
+-----
+
 ## Current package usage:
 - clap - CLI parsing.
 - configparser - Parsing .conf files.
