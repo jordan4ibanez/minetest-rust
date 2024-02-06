@@ -398,24 +398,20 @@ impl RenderEngine {
       )
       .unwrap();
 
-      // new_render_engine
-      //   .models
-      //   .insert(chair_model.name.clone(), chair_model);
+      new_render_engine.store_model(&chair_model.name.clone(), chair_model);
 
-      // new_render_engine.create_texture("./prototype_textures/chair.png");
+      new_render_engine.create_texture("./prototype_textures/chair.png");
 
       // ! SNOWMAN
 
-      // let snowman = ModelLoader::load_model(
-      //   "./prototype_models/snowman.obj",
-      //   &new_render_engine.device,
-      //   &new_render_engine.queue,
-      // )
-      // .unwrap();
+      let snowman = ModelLoader::load_model(
+        "./prototype_models/snowman.obj",
+        &new_render_engine.device,
+        &new_render_engine.queue,
+      )
+      .unwrap();
 
-      // new_render_engine
-      //   .models
-      //   .insert(snowman.name.clone(), snowman);
+      new_render_engine.store_model(&snowman.name.clone(), snowman);
 
       new_render_engine.create_texture("./prototype_textures/snowman.png");
 

@@ -249,7 +249,7 @@ impl Client {
       Vec3A::new(1.0, 1.0, 1.0),
     );
 
-    let snowman_texture = self.render_engine.get_mesh_id("snowman.png");
+    let snowman_texture = self.render_engine.get_texture_id("snowman.png");
     self.render_engine.render_model(
       self.render_engine.get_model_id("snowman.obj"),
       vec![
