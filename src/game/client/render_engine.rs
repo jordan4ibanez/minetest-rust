@@ -72,7 +72,7 @@ pub struct RenderEngine {
   command_encoder: Option<CommandEncoder>,
   texture_view: Option<TextureView>,
   depth_buffer: Option<DepthBuffer>,
-  render_command_count: u32,
+  render_command_count: u64,
 
   // General variables.
   config: wgpu::SurfaceConfiguration,
@@ -84,8 +84,8 @@ pub struct RenderEngine {
   model_render_queue: VecDeque<ModelRenderCall>,
 
   // Instanced render queues and buffer.
-  instanced_mesh_render_queue: AHashMap<u32, InstancedMeshRenderData>,
-  instanced_model_render_queue: AHashMap<u32, InstancedModelRenderData>,
+  instanced_mesh_render_queue: AHashMap<u64, InstancedMeshRenderData>,
+  instanced_model_render_queue: AHashMap<u64, InstancedModelRenderData>,
   instance_buffer: Option<wgpu::Buffer>,
   instance_trigger: InstanceTrigger,
 
@@ -93,12 +93,12 @@ pub struct RenderEngine {
   id_dispatcher: Unique64,
 
   // Containers for wgpu data.
-  meshes: AHashMap<u32, Mesh>,
+  meshes: AHashMap<u64, Mesh>,
 
-  texture_name_to_id: AHashMap<String, u32>,
-  textures: AHashMap<u32, Texture>,
-  model_name_to_id: AHashMap<String, u32>,
-  models: AHashMap<u32, Model>,
+  texture_name_to_id: AHashMap<String, u64>,
+  textures: AHashMap<u64, Texture>,
+  model_name_to_id: AHashMap<String, u64>,
+  models: AHashMap<u64, Model>,
 
   mesh_trs_uniform: MeshTRSUniform,
 
