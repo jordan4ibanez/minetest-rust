@@ -43,6 +43,7 @@ https://discord.gg/Z2wCscTB4F
 - rand - For doing random things.
 
 - ahash - EXTREMELY fast hashmaps.
+- unique_64 - Unique unsigned integral IDs.
 
 
 ##### Packages to be implemented:

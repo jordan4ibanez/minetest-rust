@@ -17,6 +17,7 @@ use ahash::AHashMap;
 use glam::{UVec2, Vec3A};
 use log::error;
 
+use unique_64::Unique64;
 use wgpu::{util::DeviceExt, CommandEncoder, SurfaceTexture, TextureView};
 use wgpu_sdl_linker::link_wgpu_to_sdl2;
 
@@ -87,6 +88,9 @@ pub struct RenderEngine {
   instanced_model_render_queue: AHashMap<String, InstancedModelRenderData>,
   instance_buffer: Option<wgpu::Buffer>,
   instance_trigger: InstanceTrigger,
+
+  // ID dispatcher for wgpu. Acts like the OpenGL ID dispatcher.
+  id_dispatcher: Unique64,
 
   // Containers for wgpu data.
   meshes: AHashMap<String, Mesh>,
@@ -316,6 +320,9 @@ impl RenderEngine {
       instanced_model_render_queue: AHashMap::new(),
       instance_buffer: None,
       instance_trigger,
+
+      // ID dispatcher for wgpu. Acts like the OpenGL ID dispatcher.
+      id_dispatcher: Unique64::new(),
 
       // Containers for wgpu data.
       meshes: AHashMap::new(),

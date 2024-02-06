@@ -1050,6 +1050,7 @@ dependencies = [
  "spin_sleep_util",
  "syn 2.0.48",
  "tobj",
+ "unique_64",
  "wgpu",
  "wgpu_sdl_linker",
 ]
@@ -1802,6 +1803,12 @@ name = "unicode-xid"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f962df74c8c05a667b5ee8bcf162993134c104e96440b663c8daa176dc772d8c"
+
+[[package]]
+name = "unique_64"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd2c531461931d25fe34d612931756feb0eebe4a4015086af958c0f53bdfa783"
 
 [[package]]
 name = "url"
