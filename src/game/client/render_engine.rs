@@ -14,7 +14,7 @@ mod trs_projection_data;
 use std::{collections::VecDeque, iter, mem::swap};
 
 use ahash::AHashMap;
-use glam::{UVec2, Vec3A};
+use glam::{UVec2, Vec3A, Vec4};
 use log::error;
 
 use unique_64::Unique64;
@@ -35,7 +35,9 @@ use self::{
   camera::Camera,
   color_uniform::ColorUniform,
   depth_buffer::DepthBuffer,
-  instanced_render_matrix::{InstanceMatrix, InstancedMeshRenderData, InstancedModelRenderData},
+  instanced_render_matrix::{
+    InstanceMatrixRGBA, InstancedMeshRenderData, InstancedModelRenderData,
+  },
   mesh_trs_uniform::MeshTRSUniform,
   model::Model,
   render_call::{MeshRenderCall, ModelRenderCall},
@@ -209,7 +211,7 @@ impl RenderEngine {
       vertex: wgpu::VertexState {
         buffers: &[
           Mesh::get_wgpu_descriptor(),
-          InstanceMatrix::get_wgpu_descriptor(),
+          InstanceMatrixRGBA::get_wgpu_descriptor(),
         ],
         module: &shader,
         entry_point: "vs_main",
@@ -643,7 +645,7 @@ impl RenderEngine {
 
     // We set the instance buffer to be nothing for not instanced render calls.
     // This blank_data must match our lifetime.
-    let blank_data = InstanceMatrix::get_blank_data();
+    let blank_data = InstanceMatrixRGBA::get_blank_data();
     self.instance_buffer = Some(self.device.create_buffer_init(
       &wgpu::util::BufferInitDescriptor {
         label: Some("instance_buffer"),
@@ -766,7 +768,7 @@ impl RenderEngine {
 
     // We set the instance buffer to be nothing for not instanced render calls.
     // This blank_data must match our lifetime.
-    let blank_data = InstanceMatrix::get_blank_data();
+    let blank_data = InstanceMatrixRGBA::get_blank_data();
     self.instance_buffer = Some(self.device.create_buffer_init(
       &wgpu::util::BufferInitDescriptor {
         label: Some("instance_buffer"),
@@ -872,7 +874,7 @@ impl RenderEngine {
     &mut self,
     mesh_id: u64,
     texture_id: u64,
-    instance_data: &Vec<InstanceMatrix>,
+    instance_data: &Vec<InstanceMatrixRGBA>,
   ) {
     // Do 4 very basic checks before attempting to render.
     if self.output.is_none() {
@@ -1025,7 +1027,7 @@ impl RenderEngine {
     &mut self,
     model_id: u64,
     texture_ids: &[u64],
-    instance_data: &Vec<InstanceMatrix>,
+    instance_data: &Vec<InstanceMatrixRGBA>,
   ) {
     // Do 4 very basic checks before attempting to render.
     if self.output.is_none() {
@@ -1365,6 +1367,7 @@ impl RenderEngine {
     translation: Vec3A,
     rotation: Vec3A,
     scale: Vec3A,
+    rgba: Vec4,
   ) {
     // If the key does not exist, we create it.
     let current_mesh_instance_render_data = self
@@ -1373,7 +1376,7 @@ impl RenderEngine {
       .or_insert(InstancedMeshRenderData::new(texture_id));
 
     // Now push one into the struct.
-    current_mesh_instance_render_data.push_single(translation, rotation, scale);
+    current_mesh_instance_render_data.push_single(translation, rotation, scale, rgba);
   }
 
   ///
@@ -1385,7 +1388,7 @@ impl RenderEngine {
     &mut self,
     mesh_id: u64,
     texture_ids: u64,
-    instancing: &Vec<InstanceMatrix>,
+    instancing: &Vec<InstanceMatrixRGBA>,
   ) {
     // If the key does not exist, we create it.
     let current_mesh_instance_render_data = self
@@ -1412,6 +1415,7 @@ impl RenderEngine {
     translation: Vec3A,
     rotation: Vec3A,
     scale: Vec3A,
+    rgba: Vec4,
   ) {
     // If the key does not exist, we create it.
     let current_model_instance_render_data = self
@@ -1420,7 +1424,7 @@ impl RenderEngine {
       .or_insert(InstancedModelRenderData::new(texture_ids));
 
     // Now push one into the struct.
-    current_model_instance_render_data.push_single(translation, rotation, scale);
+    current_model_instance_render_data.push_single(translation, rotation, scale, rgba);
   }
 
   ///
@@ -1432,7 +1436,7 @@ impl RenderEngine {
     &mut self,
     model_id: u64,
     texture_ids: &[u64],
-    instancing: &Vec<InstanceMatrix>,
+    instancing: &Vec<InstanceMatrixRGBA>,
   ) {
     // If the key does not exist, we create it.
     let current_model_instance_render_data = self
