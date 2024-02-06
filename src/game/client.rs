@@ -4,13 +4,13 @@ mod mouse;
 mod render_engine;
 mod window_handler;
 
-use glam::{vec3a, Vec3A};
+use glam::{vec3a, vec4, Vec3A};
 
 use self::{
   client_connection::ClientConnection,
   keyboard::KeyboardController,
   mouse::MouseController,
-  render_engine::{instanced_render_matrix::InstanceMatrix, RenderEngine},
+  render_engine::{instanced_render_matrix::InstanceMatrixRGBA, RenderEngine},
   window_handler::WindowHandler,
 };
 
@@ -45,6 +45,8 @@ pub struct Client {
 
   // ! TESTING
   spin_test: f64,
+
+  color_fun: f64,
 }
 
 impl Client {
@@ -79,6 +81,7 @@ impl Client {
 
       // ! TESTING
       spin_test: 0.0,
+      color_fun: 0.0,
     };
 
     new_client.reset_lua_vm();
@@ -277,10 +280,11 @@ impl Client {
 
     for x in 0..TESTING_LIMIT {
       for z in 0..TESTING_LIMIT {
-        instancing_tf.push(InstanceMatrix::new(
+        instancing_tf.push(InstanceMatrixRGBA::new(
           vec3a(x as f32, z as f32, 0.0),
           vec3a(0.0, self.spin_test as f32, 0.0),
           vec3a(1.0, 1.0, 1.0),
+          vec4(1.0, 1.0, 1.0, 1.0),
         ));
       }
     }
@@ -293,16 +297,27 @@ impl Client {
 
     let mut instancing_tf = Vec::with_capacity(TESTING_LIMIT * TESTING_LIMIT);
 
+    let mut color = self.color_fun;
     let mut i = 0.0;
     for x in 0..TESTING_LIMIT {
       for z in 0..TESTING_LIMIT {
-        instancing_tf.push(InstanceMatrix::new(
+        color += 0.001375;
+        if color >= 1.0 {
+          color = 0.0;
+        }
+        instancing_tf.push(InstanceMatrixRGBA::new(
           vec3a(x as f32, 0.0, z as f32),
           vec3a(0.0, self.spin_test as f32 + i, 0.0),
           vec3a(1.0, 1.0, 1.0),
+          vec4(1.0, color as f32, 1.0, 1.0),
         ));
         i += 0.05;
       }
+    }
+
+    self.color_fun += 0.05;
+    if self.color_fun >= 1.0 {
+      self.color_fun = 0.0;
     }
 
     self
