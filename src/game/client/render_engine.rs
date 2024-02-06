@@ -1024,8 +1024,8 @@ impl RenderEngine {
   ///
   fn process_instanced_model_render_call(
     &mut self,
-    model_name: &String,
-    textures: &[String],
+    model_id: u64,
+    texture_ids: &[u64],
     instance_data: &Vec<InstanceMatrix>,
   ) {
     // Do 4 very basic checks before attempting to render.
@@ -1089,13 +1089,13 @@ impl RenderEngine {
     self.instance_trigger.trigger_on(&self.queue);
 
     // * Begin instanced render call.
-    match self.models.get(model_name) {
+    match self.models.get(&model_id) {
       Some(model) => {
         let meshes = &model.meshes;
 
         // todo: in the future make this just insert some default texture.
         let meshes_length = meshes.len();
-        let textures_length = textures.len();
+        let textures_length = texture_ids.len();
 
         if meshes_length != textures_length {
           error!("RenderEngine: Attempted not instanced render on model [{}] with unmatched texture to model buffers.
@@ -1115,8 +1115,8 @@ impl RenderEngine {
           },
         ));
 
-        for (mesh, texture_name) in meshes.iter().zip(textures) {
-          match self.textures.get(texture_name) {
+        for (mesh, texture_id) in meshes.iter().zip(texture_ids) {
+          match self.textures.get(texture_id) {
             Some(texture) => {
               // Now activate the used texture's bind group.
               render_pass.set_bind_group(0, texture.get_wgpu_diffuse_bind_group(), &[]);
@@ -1143,8 +1143,8 @@ impl RenderEngine {
             }
             None => {
               error!(
-                "render_engine: {} is not a stored Texture. [instanced]",
-                texture_name
+                "render_engine: ID {} is not a stored Texture. [instanced]",
+                texture_id
               );
             }
           }
@@ -1152,8 +1152,8 @@ impl RenderEngine {
       }
       None => {
         error!(
-          "render_engine: {} is not a stored Model. [instanced]",
-          model_name
+          "render_engine: ID {} is not a stored Model. [instanced]",
+          model_id
         );
       }
     }
@@ -1162,7 +1162,7 @@ impl RenderEngine {
   ///
   /// Completely wipes out the instanced Model render queue and returns the current data to you.
   ///
-  fn take_model_instanced_data(&mut self) -> AHashMap<String, InstancedModelRenderData> {
+  fn take_model_instanced_data(&mut self) -> AHashMap<u64, InstancedModelRenderData> {
     let mut temporary = AHashMap::new();
     swap(&mut self.instanced_model_render_queue, &mut temporary);
     temporary
@@ -1176,10 +1176,10 @@ impl RenderEngine {
     let instanced_key_value_set = self.take_model_instanced_data();
 
     // Iterate through all the instanced data.
-    for (mesh_name, instance_data) in instanced_key_value_set {
+    for (mesh_id, instance_data) in instanced_key_value_set {
       self.initialize_render();
       self.process_instanced_model_render_call(
-        &mesh_name,
+        mesh_id,
         instance_data.borrow_texture_names(),
         instance_data.borrow_data(),
       );
