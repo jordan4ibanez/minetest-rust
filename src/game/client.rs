@@ -232,33 +232,36 @@ impl Client {
 
     // * Begin not instanced.
 
+    // Gather all resources.
+    let debug_mesh = self.render_engine.get_mesh_id("debug");
+    let debug_mesh_texture = self.render_engine.get_texture_id("tf.png");
+
+    let chair_model = self.render_engine.get_model_id("chair.obj");
+    let chair_textures = vec![self.render_engine.get_texture_id("chair.png")];
+
+    let snowman_model = self.render_engine.get_model_id("snowman.obj");
+    let snowman_textures = vec![self.render_engine.get_texture_id("snowman.png"); 5];
+
     // Not instanced.
     self.render_engine.render_mesh(
-      self.render_engine.get_mesh_id("debug"),
-      self.render_engine.get_texture_id("tf.png"),
+      debug_mesh,
+      debug_mesh_texture,
       Vec3A::new(-1.0, 0.0, 0.0),
       Vec3A::new(0.0, -self.spin_test as f32, 0.0),
       Vec3A::new(1.0, 1.0, 1.0),
     );
 
     self.render_engine.render_model(
-      self.render_engine.get_model_id("chair.obj"),
-      vec![self.render_engine.get_texture_id("chair.png")],
+      chair_model,
+      chair_textures,
       Vec3A::new(-2.0, 0.0, 0.0),
       Vec3A::new(0.0, -self.spin_test as f32, 0.0),
       Vec3A::new(1.0, 1.0, 1.0),
     );
 
-    let snowman_texture = self.render_engine.get_texture_id("snowman.png");
     self.render_engine.render_model(
-      self.render_engine.get_model_id("snowman.obj"),
-      vec![
-        snowman_texture,
-        snowman_texture,
-        snowman_texture,
-        snowman_texture,
-        snowman_texture,
-      ],
+      snowman_model,
+      snowman_textures.clone(),
       Vec3A::new(-3.0, 0.0, 0.0),
       Vec3A::new(0.0, -self.spin_test as f32, 0.0),
       Vec3A::new(1.0, 1.0, 1.0),
@@ -282,11 +285,9 @@ impl Client {
       }
     }
 
-    self.render_engine.render_mesh_instanced(
-      self.render_engine.get_mesh_id("debug"),
-      self.render_engine.get_texture_id("tf.png"),
-      &instancing_tf,
-    );
+    self
+      .render_engine
+      .render_mesh_instanced(debug_mesh, debug_mesh_texture, &instancing_tf);
 
     // ? Snowman.
 
@@ -304,17 +305,9 @@ impl Client {
       }
     }
 
-    self.render_engine.render_model_instanced(
-      self.render_engine.get_model_id("snowman.obj"),
-      &[
-        snowman_texture,
-        snowman_texture,
-        snowman_texture,
-        snowman_texture,
-        snowman_texture,
-      ],
-      &instancing_tf,
-    );
+    self
+      .render_engine
+      .render_model_instanced(snowman_model, &snowman_textures, &instancing_tf);
 
     self.render_engine.process_instanced_mesh_render_calls();
     self.render_engine.process_instanced_model_render_calls();
