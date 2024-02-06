@@ -1287,7 +1287,7 @@ impl RenderEngine {
     *self
       .mesh_name_to_id
       .get(name)
-      .expect(format!("RenderEngine: Mesh [{}] does not exist!", name).as_str())
+      .unwrap_or_else(|| panic!("RenderEngine: Mesh [{}] does not exist!", name))
   }
 
   ///
@@ -1299,7 +1299,7 @@ impl RenderEngine {
     *self
       .model_name_to_id
       .get(name)
-      .expect(format!("RenderEngine: Model [{}] does not exist!", name).as_str())
+      .unwrap_or_else(|| panic!("RenderEngine: Model [{}] does not exist!", name))
   }
 
   ///
@@ -1311,7 +1311,7 @@ impl RenderEngine {
     *self
       .texture_name_to_id
       .get(name)
-      .expect(format!("RenderEngine: Texture [{}] does not exist!", name).as_str())
+      .unwrap_or_else(|| panic!("RenderEngine: Texture [{}] does not exist!", name))
   }
 
   ///

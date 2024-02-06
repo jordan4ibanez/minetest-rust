@@ -234,30 +234,30 @@ impl Client {
 
     // Not instanced.
     self.render_engine.render_mesh(
-      "debug",
-      "tf.png",
+      self.render_engine.get_mesh_id("debug"),
+      self.render_engine.get_texture_id("tf.png"),
       Vec3A::new(-1.0, 0.0, 0.0),
       Vec3A::new(0.0, -self.spin_test as f32, 0.0),
       Vec3A::new(1.0, 1.0, 1.0),
     );
 
     self.render_engine.render_model(
-      "chair.obj",
-      vec!["chair.png".to_string()],
+      self.render_engine.get_model_id("chair.obj"),
+      vec![self.render_engine.get_texture_id("chair.png")],
       Vec3A::new(-2.0, 0.0, 0.0),
       Vec3A::new(0.0, -self.spin_test as f32, 0.0),
       Vec3A::new(1.0, 1.0, 1.0),
     );
 
-    let snowman_texture = "snowman.png".to_string();
+    let snowman_texture = self.render_engine.get_mesh_id("snowman.png");
     self.render_engine.render_model(
-      "snowman.obj",
+      self.render_engine.get_model_id("snowman.obj"),
       vec![
-        snowman_texture.clone(),
-        snowman_texture.clone(),
-        snowman_texture.clone(),
-        snowman_texture.clone(),
-        snowman_texture.clone(),
+        snowman_texture,
+        snowman_texture,
+        snowman_texture,
+        snowman_texture,
+        snowman_texture,
       ],
       Vec3A::new(-3.0, 0.0, 0.0),
       Vec3A::new(0.0, -self.spin_test as f32, 0.0),
@@ -282,9 +282,11 @@ impl Client {
       }
     }
 
-    self
-      .render_engine
-      .render_mesh_instanced("debug", "tf.png", &instancing_tf);
+    self.render_engine.render_mesh_instanced(
+      self.render_engine.get_mesh_id("debug"),
+      self.render_engine.get_texture_id("tf.png"),
+      &instancing_tf,
+    );
 
     // ? Snowman.
 
@@ -302,15 +304,14 @@ impl Client {
       }
     }
 
-    let snowman_texture = "snowman.png".to_string();
     self.render_engine.render_model_instanced(
-      "snowman.obj",
+      self.render_engine.get_model_id("snowman.obj"),
       &[
-        snowman_texture.clone(),
-        snowman_texture.clone(),
-        snowman_texture.clone(),
-        snowman_texture.clone(),
-        snowman_texture.clone(),
+        snowman_texture,
+        snowman_texture,
+        snowman_texture,
+        snowman_texture,
+        snowman_texture,
       ],
       &instancing_tf,
     );
