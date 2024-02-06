@@ -93,6 +93,7 @@ pub struct RenderEngine {
   id_dispatcher: Unique64,
 
   // Containers for wgpu data.
+  mesh_name_to_id: AHashMap<String, u64>,
   meshes: AHashMap<u64, Mesh>,
 
   texture_name_to_id: AHashMap<String, u64>,
@@ -327,7 +328,9 @@ impl RenderEngine {
       id_dispatcher: Unique64::new(),
 
       // Containers for wgpu data.
+      mesh_name_to_id: AHashMap::new(),
       meshes: AHashMap::new(),
+
       texture_name_to_id: AHashMap::new(),
       textures: AHashMap::new(),
       model_name_to_id: AHashMap::new(),
@@ -1234,30 +1237,45 @@ impl RenderEngine {
   ///
   /// Store a Mesh into the render engine for usage.
   ///
-  pub fn store_mesh(&mut self, name: &str, mesh: Mesh) {
-    self.meshes.insert(name.to_owned(), mesh);
+  /// Returns the Mesh ID.
+  ///
+  pub fn store_mesh(&mut self, name: &str, mesh: Mesh) -> u64 {
+    let new_id = self.id_dispatcher.get_next();
+    self.mesh_name_to_id.insert(name.to_owned(), new_id);
+    self.meshes.insert(new_id, mesh);
+    new_id
   }
 
   ///
   /// Store a Model into the render engine for usage.
   ///
-  pub fn store_model(&mut self, name: &str, model: Model) {
-    self.models.insert(name.to_owned(), model);
+  /// Returns the Model ID.
+  ///
+  pub fn store_model(&mut self, name: &str, model: Model) -> u64 {
+    let new_id = self.id_dispatcher.get_next();
+    self.model_name_to_id.insert(name.to_owned(), new_id);
+    self.models.insert(new_id, model);
+    new_id
   }
 
   ///
   /// Automatically create a texture in the RenderEngine from a path.
   ///
-  pub fn create_texture(&mut self, path: &str) {
-    self.store_texture(Texture::new(path, &self.device, &self.queue));
+  /// Returns the Texture ID.
+  ///
+  pub fn create_texture(&mut self, path: &str) -> u64 {
+    self.store_texture(Texture::new(path, &self.device, &self.queue))
   }
 
   ///
   /// Store a Texture into the render engine for usage.
   ///
-  fn store_texture(&mut self, texture: Texture) {
+  fn store_texture(&mut self, texture: Texture) -> u64 {
+    let new_id = self.id_dispatcher.get_next();
     let name = texture.get_name().clone();
-    self.textures.insert(name.to_owned(), texture);
+    self.texture_name_to_id.insert(name.clone(), new_id);
+    self.textures.insert(new_id, texture);
+    new_id
   }
 
   ///
@@ -1265,15 +1283,15 @@ impl RenderEngine {
   ///
   pub fn render_mesh(
     &mut self,
-    mesh_name: &str,
-    texture_name: &str,
+    mesh_id: u64,
+    texture_id: u64,
     translation: Vec3A,
     rotation: Vec3A,
     scale: Vec3A,
   ) {
     self.mesh_render_queue.push_back(MeshRenderCall::new(
-      mesh_name,
-      texture_name,
+      mesh_id,
+      texture_id,
       translation,
       rotation,
       scale,
@@ -1285,15 +1303,15 @@ impl RenderEngine {
   ///
   pub fn render_model(
     &mut self,
-    model_name: &str,
-    texture_names: Vec<String>,
+    model_id: u64,
+    texture_ids: Vec<u64>,
     translation: Vec3A,
     rotation: Vec3A,
     scale: Vec3A,
   ) {
     self.model_render_queue.push_back(ModelRenderCall::new(
-      model_name,
-      texture_names,
+      model_id,
+      texture_ids,
       translation,
       rotation,
       scale,
@@ -1310,8 +1328,8 @@ impl RenderEngine {
   ///
   pub fn render_mesh_instanced_single(
     &mut self,
-    mesh_name: &str,
-    texture_name: &str,
+    mesh_id: u64,
+    texture_id: u64,
     translation: Vec3A,
     rotation: Vec3A,
     scale: Vec3A,
@@ -1319,8 +1337,8 @@ impl RenderEngine {
     // If the key does not exist, we create it.
     let current_mesh_instance_render_data = self
       .instanced_mesh_render_queue
-      .entry(mesh_name.to_string())
-      .or_insert(InstancedMeshRenderData::new(texture_name));
+      .entry(mesh_id)
+      .or_insert(InstancedMeshRenderData::new(texture_id));
 
     // Now push one into the struct.
     current_mesh_instance_render_data.push_single(translation, rotation, scale);
@@ -1333,15 +1351,15 @@ impl RenderEngine {
   ///
   pub fn render_mesh_instanced(
     &mut self,
-    mesh_name: &str,
-    texture_name: &str,
+    mesh_id: u64,
+    texture_ids: u64,
     instancing: &Vec<InstanceMatrix>,
   ) {
     // If the key does not exist, we create it.
     let current_mesh_instance_render_data = self
       .instanced_mesh_render_queue
-      .entry(mesh_name.to_string())
-      .or_insert(InstancedMeshRenderData::new(texture_name));
+      .entry(mesh_id)
+      .or_insert(InstancedMeshRenderData::new(texture_ids));
 
     // Now extend multiple into the struct.
     current_mesh_instance_render_data.push(instancing);
@@ -1357,8 +1375,8 @@ impl RenderEngine {
   ///
   pub fn render_model_instanced_single(
     &mut self,
-    model_name: &str,
-    texture_names: &[String],
+    model_id: u64,
+    texture_ids: &[u64],
     translation: Vec3A,
     rotation: Vec3A,
     scale: Vec3A,
@@ -1366,8 +1384,8 @@ impl RenderEngine {
     // If the key does not exist, we create it.
     let current_model_instance_render_data = self
       .instanced_model_render_queue
-      .entry(model_name.to_string())
-      .or_insert(InstancedModelRenderData::new(texture_names));
+      .entry(model_id)
+      .or_insert(InstancedModelRenderData::new(texture_ids));
 
     // Now push one into the struct.
     current_model_instance_render_data.push_single(translation, rotation, scale);
@@ -1380,15 +1398,15 @@ impl RenderEngine {
   ///
   pub fn render_model_instanced(
     &mut self,
-    model_name: &str,
-    texture_names: &[String],
+    model_id: u64,
+    texture_ids: &[u64],
     instancing: &Vec<InstanceMatrix>,
   ) {
     // If the key does not exist, we create it.
     let current_model_instance_render_data = self
       .instanced_model_render_queue
-      .entry(model_name.to_string())
-      .or_insert(InstancedModelRenderData::new(texture_names));
+      .entry(model_id)
+      .or_insert(InstancedModelRenderData::new(texture_ids));
 
     // Now extend multiple into the struct.
     current_model_instance_render_data.push(instancing);
