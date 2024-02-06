@@ -77,14 +77,14 @@ impl InstanceMatrix {
 ///
 pub struct InstancedMeshRenderData {
   matrices: Vec<InstanceMatrix>,
-  texture: String,
+  texture_id: u64,
 }
 
 impl InstancedMeshRenderData {
-  pub fn new(texture: &str) -> Self {
+  pub fn new(texture_id: u64) -> Self {
     InstancedMeshRenderData {
       matrices: vec![],
-      texture: texture.to_owned(),
+      texture_id,
     }
   }
 
@@ -117,10 +117,10 @@ impl InstancedMeshRenderData {
   }
 
   ///
-  /// Borrow the texture name for rendering.
+  /// Get the Texture ID for rendering.
   ///
-  pub fn borrow_texture_name(&self) -> &String {
-    &self.texture
+  pub fn get_texture_id(&self) -> u64 {
+    self.texture_id
   }
 }
 
@@ -131,14 +131,14 @@ impl InstancedMeshRenderData {
 ///
 pub struct InstancedModelRenderData {
   matrices: Vec<InstanceMatrix>,
-  textures: Vec<String>,
+  texture_ids: Vec<u64>,
 }
 
 impl InstancedModelRenderData {
-  pub fn new(textures: &[String]) -> Self {
+  pub fn new(texture_ids: &[u64]) -> Self {
     InstancedModelRenderData {
       matrices: vec![],
-      textures: textures.to_vec(),
+      texture_ids: texture_ids.to_vec(),
     }
   }
 
@@ -171,9 +171,9 @@ impl InstancedModelRenderData {
   }
 
   ///
-  /// Borrow the Texture names for rendering.
+  /// Get the Texture IDs for rendering.
   ///
-  pub fn borrow_texture_names(&self) -> &Vec<String> {
-    &self.textures
+  pub fn borrow_texture_names(&self) -> &Vec<u64> {
+    &self.texture_ids
   }
 }
