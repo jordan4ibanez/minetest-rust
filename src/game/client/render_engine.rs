@@ -38,7 +38,7 @@ use self::{
   instanced_render_matrix::{InstanceMatrix, InstancedMeshRenderData, InstancedModelRenderData},
   mesh_trs_uniform::MeshTRSUniform,
   model::Model,
-  render_call::{ModelRenderCall, RenderCall},
+  render_call::{MeshRenderCall, ModelRenderCall},
 };
 
 use super::window_handler::WindowHandler;
@@ -80,7 +80,7 @@ pub struct RenderEngine {
   clear_color: wgpu::Color,
 
   // Not instanced render queues. (Individual render calls)
-  mesh_render_queue: VecDeque<RenderCall>,
+  mesh_render_queue: VecDeque<MeshRenderCall>,
   model_render_queue: VecDeque<ModelRenderCall>,
 
   // Instanced render queues and buffer.
@@ -1271,7 +1271,7 @@ impl RenderEngine {
     rotation: Vec3A,
     scale: Vec3A,
   ) {
-    self.mesh_render_queue.push_back(RenderCall::new(
+    self.mesh_render_queue.push_back(MeshRenderCall::new(
       mesh_name,
       texture_name,
       translation,
