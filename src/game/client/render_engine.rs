@@ -84,8 +84,8 @@ pub struct RenderEngine {
   model_render_queue: VecDeque<ModelRenderCall>,
 
   // Instanced render queues and buffer.
-  instanced_mesh_render_queue: AHashMap<String, InstancedMeshRenderData>,
-  instanced_model_render_queue: AHashMap<String, InstancedModelRenderData>,
+  instanced_mesh_render_queue: AHashMap<u32, InstancedMeshRenderData>,
+  instanced_model_render_queue: AHashMap<u32, InstancedModelRenderData>,
   instance_buffer: Option<wgpu::Buffer>,
   instance_trigger: InstanceTrigger,
 
@@ -93,10 +93,12 @@ pub struct RenderEngine {
   id_dispatcher: Unique64,
 
   // Containers for wgpu data.
-  meshes: AHashMap<String, Mesh>,
-  textures: AHashMap<String, Texture>,
+  meshes: AHashMap<u32, Mesh>,
 
-  models: AHashMap<String, Model>,
+  texture_name_to_id: AHashMap<String, u32>,
+  textures: AHashMap<u32, Texture>,
+  model_name_to_id: AHashMap<String, u32>,
+  models: AHashMap<u32, Model>,
 
   mesh_trs_uniform: MeshTRSUniform,
 
@@ -326,7 +328,9 @@ impl RenderEngine {
 
       // Containers for wgpu data.
       meshes: AHashMap::new(),
+      texture_name_to_id: AHashMap::new(),
       textures: AHashMap::new(),
+      model_name_to_id: AHashMap::new(),
       models: AHashMap::new(),
 
       mesh_trs_uniform,
@@ -391,24 +395,24 @@ impl RenderEngine {
       )
       .unwrap();
 
-      new_render_engine
-        .models
-        .insert(chair_model.name.clone(), chair_model);
+      // new_render_engine
+      //   .models
+      //   .insert(chair_model.name.clone(), chair_model);
 
-      new_render_engine.create_texture("./prototype_textures/chair.png");
+      // new_render_engine.create_texture("./prototype_textures/chair.png");
 
       // ! SNOWMAN
 
-      let snowman = ModelLoader::load_model(
-        "./prototype_models/snowman.obj",
-        &new_render_engine.device,
-        &new_render_engine.queue,
-      )
-      .unwrap();
+      // let snowman = ModelLoader::load_model(
+      //   "./prototype_models/snowman.obj",
+      //   &new_render_engine.device,
+      //   &new_render_engine.queue,
+      // )
+      // .unwrap();
 
-      new_render_engine
-        .models
-        .insert(snowman.name.clone(), snowman);
+      // new_render_engine
+      //   .models
+      //   .insert(snowman.name.clone(), snowman);
 
       new_render_engine.create_texture("./prototype_textures/snowman.png");
 
