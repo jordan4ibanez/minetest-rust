@@ -75,23 +75,23 @@ impl MeshRenderCall {
 /// If you want to batch it, see BatchRenderCall.
 ///
 pub struct ModelRenderCall {
-  model_name: String,
-  texture_names: Vec<String>,
+  model_id: u64,
+  texture_ids: Vec<u64>,
   translation: Vec3A,
   rotation: Vec3A,
   scale: Vec3A,
 }
 impl ModelRenderCall {
   pub fn new(
-    mesh_name: &str,
-    texture_names: Vec<String>,
+    model_id: u64,
+    texture_ids: Vec<u64>,
     translation: Vec3A,
     rotation: Vec3A,
     scale: Vec3A,
   ) -> Self {
     ModelRenderCall {
-      model_name: mesh_name.to_owned(),
-      texture_names,
+      model_id,
+      texture_ids,
       translation,
       rotation,
       scale,
@@ -99,17 +99,17 @@ impl ModelRenderCall {
   }
 
   ///
-  /// Get the ModelRenderCall's name.
+  /// Get the ModelRenderCall's Model ID.
   ///
-  pub fn get_model_name(&self) -> &String {
-    &self.model_name
+  pub fn get_model_name(&self) -> u64 {
+    self.model_id
   }
 
   ///
-  /// Get the texture that will be used for this ModelRenderCall.
+  /// Get the Texture IDs that will be used for this ModelRenderCall.
   ///
-  pub fn get_texture_names(&self) -> &Vec<String> {
-    &self.texture_names
+  pub fn get_texture_ids(&self) -> &Vec<u64> {
+    &self.texture_ids
   }
 
   ///
