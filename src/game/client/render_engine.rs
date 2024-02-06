@@ -658,11 +658,11 @@ impl RenderEngine {
 
     let not_instanced_render_call = self.mesh_render_queue.pop_front().unwrap();
 
-    let mesh_name = not_instanced_render_call.get_mesh_name();
+    let mesh_name = not_instanced_render_call.get_mesh_id();
 
     match self.meshes.get(mesh_name) {
       Some(mesh) => {
-        let texture_name = not_instanced_render_call.get_texture_name();
+        let texture_name = not_instanced_render_call.get_texture_id();
 
         match self.textures.get(texture_name) {
           Some(texture) => {

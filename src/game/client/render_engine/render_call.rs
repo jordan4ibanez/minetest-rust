@@ -36,14 +36,14 @@ impl MeshRenderCall {
   ///
   /// Get the MeshRenderCall's Mesh ID.
   ///
-  pub fn get_mesh_name(&self) -> u64 {
+  pub fn get_mesh_id(&self) -> u64 {
     self.mesh_id
   }
 
   ///
   /// Get the Texture ID that will be used for this MeshRenderCall.
   ///
-  pub fn get_texture_name(&self) -> u64 {
+  pub fn get_texture_id(&self) -> u64 {
     self.texture_id
   }
 
