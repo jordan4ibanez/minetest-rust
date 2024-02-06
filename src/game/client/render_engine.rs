@@ -658,13 +658,13 @@ impl RenderEngine {
 
     let not_instanced_render_call = self.mesh_render_queue.pop_front().unwrap();
 
-    let mesh_name = not_instanced_render_call.get_mesh_id();
+    let mesh_id = not_instanced_render_call.get_mesh_id();
 
-    match self.meshes.get(mesh_name) {
+    match self.meshes.get(&mesh_id) {
       Some(mesh) => {
-        let texture_name = not_instanced_render_call.get_texture_id();
+        let texture_id = not_instanced_render_call.get_texture_id();
 
-        match self.textures.get(texture_name) {
+        match self.textures.get(&texture_id) {
           Some(texture) => {
             // Now activate the used texture's bind group.
             render_pass.set_bind_group(0, texture.get_wgpu_diffuse_bind_group(), &[]);
@@ -696,14 +696,14 @@ impl RenderEngine {
             render_pass.draw_indexed(0..mesh.get_number_of_indices(), 0, 0..1);
           }
           None => error!(
-            "render_engine: {} is not a stored Texture. [not instanced]",
-            texture_name
+            "render_engine: ID {} is not a stored Texture. [not instanced]",
+            texture_id
           ),
         }
       }
       None => error!(
-        "render_engine: {} is not a stored Mesh. [not instanced]",
-        mesh_name
+        "render_engine: ID {} is not a stored Mesh. [not instanced]",
+        mesh_id
       ),
     }
   }
