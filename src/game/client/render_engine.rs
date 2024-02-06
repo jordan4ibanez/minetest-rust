@@ -1279,6 +1279,42 @@ impl RenderEngine {
   }
 
   ///
+  /// Get a Mesh ID from the literal &str representation.
+  ///
+  /// Will panic if it doesn't exist.
+  ///
+  pub fn get_mesh_id(&self, name: &str) -> u64 {
+    *self
+      .mesh_name_to_id
+      .get(name)
+      .expect(format!("RenderEngine: Mesh [{}] does not exist!", name).as_str())
+  }
+
+  ///
+  /// Get Model ID from the literal &str representation.
+  ///
+  /// Will panic if it doesn't exist.
+  ///
+  pub fn get_model_id(&self, name: &str) -> u64 {
+    *self
+      .model_name_to_id
+      .get(name)
+      .expect(format!("RenderEngine: Model [{}] does not exist!", name).as_str())
+  }
+
+  ///
+  /// Get Texture ID from the literal &str representation.
+  ///
+  /// Will panic if it doesn't exist.
+  ///
+  pub fn get_texture_id(&self, name: &str) -> u64 {
+    *self
+      .texture_name_to_id
+      .get(name)
+      .expect(format!("RenderEngine: Texture [{}] does not exist!", name).as_str())
+  }
+
+  ///
   /// Render a mesh not instanced.
   ///
   pub fn render_mesh(
