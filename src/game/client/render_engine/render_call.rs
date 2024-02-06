@@ -101,7 +101,7 @@ impl ModelRenderCall {
   ///
   /// Get the ModelRenderCall's Model ID.
   ///
-  pub fn get_model_name(&self) -> u64 {
+  pub fn get_model_id(&self) -> u64 {
     self.model_id
   }
 

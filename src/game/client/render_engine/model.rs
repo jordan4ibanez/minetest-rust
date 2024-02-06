@@ -5,7 +5,7 @@ use super::mesh::Mesh;
 /// ! use encapsulation to stop this from getting changed with a lockout.
 ///
 pub struct Model {
-  pub name: String,
+  pub name: u64,
   pub meshes: Vec<Mesh>,
   pub number_of_texture_buffers: u32,
   // todo: use this to lockout the model from changing and be readonly.
