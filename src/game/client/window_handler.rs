@@ -60,6 +60,7 @@ impl WindowHandler {
       .resizable()
       .position_centered()
       .allow_highdpi()
+      .metal_view()
       .build()
       .unwrap();
 
