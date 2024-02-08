@@ -8,6 +8,9 @@ authors = ["jordan4ibanez", "for the moment"]
 # You can update your rust version with: rustup update stable
 rust-version = "1.75.0"
 
+# Fixes for Windows.
+build = "build.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lints.rust]
@@ -60,3 +63,7 @@ tobj = "*"
 unique_64 = "*"
 wgpu = "*"
 wgpu_sdl_linker = "*"
+
+# Specialty dependencies.
+[target.'cfg(windows)'.build-dependencies]
+winres = "*"
