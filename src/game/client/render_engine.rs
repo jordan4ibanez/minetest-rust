@@ -117,6 +117,9 @@ impl RenderEngine {
     // This is written verbosely so you can read what's going on easier.
 
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
+      // This is the portion where you can select the backend.
+      // Vulkan, OpenGL, Metal, DX11, DX12, and WebGPU.
+      // It automatically selects based on your hardware for now.
       backends: wgpu::Backends::PRIMARY,
       flags: wgpu::InstanceFlags::debugging(),
       dx12_shader_compiler: wgpu::Dx12Compiler::default(),
