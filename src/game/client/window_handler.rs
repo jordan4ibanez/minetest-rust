@@ -78,14 +78,7 @@ impl WindowHandler {
 
     new_window_handler.show();
 
-    new_window_handler.sdl_context.mouse().capture(true);
-
     new_window_handler.toggle_mouse_capture(mouse);
-
-    new_window_handler
-      .sdl_context
-      .mouse()
-      .set_relative_mouse_mode(true);
 
     new_window_handler
   }
