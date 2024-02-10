@@ -25,7 +25,11 @@ impl ModelLoader {
       Ok(file_name) => file_name,
       Err(e) => panic!("ModelLoader: {}", e),
     };
-    let extension = file_extension_from_path(path);
+
+    let extension = match file_extension_from_path(path) {
+      Ok(extension) => extension,
+      Err(e) => panic!("ModelLoader: {}", e),
+    };
 
     match extension {
       "gltf" => {
