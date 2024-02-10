@@ -48,10 +48,16 @@ impl LuaEngine {
     // You can't build upon what is fundamentally broken.
     if self.server_vm {
       // it's a server vm
-      self.run_file("./api/server/__internal_server.lua").unwrap();
+      match self.run_file("./api/server/__internal_server.lua") {
+        Ok(_) => (),
+        Err(e) => panic!("LuaEngine: Failed to load Server API. {}", e),
+      }
     } else {
       // it's a client vm
-      self.run_file("./api/client/__internal_client.lua").unwrap();
+      match self.run_file("./api/client/__internal_client.lua") {
+        Ok(_) => (),
+        Err(e) => panic!("LuaEngine: Failed to load Client API. {}", e),
+      }
     }
   }
 
