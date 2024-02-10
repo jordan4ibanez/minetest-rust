@@ -72,7 +72,10 @@ impl LuaEngine {
   /// ! we think we should implement better protection!
   ///
   pub fn run_file(&self, file_location: &str) -> Result<(), String> {
-    let raw_code_string = read_file_to_string(file_location);
+    let raw_code_string = match read_file_to_string(file_location) {
+      Ok(raw_code) => raw_code,
+      Err(e) => panic!("LuaEngine: {}", e),
+    };
 
     if self.output_code_string {
       println!("{}", raw_code_string);
@@ -102,7 +105,10 @@ impl LuaEngine {
 
     let mut config = Ini::new();
 
-    let game_raw_config_string = read_file_to_string(&base_path);
+    let game_raw_config_string = match read_file_to_string(&base_path) {
+      Ok(raw_config_string) => raw_config_string,
+      Err(e) => panic!("LuaEngine: {}", e),
+    };
 
     match config.read(game_raw_config_string) {
       Ok(_) => println!("minetest: parsed [{}] game config.", game_name),
