@@ -1,5 +1,4 @@
 use std::{
-  convert::Infallible,
   fs::{self, File},
   io::BufReader,
   path::Path,
@@ -23,12 +22,7 @@ pub fn file_exists(path: &str) -> bool {
 }
 
 ///
-/// This is a very lazy function but it cleans up implementation.
-///
-fn panic_if_no_path(path: &str, read_to_type: &str) {}
-
-///
-/// Get the file name from the path provided.
+/// Get a file name from the path provided.
 ///
 pub fn file_name_from_path(path: &str) -> Result<&str, &str> {
   let new_path = Path::new(path);
@@ -47,7 +41,7 @@ pub fn file_name_from_path(path: &str) -> Result<&str, &str> {
 }
 
 ///
-/// Get the file extension from the path provided.
+/// Get a file extension from the path provided.
 ///
 pub fn file_extension_from_path(path: &str) -> Result<&str, &str> {
   let new_path = Path::new(path);
@@ -66,38 +60,33 @@ pub fn file_extension_from_path(path: &str) -> Result<&str, &str> {
 }
 
 ///
-/// This will first check if the file exists.
+/// Automatically parse a file path into a String.
 ///
-/// Next it will automatically parse the file into a String.
-///
-pub fn read_file_to_string(path: &str) -> String {
-  panic_if_no_path(path, "String");
-  fs::read_to_string(path).unwrap().parse().unwrap()
+pub fn read_file_to_string(path: &str) -> Result<String, String> {
+  match fs::read_to_string(path) {
+    Ok(data) => Ok(data),
+    Err(e) => Err(e.to_string()),
+  }
+
+  //.parse().unwrap()
 }
 
 ///
-/// This will attempt to parse the file into a string.
+/// Automatically parse a file path into a byte Vec.
 ///
-pub fn read_file_to_string_result(path: &str) -> Result<String, Infallible> {
-  fs::read_to_string(path).unwrap().parse()
+pub fn read_file_to_byte_vec(path: &str) -> Result<Vec<u8>, String> {
+  match fs::read(path) {
+    Ok(data) => Ok(data),
+    Err(e) => Err(e.to_string()),
+  }
 }
 
 ///
-/// This will first check if the file exists.
+/// Automatically parse a file path into a BufReader<File>.
 ///
-/// Next it will automatically parse the file into a byte Vec.
-///
-pub fn read_file_to_byte_vec(path: &str) -> Vec<u8> {
-  panic_if_no_path(path, "bytes");
-  fs::read(path).unwrap()
-}
-
-///
-/// This will first check if the file exists.
-///
-/// Next it will automatically parse the file into a BufReader<File>
-///
-pub fn read_path_to_buf_read(path: &str) -> BufReader<File> {
-  panic_if_no_path(path, "BufRead");
-  BufReader::new(File::open(path).unwrap())
+pub fn read_path_to_buf_read(path: &str) -> Result<BufReader<File>, String> {
+  match File::open(path) {
+    Ok(file) => Ok(BufReader::new(file)),
+    Err(e) => Err(e.to_string()),
+  }
 }
