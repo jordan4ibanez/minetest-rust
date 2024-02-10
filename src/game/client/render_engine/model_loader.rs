@@ -21,7 +21,10 @@ impl ModelLoader {
   pub fn load_model(path: &str, device: &wgpu::Device, queue: &wgpu::Queue) -> Option<Model> {
     println!("Hello I am loading hooray!");
 
-    let file_name = file_name_from_path(path);
+    let file_name = match file_name_from_path(path) {
+      Ok(file_name) => file_name,
+      Err(e) => panic!("ModelLoader: {}", e),
+    };
     let extension = file_extension_from_path(path);
 
     match extension {

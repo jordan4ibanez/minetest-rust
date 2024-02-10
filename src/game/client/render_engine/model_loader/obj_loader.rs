@@ -31,7 +31,10 @@ pub struct ObjLoader {}
 impl ObjLoader {
   pub fn load(path: &str, device: &wgpu::Device, queue: &wgpu::Queue) -> Model {
     // The file name. This will be used later.
-    let file_name = file_name_from_path(path);
+    let file_name = match file_name_from_path(path) {
+      Ok(file_name) => file_name,
+      Err(e) => panic!("ObjLoader: {}", e),
+    };
 
     // The buffer we're going to read the model into.
     let mut model_reader = read_path_to_buf_read(path);
