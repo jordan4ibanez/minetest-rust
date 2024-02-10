@@ -477,23 +477,23 @@ impl RenderEngine {
   /// Aka, the framebuffer.
   ///
   pub fn generate_frame_buffer(&mut self) {
-    self.output = Some(
-      self
-        .surface
-        .get_current_texture()
-        .expect("minetest: wgpu surface texture does not exist!"),
-    );
+    match self.surface.get_current_texture() {
+      Ok(texture) => self.output = Some(texture),
+      Err(e) => panic!("RenderEngine: Surface texture error. {}", e),
+    }
 
-    self.texture_view = Some(
-      self
-        .output
-        .as_mut()
-        .unwrap()
-        .texture
-        // ? If this comes up as an error in vscode, you need to switch
-        // ? to a rust-analyzer pre-release version.
-        .create_view(&wgpu::TextureViewDescriptor::default()),
-    );
+    match self.output.as_mut() {
+      Some(output) => {
+        self.texture_view = Some(
+          output
+            .texture
+            // ? If this comes up as an error in vscode, you need to switch
+            // ? to a rust-analyzer pre-release version.
+            .create_view(&wgpu::TextureViewDescriptor::default()),
+        );
+      }
+      None => panic!("RenderEngine: Tried to generate a framebuffer with no output."),
+    }
 
     self.depth_buffer = Some(DepthBuffer::new(&self.device, &self.config, "depth_buffer"));
   }
