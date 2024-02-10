@@ -25,7 +25,10 @@ impl Texture {
       Ok(diffuse_bytes) => diffuse_bytes,
       Err(e) => panic!("Texture: {}", e),
     };
-    let diffuse_image = image::load_from_memory(diffuse_bytes.as_slice()).unwrap();
+    let diffuse_image = match image::load_from_memory(diffuse_bytes.as_slice()) {
+      Ok(image) => image,
+      Err(e) => panic!("Texture: Failed to load image from memory. {}", e),
+    };
     let diffuse_rgba: ImageBuffer<Rgba<u8>, Vec<u8>> = diffuse_image.to_rgba8();
     let dimensions = diffuse_image.dimensions();
 
