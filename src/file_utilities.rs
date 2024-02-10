@@ -25,19 +25,12 @@ pub fn file_exists(path: &str) -> bool {
 ///
 /// This is a very lazy function but it cleans up implementation.
 ///
-fn panic_if_no_path(path: &str, read_to_type: &str) {
-  if !file_exists(path) {
-    panic!(
-      "tried to read file [{}] into [{}] which doesn't exist!",
-      path, read_to_type
-    )
-  }
-}
+fn panic_if_no_path(path: &str, read_to_type: &str) {}
 
 ///
 /// Get the file name from the path provided.
 ///
-pub fn file_name_from_path(path: &str) -> Result<String, &str> {
+pub fn file_name_from_path(path: &str) -> Result<&str, &str> {
   let new_path = Path::new(path);
 
   if !new_path.exists() {
@@ -45,20 +38,31 @@ pub fn file_name_from_path(path: &str) -> Result<String, &str> {
   }
 
   match new_path.file_name() {
-    Some(os_str_name) => match os_str_name.to_str() {
-      Some(literal_name) => Ok(literal_name.to_owned()),
+    Some(os_str) => match os_str.to_str() {
+      Some(final_str) => Ok(final_str),
       None => Err("Failed to convert OsStr to str."),
     },
-    None => Err("Minetest: Failed to parse OS Path str."),
+    None => Err("Failed to parse OS Path str."),
   }
 }
 
 ///
 /// Get the file extension from the path provided.
 ///
-pub fn file_extension_from_path(path: &str) -> &str {
-  panic_if_no_path(path, "file extension to String");
-  Path::new(path).extension().unwrap().to_str().unwrap()
+pub fn file_extension_from_path(path: &str) -> Result<&str, &str> {
+  let new_path = Path::new(path);
+
+  if !new_path.exists() {
+    return Err("Path does not exist.");
+  }
+
+  match new_path.extension() {
+    Some(extension_os_str) => match extension_os_str.to_str() {
+      Some(os_str) => Ok(os_str),
+      None => Err("Failed to convert OsStr to str."),
+    },
+    None => Err("Failed to parse OS Path str."),
+  }
 }
 
 ///
