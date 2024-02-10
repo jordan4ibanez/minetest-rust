@@ -28,7 +28,7 @@ pub fn file_exists(path: &str) -> bool {
 fn panic_if_no_path(path: &str, read_to_type: &str) {
   if !file_exists(path) {
     panic!(
-      "minetest: tried to read file [{}] into [{}] which doesn't exist!",
+      "tried to read file [{}] into [{}] which doesn't exist!",
       path, read_to_type
     )
   }
@@ -38,10 +38,16 @@ fn panic_if_no_path(path: &str, read_to_type: &str) {
 /// Get the file name from the path provided.
 ///
 pub fn file_name_from_path(path: &str) -> Result<String, &str> {
-  match Path::new(path).file_name() {
+  let new_path = Path::new(path);
+
+  if !new_path.exists() {
+    return Err("Path does not exist.");
+  }
+
+  match new_path.file_name() {
     Some(os_str_name) => match os_str_name.to_str() {
       Some(literal_name) => Ok(literal_name.to_owned()),
-      None => Err("Minetest: Failed to convert OsStr to str."),
+      None => Err("Failed to convert OsStr to str."),
     },
     None => Err("Minetest: Failed to parse OS Path str."),
   }
