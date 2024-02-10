@@ -18,7 +18,11 @@ use super::model::Model;
 pub struct ModelLoader {}
 
 impl ModelLoader {
-  pub fn load_model(path: &str, device: &wgpu::Device, queue: &wgpu::Queue) -> Option<Model> {
+  pub fn load_model(
+    path: &str,
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+  ) -> Result<Model, String> {
     println!("Hello I am loading hooray!");
 
     let file_name = match file_name_from_path(path) {
@@ -34,19 +38,16 @@ impl ModelLoader {
     match extension {
       "gltf" => {
         println!("ModelLoader: this is a GLTF model file.");
-        None
+        Err("ModelLoader: GLTF not implemented.".to_string())
       }
       "obj" => {
         println!("ModelLoader: this is an OBJ model file.");
-        Some(ObjLoader::load(path, device, queue))
+        Ok(ObjLoader::load(path, device, queue))
       }
-      _ => {
-        error!(
-          "ModelLoader: error loading [{}]. [{}] is not an integrated model format.",
-          file_name, extension
-        );
-        None
-      }
+      _ => Err(format!(
+        "ModelLoader: Failed to load {}. Extension [{}] is not implemented.",
+        file_name, extension
+      )),
     }
 
     // println!("ModelLoader: the extension is [{}]", extension);
