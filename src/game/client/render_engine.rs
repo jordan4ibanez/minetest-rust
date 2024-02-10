@@ -163,9 +163,13 @@ impl RenderEngine {
     };
 
     // Load up the default shader source code.
+    let shader_code = match read_file_to_string("shaders/default_shader.wgsl") {
+      Ok(shader_code) => shader_code,
+      Err(e) => panic!("RenderEngine: {}", e),
+    };
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
       label: Some("default_shader"),
-      source: wgpu::ShaderSource::Wgsl(read_file_to_string("shaders/default_shader.wgsl").into()),
+      source: wgpu::ShaderSource::Wgsl(shader_code.into()),
     });
 
     // Create the pipeline layout.
