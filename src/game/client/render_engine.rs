@@ -590,8 +590,22 @@ impl RenderEngine {
   ///
   fn process_not_instanced_mesh_render_call(&mut self) {
     let command_encoder = match self.command_encoder.as_mut() {
-        Some(encoder) => encoder,
-        None => panic!("RenderEngine: Attempted to process not instanced mesh render call without command encoder."),
+      Some(encoder) => encoder,
+      None => panic!("RenderEngine: Attempted to process not instanced mesh render call without command encoder."),
+    };
+
+    let texture_view = match self.texture_view.as_ref() {
+      Some(view) => view,
+      None => {
+        panic!("RenderEngine: Attempted to not instanced mesh render call without texture view.")
+      }
+    };
+
+    let depth_buffer = match self.depth_buffer.as_ref() {
+      Some(buffer) => buffer,
+      None => {
+        panic!("RenderEngine: Attempted to not instanced mesh render call without depth buffer.")
+      }
     };
 
     // * Begin not instanced render calls. [MESH]
@@ -602,7 +616,7 @@ impl RenderEngine {
 
       // color attachments is a array of pipeline render pass color attachments.
       color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-        view: self.texture_view.as_ref().unwrap(),
+        view: texture_view,
         resolve_target: None,
         ops: wgpu::Operations {
           load: wgpu::LoadOp::Load,
@@ -611,7 +625,7 @@ impl RenderEngine {
       })],
 
       depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
-        view: self.depth_buffer.as_ref().unwrap().get_view(),
+        view: depth_buffer.get_view(),
         depth_ops: Some(wgpu::Operations {
           load: wgpu::LoadOp::Load,
           store: wgpu::StoreOp::Store,
