@@ -520,7 +520,7 @@ impl RenderEngine {
     // Begin a wgpu render pass
     let command_encoder = match self.command_encoder.as_mut() {
       Some(encoder) => encoder,
-      None => panic!("RenderEngine: Attempted to clear buffers without a command encoder."),
+      None => panic!("RenderEngine: Attempted to clear buffers without command encoder."),
     };
 
     let texture_view = match self.texture_view.as_ref() {
@@ -589,55 +589,38 @@ impl RenderEngine {
   /// Processes the next available render call in the Mesh queue.
   ///
   fn process_not_instanced_mesh_render_call(&mut self) {
-    // Do 4 very basic checks before attempting to render.
-    if self.output.is_none() {
-      panic!("RenderEngine: attempted to render with no output!");
-    }
-
-    if self.command_encoder.is_none() {
-      panic!("RenderEngine: attempted render with no command encoder!");
-    }
-
-    if self.texture_view.is_none() {
-      panic!("RenderEngine: attempted to render with no texture view!");
-    }
-
-    if self.depth_buffer.is_none() {
-      panic!("RenderEngine: attempted to render with no depth buffer!");
-    }
+    let command_encoder = match self.command_encoder.as_mut() {
+        Some(encoder) => encoder,
+        None => panic!("RenderEngine: Attempted to process not instanced mesh render call without command encoder."),
+    };
 
     // * Begin not instanced render calls. [MESH]
     // Begin a wgpu render pass
-    let mut render_pass =
-      self
-        .command_encoder
-        .as_mut()
-        .unwrap()
-        .begin_render_pass(&wgpu::RenderPassDescriptor {
-          // The label of this render pass.
-          label: Some("minetest_not_instanced_mesh_render_pass"),
+    let mut render_pass = command_encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+      // The label of this render pass.
+      label: Some("minetest_not_instanced_mesh_render_pass"),
 
-          // color attachments is a array of pipeline render pass color attachments.
-          color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-            view: self.texture_view.as_ref().unwrap(),
-            resolve_target: None,
-            ops: wgpu::Operations {
-              load: wgpu::LoadOp::Load,
-              store: wgpu::StoreOp::Store,
-            },
-          })],
+      // color attachments is a array of pipeline render pass color attachments.
+      color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+        view: self.texture_view.as_ref().unwrap(),
+        resolve_target: None,
+        ops: wgpu::Operations {
+          load: wgpu::LoadOp::Load,
+          store: wgpu::StoreOp::Store,
+        },
+      })],
 
-          depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
-            view: self.depth_buffer.as_ref().unwrap().get_view(),
-            depth_ops: Some(wgpu::Operations {
-              load: wgpu::LoadOp::Load,
-              store: wgpu::StoreOp::Store,
-            }),
-            stencil_ops: None,
-          }),
-          occlusion_query_set: None,
-          timestamp_writes: None,
-        });
+      depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+        view: self.depth_buffer.as_ref().unwrap().get_view(),
+        depth_ops: Some(wgpu::Operations {
+          load: wgpu::LoadOp::Load,
+          store: wgpu::StoreOp::Store,
+        }),
+        stencil_ops: None,
+      }),
+      occlusion_query_set: None,
+      timestamp_writes: None,
+    });
 
     render_pass.set_pipeline(&self.render_pipeline);
 
