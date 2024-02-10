@@ -28,15 +28,15 @@ pub fn file_name_from_path(path: &str) -> Result<&str, &str> {
   let new_path = Path::new(path);
 
   if !new_path.exists() {
-    return Err("Path does not exist.");
+    return Err("File name from file path. Path does not exist.");
   }
 
   match new_path.file_name() {
     Some(os_str) => match os_str.to_str() {
       Some(final_str) => Ok(final_str),
-      None => Err("Failed to convert OsStr to str."),
+      None => Err("File name from file path. Failed to convert OsStr to str."),
     },
-    None => Err("Failed to parse OS Path str."),
+    None => Err("File name from file path. Failed to parse OS Path str."),
   }
 }
 
@@ -47,15 +47,15 @@ pub fn file_extension_from_path(path: &str) -> Result<&str, &str> {
   let new_path = Path::new(path);
 
   if !new_path.exists() {
-    return Err("Path does not exist.");
+    return Err("Extension from file path. Path does not exist.");
   }
 
   match new_path.extension() {
     Some(extension_os_str) => match extension_os_str.to_str() {
       Some(os_str) => Ok(os_str),
-      None => Err("Failed to convert OsStr to str."),
+      None => Err("Extension from file path. Failed to convert OsStr to str."),
     },
-    None => Err("Failed to parse OS Path str."),
+    None => Err("Extension from file path. Failed to parse OS Path str."),
   }
 }
 
@@ -65,7 +65,7 @@ pub fn file_extension_from_path(path: &str) -> Result<&str, &str> {
 pub fn read_file_to_string(path: &str) -> Result<String, String> {
   match fs::read_to_string(path) {
     Ok(data) => Ok(data),
-    Err(e) => Err(e.to_string()),
+    Err(e) => Err(format!("Path to String read failure. {}", e)),
   }
 
   //.parse().unwrap()
@@ -77,7 +77,7 @@ pub fn read_file_to_string(path: &str) -> Result<String, String> {
 pub fn read_file_to_byte_vec(path: &str) -> Result<Vec<u8>, String> {
   match fs::read(path) {
     Ok(data) => Ok(data),
-    Err(e) => Err(e.to_string()),
+    Err(e) => Err(format!("Path to byte Vec read failure. {}", e)),
   }
 }
 
@@ -87,6 +87,6 @@ pub fn read_file_to_byte_vec(path: &str) -> Result<Vec<u8>, String> {
 pub fn read_path_to_buf_read(path: &str) -> Result<BufReader<File>, String> {
   match File::open(path) {
     Ok(file) => Ok(BufReader::new(file)),
-    Err(e) => Err(e.to_string()),
+    Err(e) => Err(format!("Path to BufReader failure. {}", e)),
   }
 }
