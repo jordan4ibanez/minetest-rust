@@ -37,7 +37,10 @@ impl ObjLoader {
     };
 
     // The buffer we're going to read the model into.
-    let mut model_reader = read_path_to_buf_read(path);
+    let mut model_reader = match read_path_to_buf_read(path) {
+      Ok(model_reader) => model_reader,
+      Err(e) => panic!("ObjLoader: {}", e),
+    };
 
     // Model loading options, we just want the basics.
     let model_load_options = tobj::LoadOptions {
@@ -123,7 +126,7 @@ impl ObjLoader {
     );
 
     Model {
-      name: file_name,
+      name: file_name.to_owned(),
       meshes,
       number_of_texture_buffers,
       lock: false,
