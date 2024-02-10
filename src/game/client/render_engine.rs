@@ -490,8 +490,8 @@ impl RenderEngine {
         .as_mut()
         .unwrap()
         .texture
-        // If this comes up as an error in vscode, you need to switch
-        // to a rust-analyzer pre-release version!
+        // ? If this comes up as an error in vscode, you need to switch
+        // ? to a rust-analyzer pre-release version.
         .create_view(&wgpu::TextureViewDescriptor::default()),
     );
 
