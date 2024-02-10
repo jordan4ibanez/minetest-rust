@@ -268,9 +268,9 @@ impl Mesh {
 /// This is primarily aimed at procedurally generated meshes, like map visual data.
 ///
 pub fn generate_mesh(
-  positions: &Vec<f32>,
-  texture_coordinates: &Vec<f32>,
-  colors: &Vec<f32>,
+  positions: &[f32],
+  texture_coordinates: &[f32],
+  colors: &[f32],
 ) -> Result<Mesh, String> {
   // We want to check all the data to ensure the logic is sound.
 
