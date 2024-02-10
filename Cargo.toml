@@ -21,11 +21,10 @@ dead_code = "allow"
 unused_variables = "allow"
 
 [lints.clippy]
-panicking_unwrap = "forbid"
-
 # These ones are REALLY annoying.
-# unwrap_used = "forbid"
-# get_unwrap = "forbid"
+unwrap_used = "warn"
+panicking_unwrap = "warn"
+get_unwrap = "warn"
 
 
 [dependencies]
