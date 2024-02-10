@@ -400,12 +400,14 @@ impl RenderEngine {
 
       // ! CHAIR
 
-      let chair_model = ModelLoader::load_model(
+      let chair_model = match ModelLoader::load_model(
         "./prototype_models/chair.obj",
         &new_render_engine.device,
         &new_render_engine.queue,
-      )
-      .unwrap();
+      ) {
+        Ok(chair) => chair,
+        Err(e) => panic!("RenderEngine: {}", e),
+      };
 
       new_render_engine.store_model(&chair_model.name.clone(), chair_model);
 
@@ -413,12 +415,14 @@ impl RenderEngine {
 
       // ! SNOWMAN
 
-      let snowman = ModelLoader::load_model(
+      let snowman = match ModelLoader::load_model(
         "./prototype_models/snowman.obj",
         &new_render_engine.device,
         &new_render_engine.queue,
-      )
-      .unwrap();
+      ) {
+        Ok(snowman) => snowman,
+        Err(e) => panic!("RenderEngine: {}", e),
+      };
 
       new_render_engine.store_model(&snowman.name.clone(), snowman);
 
