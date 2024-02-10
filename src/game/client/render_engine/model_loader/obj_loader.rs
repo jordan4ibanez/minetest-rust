@@ -107,7 +107,7 @@ impl ObjLoader {
 
       // Finally, make a mesh struct from the data! Hooray.
       let new_mesh = Mesh::new_from_existing(
-        &file_name,
+        file_name,
         vertex_buffer,
         index_buffer,
         model.mesh.indices.len() as u32,
