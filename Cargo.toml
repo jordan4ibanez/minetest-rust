@@ -23,8 +23,7 @@ unused_variables = "allow"
 [lints.clippy]
 # These ones are REALLY annoying.
 unwrap_used = "warn"
-panicking_unwrap = "warn"
-get_unwrap = "warn"
+panicking_unwrap = "forbid"
 
 
 [dependencies]
