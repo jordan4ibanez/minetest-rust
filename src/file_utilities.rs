@@ -37,14 +37,14 @@ fn panic_if_no_path(path: &str, read_to_type: &str) {
 ///
 /// Get the file name from the path provided.
 ///
-pub fn file_name_from_path(path: &str) -> String {
-  panic_if_no_path(path, "file name String");
-  Path::new(path)
-    .file_name()
-    .unwrap()
-    .to_str()
-    .unwrap()
-    .to_owned()
+pub fn file_name_from_path(path: &str) -> Result<String, &str> {
+  match Path::new(path).file_name() {
+    Some(os_str_name) => match os_str_name.to_str() {
+      Some(literal_name) => Ok(literal_name.to_owned()),
+      None => Err("Minetest: Failed to convert OsStr to str."),
+    },
+    None => Err("Minetest: Failed to parse OS Path str."),
+  }
 }
 
 ///
