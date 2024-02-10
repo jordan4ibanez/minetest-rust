@@ -33,7 +33,11 @@ pub struct ClientConnection {
 
 impl ClientConnection {
   pub fn new(address: String, port: i32) -> Self {
-    let remote_address = Self::get_socket(&address, port).to_remote_addr().unwrap();
+    let remote_address = match Self::get_socket(&address, port).to_remote_addr() {
+      Ok(address) => address,
+      Err(e) => panic!("ClientConnection: Socket get failure. {}", e),
+    };
+
     let transport_protocol = Transport::Udp;
 
     // todo: will need to be initialized by the gui component.
