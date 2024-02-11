@@ -49,20 +49,29 @@ impl WindowHandler {
     // We want to use wgpu as our rendering multiplexer, disable OpenGL.
     hint::set("SDL_VIDEO_EXTERNAL_CONTEXT", "1");
 
-    let sdl_context = sdl2::init().unwrap();
+    let sdl_context = match sdl2::init() {
+      Ok(sdl) => sdl,
+      Err(e) => panic!("WindowHandler: Failed to initialize SDL2. {}", e),
+    };
 
-    let video_subsystem = sdl_context.video().unwrap();
+    let video_subsystem = match sdl_context.video() {
+      Ok(subsystem) => subsystem,
+      Err(e) => panic!("WindowHandler: Failed to initialize video subsystem. {}", e),
+    };
 
     let size = UVec2::new(512, 512);
 
-    let window = video_subsystem
+    let window = match video_subsystem
       .window("minetest", size.x, size.y)
       .resizable()
       .position_centered()
       .allow_highdpi()
       .metal_view()
       .build()
-      .unwrap();
+    {
+      Ok(window) => window,
+      Err(e) => panic!("WindowBuilder: Failed to initialize window. {}", e),
+    };
 
     let mut new_window_handler = WindowHandler {
       sdl_context,
@@ -110,8 +119,10 @@ impl WindowHandler {
   /// Set the window title.
   ///
   pub fn set_title(&mut self, new_title: &str) {
-    // If something goes wrong, let it crash.
-    self.window.set_title(new_title).unwrap();
+    match self.window.set_title(new_title) {
+      Ok(_) => (),
+      Err(e) => panic!("WindowHandler: Failed to set title. {}", e),
+    }
   }
 
   ///
@@ -149,21 +160,33 @@ impl WindowHandler {
   /// Set the window to real fullscreen mode.
   ///
   pub fn set_fullscreen_real_mode(&mut self) {
-    self.window.set_fullscreen(FullscreenType::True).unwrap()
+    match self.window.set_fullscreen(FullscreenType::True) {
+      Ok(_) => (),
+      Err(e) => panic!("WindowHandler: Failed to set fullscreen real mode. {}", e),
+    }
   }
 
   ///
   /// Set the window to fake borderless fullscreen mode.
   ///
   pub fn set_fullscreen_borderless_mode(&mut self) {
-    self.window.set_fullscreen(FullscreenType::Desktop).unwrap()
+    match self.window.set_fullscreen(FullscreenType::Desktop) {
+      Ok(_) => (),
+      Err(e) => panic!(
+        "WindowHandler: Failed to set fullscreen borderless mode. {}",
+        e
+      ),
+    }
   }
 
   ///
   /// Set the window to normal windowed mode. (not fullscreen)
   ///
   pub fn set_windowed_mode(&mut self) {
-    self.window.set_fullscreen(FullscreenType::Off).unwrap()
+    match self.window.set_fullscreen(FullscreenType::Off) {
+      Ok(_) => (),
+      Err(e) => panic!("WindowHandler: Failed to set windoed mode. {}", e),
+    }
   }
 
   ///
@@ -215,37 +238,32 @@ impl WindowHandler {
     keyboard: &mut KeyboardController,
   ) {
     // Since SDL2 can poll anything, we need to ensure that we can actually utilize the sent scancode.
-    let scancode_result = match scancode_option {
-      Some(e) => Ok(e),
-      None => Err("minetest: severe error! User sent unknown scancode!"),
+    match scancode_option {
+      Some(scancode) => {
+        println!("TESTING: {}", scancode);
+
+        // And for now, when you press escape, the game simply exits.
+        if scancode == Scancode::Escape {
+          self.quit();
+        }
+        // ! TEMPORARY TESTING !
+        if scancode == Scancode::F5 && keyevent.is_down() {
+          self.toggle_mouse_capture(mouse)
+        }
+
+        // ! MAXIMIZE TESTING
+        if scancode == Scancode::F11 && keyevent.is_down() {
+          self.toggle_maximize();
+        }
+
+        keyboard.set_key(&scancode.to_string(), keyevent.is_down());
+      }
+
+      // If we can't use it, oops. Bail out.
+      None => {
+        error!("WindowHandler: User sent unknown scancode.");
+      }
     };
-
-    // If we can't use it, oops. Bail out.
-    if scancode_result.is_err() {
-      error!("{}", scancode_result.err().unwrap());
-      return;
-    }
-
-    // Now we know we can use it, hooray!
-    let scancode = scancode_result.unwrap();
-
-    println!("TESTING: {}", scancode);
-
-    // And for now, when you press escape, the game simply exits.
-    if scancode == Scancode::Escape {
-      self.quit();
-    }
-    // ! TEMPORARY TESTING !
-    if scancode == Scancode::F5 && keyevent.is_down() {
-      self.toggle_mouse_capture(mouse)
-    }
-
-    // ! MAXIMIZE TESTING
-    if scancode == Scancode::F11 && keyevent.is_down() {
-      self.toggle_maximize();
-    }
-
-    keyboard.set_key(&scancode.to_string(), keyevent.is_down());
   }
 
   ///
