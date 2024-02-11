@@ -143,7 +143,7 @@ impl RenderEngine {
 
     let adapter = match adapter_option {
       Some(new_adapter) => new_adapter,
-      None => panic!("minetest: no graphics adapter found!"),
+      None => panic!("RenderEngine: no graphics adapter found!"),
     };
 
     // We must block the main thread while this completes or things can go crazy.

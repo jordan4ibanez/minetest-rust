@@ -330,14 +330,14 @@ impl WindowHandler {
   ///
   fn handle_window_event(&mut self, win_event: WindowEvent) {
     match win_event {
-      WindowEvent::None => println!("minetest: window: event none"),
-      WindowEvent::Shown => println!("minetest: window: event shown"),
-      WindowEvent::Hidden => println!("minetest: window: event hidden"),
-      WindowEvent::Exposed => println!("minetest: window: event exposed"),
-      WindowEvent::Moved(x, y) => println!("minetest: window: event moved | x: {} | y: {} |", x, y),
+      WindowEvent::None => println!("WindowHandler window: event none"),
+      WindowEvent::Shown => println!("WindowHandler window: event shown"),
+      WindowEvent::Hidden => println!("WindowHandler window: event hidden"),
+      WindowEvent::Exposed => println!("WindowHandler window: event exposed"),
+      WindowEvent::Moved(x, y) => println!("WindowHandler window: event moved | x: {} | y: {} |", x, y),
       WindowEvent::Resized(width, height) => {
         println!(
-          "minetest: window: event resized | width: {} | height: {} |",
+          "WindowHandler window: event resized | width: {} | height: {} |",
           width, height
         );
 
@@ -345,27 +345,27 @@ impl WindowHandler {
       }
       WindowEvent::SizeChanged(width, height) => {
         println!(
-          "minetest: window: event size changed | width: {} | height: {} |",
+          "WindowHandler window: event size changed | width: {} | height: {} |",
           width, height
         );
         self.update_size(width, height);
       }
-      WindowEvent::Minimized => println!("minetest: window: event minimized"),
-      WindowEvent::Maximized => println!("minetest: window: event maximized"),
-      WindowEvent::Restored => println!("minetest: window: event restored"),
-      WindowEvent::Enter => println!("minetest: window: event enter"),
-      WindowEvent::Leave => println!("minetest: window: event leave"),
-      WindowEvent::FocusGained => println!("minetest: window: event focus gained"),
-      WindowEvent::FocusLost => println!("minetest: window: event focus lost"),
+      WindowEvent::Minimized => println!("WindowHandler window: event minimized"),
+      WindowEvent::Maximized => println!("WindowHandler window: event maximized"),
+      WindowEvent::Restored => println!("WindowHandler window: event restored"),
+      WindowEvent::Enter => println!("WindowHandler window: event enter"),
+      WindowEvent::Leave => println!("WindowHandler window: event leave"),
+      WindowEvent::FocusGained => println!("WindowHandler window: event focus gained"),
+      WindowEvent::FocusLost => println!("WindowHandler window: event focus lost"),
       WindowEvent::Close => {
-        println!("minetest: window: event close");
+        println!("WindowHandler window: event close");
         self.quit();
       }
-      WindowEvent::TakeFocus => println!("minetest: window: event take focus"),
-      WindowEvent::HitTest => println!("minetest: window: event hit test"),
-      WindowEvent::ICCProfChanged => println!("minetest: window: event icc prof changed"),
+      WindowEvent::TakeFocus => println!("WindowHandler window: event take focus"),
+      WindowEvent::HitTest => println!("WindowHandler window: event hit test"),
+      WindowEvent::ICCProfChanged => println!("WindowHandler window: event icc prof changed"),
       WindowEvent::DisplayChanged(display_id) => println!(
-        "minetest: window: event display changed | display_id: {} |",
+        "WindowHandler window: event display changed | display_id: {} |",
         display_id
       ),
     }

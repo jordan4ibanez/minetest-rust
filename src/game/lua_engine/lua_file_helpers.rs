@@ -209,35 +209,35 @@ pub fn get_game_mod_folders(games_dir: &str, game_name: &str) -> Vec<ModDirector
 ///
 pub fn check_game(games_dir: &str, game_name: &str) {
   if !check_games_folder(games_dir) {
-    panic!("minetest: games folder [{}] does not exist.", games_dir);
+    panic!("LuaHelpers: games folder [{}] does not exist.", games_dir);
   }
 
   if !game_exists(games_dir, game_name) {
-    panic!("minetest: game [{}] does not exist!", game_name);
+    panic!("LuaHelpers: game [{}] does not exist!", game_name);
   }
 
   if !game_mods_folder_exists(games_dir, game_name) {
     panic!(
-      "minetest: game [{}] does not have a mods folder!",
+      "LuaHelpers: game [{}] does not have a mods folder!",
       game_name
     );
   }
 
   if !game_has_conf_file(games_dir, game_name) {
     panic!(
-      "minetest: game [{}] does not have a mod.conf file!",
+      "LuaHelpers: game [{}] does not have a mod.conf file!",
       game_name
     );
   }
 
   if !game_has_mods(games_dir, game_name) {
-    panic!("minetest: game [{}] does not have any mods!", game_name);
+    panic!("LuaHelpers: game [{}] does not have any mods!", game_name);
   }
 
   match game_mods_have_main_and_conf(games_dir, game_name) {
     Ok(_) => (),
     Err(check_game_error) => panic!(
-      "minetest: mod [{}] in game [{}] has no [{}]!",
+      "LuaHelpers: mod [{}] in game [{}] has no [{}]!",
       check_game_error.mod_name, game_name, check_game_error.conf_or_main
     ),
   }
