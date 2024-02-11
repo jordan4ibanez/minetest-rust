@@ -99,8 +99,6 @@ fn game_has_mods(games_dir: &str, game_name: &str) -> bool {
 
   let mut folder_counter = 0;
   for folder_result in folders {
-    // We could chain these unwraps to tell the user they don't have access.
-    // Use a match if this is decided upon.
     match folder_result {
       Ok(folder) => match folder.file_type() {
         Ok(file_type) => {
