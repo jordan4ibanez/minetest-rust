@@ -67,8 +67,6 @@ pub fn read_file_to_string(path: &str) -> Result<String, String> {
     Ok(data) => Ok(data),
     Err(e) => Err(format!("Path to String read failure. {}", e)),
   }
-
-  //.parse().unwrap()
 }
 
 ///
