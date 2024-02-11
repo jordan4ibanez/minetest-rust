@@ -184,24 +184,26 @@ impl Mesh {
   /// Grab the wgpu vertex buffer for rendering.
   ///
   pub fn get_wgpu_vertex_buffer(&self) -> &wgpu::Buffer {
-    self.vertex_buffer.as_ref().unwrap_or_else(|| {
-      panic!(
+    match self.vertex_buffer.as_ref() {
+      Some(vertex_buffer) => vertex_buffer,
+      None => panic!(
         "Mesh: vertex buffer was never attached for Mesh [{}].",
         self.name
-      )
-    })
+      ),
+    }
   }
 
   ///
   /// Grab the wgpu index buffer for rendering.
   ///
   pub fn get_wgpu_index_buffer(&self) -> &wgpu::Buffer {
-    self.index_buffer.as_ref().unwrap_or_else(|| {
-      panic!(
+    match self.index_buffer.as_ref() {
+      Some(index_buffer) => index_buffer,
+      None => panic!(
         "Mesh: index buffer was never attached for Mesh [{}].",
         self.name
-      )
-    })
+      ),
+    }
   }
 
   ///
@@ -319,8 +321,6 @@ pub fn generate_mesh(
 
   // Can use one range iterator, they are all supposed to be equal.
   for i in 0..positions_components {
-    // todo Instead of unwrapping this in the future, we should match.
-
     let position_base_offset = i * POSITION_COMPONENTS;
 
     let position_slice: [f32; POSITION_COMPONENTS] = positions
