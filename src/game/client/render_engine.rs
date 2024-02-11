@@ -191,13 +191,16 @@ impl RenderEngine {
     let surface_caps = surface.get_capabilities(&adapter);
 
     // And the surface format.
-    let surface_format = surface_caps
+    let surface_format = match surface_caps
       .formats
       .iter()
       .copied()
       // This may not be thorough enough to get the format we want.
       .find(|f| f.is_srgb())
-      .unwrap_or(surface_caps.formats[0]);
+    {
+      Some(found_surface) => found_surface,
+      None => surface_caps.formats[0],
+    };
 
     // Need to get the window size to configure the surface.
     let (width, height) = window_handler.borrow_window().size();
@@ -1338,10 +1341,10 @@ impl RenderEngine {
   /// Will panic if it doesn't exist.
   ///
   pub fn get_mesh_id(&self, name: &str) -> u64 {
-    *self
-      .mesh_name_to_id
-      .get(name)
-      .unwrap_or_else(|| panic!("RenderEngine: Mesh [{}] does not exist!", name))
+    match self.mesh_name_to_id.get(name) {
+      Some(found_mesh_id) => *found_mesh_id,
+      None => panic!("RenderEngine: Mesh [{}] does not exist!", name),
+    }
   }
 
   ///
@@ -1350,10 +1353,10 @@ impl RenderEngine {
   /// Will panic if it doesn't exist.
   ///
   pub fn get_model_id(&self, name: &str) -> u64 {
-    *self
-      .model_name_to_id
-      .get(name)
-      .unwrap_or_else(|| panic!("RenderEngine: Model [{}] does not exist!", name))
+    match self.model_name_to_id.get(name) {
+      Some(found_model_id) => *found_model_id,
+      None => panic!("RenderEngine: Model [{}] does not exist!", name),
+    }
   }
 
   ///
@@ -1362,10 +1365,10 @@ impl RenderEngine {
   /// Will panic if it doesn't exist.
   ///
   pub fn get_texture_id(&self, name: &str) -> u64 {
-    *self
-      .texture_name_to_id
-      .get(name)
-      .unwrap_or_else(|| panic!("RenderEngine: Texture [{}] does not exist!", name))
+    match self.texture_name_to_id.get(name) {
+      Some(found_texture_id) => *found_texture_id,
+      None => panic!("RenderEngine: Texture [{}] does not exist!", name),
+    }
   }
 
   ///
