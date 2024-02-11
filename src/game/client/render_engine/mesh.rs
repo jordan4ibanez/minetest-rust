@@ -323,25 +323,32 @@ pub fn generate_mesh(
   for i in 0..positions_components {
     let position_base_offset = i * POSITION_COMPONENTS;
 
-    let position_slice: [f32; POSITION_COMPONENTS] = positions
+    let position_slice: [f32; POSITION_COMPONENTS] = match positions
       [position_base_offset..position_base_offset + POSITION_COMPONENTS]
       .try_into()
-      .expect("Mesh: Failed to convert position data.");
+    {
+      Ok(slice) => slice,
+      Err(e) => panic!("Mesh: Failed to convert position data. {}", e),
+    };
 
     let texture_coordinates_base_offset = i * TEXTURE_COORDINATE_COMPONENTS;
 
-    let texture_coordinates_slice: [f32; TEXTURE_COORDINATE_COMPONENTS] = texture_coordinates
+    let texture_coordinates_slice: [f32; TEXTURE_COORDINATE_COMPONENTS] = match texture_coordinates
       [texture_coordinates_base_offset
         ..texture_coordinates_base_offset + TEXTURE_COORDINATE_COMPONENTS]
       .try_into()
-      .expect("Mesh: Failed to convert texture coordinate data.");
+    {
+      Ok(slice) => slice,
+      Err(e) => panic!("Mesh: Failed to convert texture coordinate data. {}", e),
+    };
 
     let color_base_offset = i * COLOR_COMPONENTS;
 
-    let color_slice: [f32; COLOR_COMPONENTS] = colors
-      [color_base_offset..color_base_offset + COLOR_COMPONENTS]
-      .try_into()
-      .expect("Mesh: Failed to convert color data.");
+    let color_slice: [f32; COLOR_COMPONENTS] =
+      match colors[color_base_offset..color_base_offset + COLOR_COMPONENTS].try_into() {
+        Ok(slice) => slice,
+        Err(e) => panic!("Mesh: Failed to convert color data. {}", e),
+      };
 
     mesh.push_vertex(Vertex {
       position: position_slice,
@@ -373,7 +380,13 @@ mod tests {
       let colors = vec![3.0, 4.0, 5.0];
       let test_mesh = generate_mesh(&positions, &texture_coordinates, &colors);
       assert!(test_mesh.is_ok());
-      println!("{:?}", test_mesh.expect("Unit test is broken."));
+      println!(
+        "{:?}",
+        match test_mesh {
+          Ok(good) => good,
+          Err(e) => panic!("Unit test is broken. {}", e),
+        }
+      );
     }
 
     {
@@ -382,7 +395,13 @@ mod tests {
       let colors = vec![7.0, 8.0, 9.0, 10.0, 11.0, 12.0];
       let test_mesh = generate_mesh(&positions, &texture_coordinates, &colors);
       assert!(test_mesh.is_ok());
-      println!("{:?}", test_mesh.expect("Unit test is broken."));
+      println!(
+        "{:?}",
+        match test_mesh {
+          Ok(good) => good,
+          Err(e) => panic!("Unit test is broken. {}", e),
+        }
+      );
     }
   }
 
