@@ -588,7 +588,10 @@ impl RenderEngine {
   ///
   /// Processes the next available render call in the Mesh queue.
   ///
-  fn process_not_instanced_mesh_render_call(&mut self) {
+  fn process_not_instanced_mesh_render_call(
+    &mut self,
+    not_instanced_mesh_render_call: MeshRenderCall,
+  ) {
     let command_encoder = match self.command_encoder.as_mut() {
       Some(encoder) => encoder,
       None => panic!("RenderEngine: Attempted to process not instanced mesh render call without command encoder."),
@@ -658,13 +661,11 @@ impl RenderEngine {
     // Disable instancing in shader.
     self.instance_trigger.trigger_off(&self.queue);
 
-    let not_instanced_render_call = self.mesh_render_queue.pop_front().unwrap();
-
-    let mesh_id = not_instanced_render_call.get_mesh_id();
+    let mesh_id = not_instanced_mesh_render_call.get_mesh_id();
 
     match self.meshes.get(&mesh_id) {
       Some(mesh) => {
-        let texture_id = not_instanced_render_call.get_texture_id();
+        let texture_id = not_instanced_mesh_render_call.get_texture_id();
 
         match self.textures.get(&texture_id) {
           Some(texture) => {
@@ -673,13 +674,13 @@ impl RenderEngine {
 
             self
               .mesh_trs_uniform
-              .set_translation(not_instanced_render_call.get_translation());
+              .set_translation(not_instanced_mesh_render_call.get_translation());
             self
               .mesh_trs_uniform
-              .set_rotation(not_instanced_render_call.get_rotation());
+              .set_rotation(not_instanced_mesh_render_call.get_rotation());
             self
               .mesh_trs_uniform
-              .set_scale(not_instanced_render_call.get_scale());
+              .set_scale(not_instanced_mesh_render_call.get_scale());
 
             self
               .mesh_trs_uniform
@@ -688,7 +689,12 @@ impl RenderEngine {
             // Now we're going to bind the pipeline to the Mesh and draw it.
 
             render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
-            render_pass.set_vertex_buffer(1, self.instance_buffer.as_ref().unwrap().slice(..));
+
+            let instance_buffer = match self.instance_buffer.as_ref() {
+              Some(buffer) => buffer,
+              None => panic!("RenderEngine: Attempted to render Mesh with no instance buffer."),
+            };
+            render_pass.set_vertex_buffer(1, instance_buffer.slice(..));
 
             render_pass.set_index_buffer(
               mesh.get_wgpu_index_buffer().slice(..),
@@ -714,9 +720,9 @@ impl RenderEngine {
   /// Process and run all Mesh render calls.
   ///
   fn process_not_instanced_mesh_render_calls(&mut self) {
-    while !self.mesh_render_queue.is_empty() {
+    while let Some(not_instanced_mesh_render_call) = self.mesh_render_queue.pop_front() {
       self.initialize_render();
-      self.process_not_instanced_mesh_render_call();
+      self.process_not_instanced_mesh_render_call(not_instanced_mesh_render_call);
       self.submit_render();
     }
   }
@@ -724,40 +730,60 @@ impl RenderEngine {
   ///
   /// Processes the next available render call in the Model queue.
   ///
-  fn process_not_instanced_model_render_call(&mut self) {
+  fn process_not_instanced_model_render_call(
+    &mut self,
+    not_instanced_model_render_call: ModelRenderCall,
+  ) {
     // * Begin not instanced render calls. [MODEL]
     // ? note: if you can find a way to draw all this in one render pass, open a PR immediately.
+
+    let command_encoder = match self.command_encoder.as_mut() {
+      Some(encoder) => encoder,
+      None => panic!(
+        "RenderEngine: Tried to process not instanced Model render call without a command encoder."
+      ),
+    };
+
+    let texture_view = match self.texture_view.as_ref() {
+      Some(view) => view,
+      None => {
+        panic!("RenderEngine: Attempted to not instanced Model render call without texture view.")
+      }
+    };
+
+    let depth_buffer = match self.depth_buffer.as_ref() {
+      Some(buffer) => buffer,
+      None => {
+        panic!("RenderEngine: Attempted to not instanced Model render call without depth buffer.")
+      }
+    };
+
     // Begin a wgpu render pass
-    let mut render_pass =
-      self
-        .command_encoder
-        .as_mut()
-        .unwrap()
-        .begin_render_pass(&wgpu::RenderPassDescriptor {
-          // The label of this render pass.
-          label: Some("minetest_not_instanced_model_render_pass"),
+    let mut render_pass = command_encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+      // The label of this render pass.
+      label: Some("minetest_not_instanced_model_render_pass"),
 
-          // color attachments is a array of pipeline render pass color attachments.
-          color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-            view: self.texture_view.as_ref().unwrap(),
-            resolve_target: None,
-            ops: wgpu::Operations {
-              load: wgpu::LoadOp::Load,
-              store: wgpu::StoreOp::Store,
-            },
-          })],
+      // color attachments is a array of pipeline render pass color attachments.
+      color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+        view: texture_view,
+        resolve_target: None,
+        ops: wgpu::Operations {
+          load: wgpu::LoadOp::Load,
+          store: wgpu::StoreOp::Store,
+        },
+      })],
 
-          depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
-            view: self.depth_buffer.as_ref().unwrap().get_view(),
-            depth_ops: Some(wgpu::Operations {
-              load: wgpu::LoadOp::Load,
-              store: wgpu::StoreOp::Store,
-            }),
-            stencil_ops: None,
-          }),
-          occlusion_query_set: None,
-          timestamp_writes: None,
-        });
+      depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+        view: depth_buffer.get_view(),
+        depth_ops: Some(wgpu::Operations {
+          load: wgpu::LoadOp::Load,
+          store: wgpu::StoreOp::Store,
+        }),
+        stencil_ops: None,
+      }),
+      occlusion_query_set: None,
+      timestamp_writes: None,
+    });
 
     render_pass.set_pipeline(&self.render_pipeline);
 
@@ -778,14 +804,12 @@ impl RenderEngine {
       },
     ));
 
-    let not_instanced_render_call = self.model_render_queue.pop_front().unwrap();
-
-    let mesh_id = not_instanced_render_call.get_model_id();
+    let mesh_id = not_instanced_model_render_call.get_model_id();
 
     match self.models.get(&mesh_id) {
       Some(model) => {
         let meshes = &model.meshes;
-        let texture_ids = not_instanced_render_call.get_texture_ids();
+        let texture_ids = not_instanced_model_render_call.get_texture_ids();
 
         // todo: in the future make this just insert some default texture.
         let meshes_length = meshes.len();
@@ -808,13 +832,13 @@ impl RenderEngine {
 
               self
                 .mesh_trs_uniform
-                .set_translation(not_instanced_render_call.get_translation());
+                .set_translation(not_instanced_model_render_call.get_translation());
               self
                 .mesh_trs_uniform
-                .set_rotation(not_instanced_render_call.get_rotation());
+                .set_rotation(not_instanced_model_render_call.get_rotation());
               self
                 .mesh_trs_uniform
-                .set_scale(not_instanced_render_call.get_scale());
+                .set_scale(not_instanced_model_render_call.get_scale());
 
               self
                 .mesh_trs_uniform
@@ -823,7 +847,13 @@ impl RenderEngine {
               // Now we're going to bind the pipeline to the Mesh and draw it.
 
               render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
-              render_pass.set_vertex_buffer(1, self.instance_buffer.as_ref().unwrap().slice(..));
+
+              let instance_buffer = match self.instance_buffer.as_ref() {
+                Some(buffer) => buffer,
+                None => panic!("RenderEngine: Attempted to render Model with no instance buffer."),
+              };
+
+              render_pass.set_vertex_buffer(1, instance_buffer.slice(..));
 
               render_pass.set_index_buffer(
                 mesh.get_wgpu_index_buffer().slice(..),
@@ -850,9 +880,9 @@ impl RenderEngine {
   /// Process and run all not instanced Model render calls.
   ///
   fn process_not_instanced_model_render_calls(&mut self) {
-    while !self.model_render_queue.is_empty() {
+    while let Some(model_not_instanced_render_call) = self.model_render_queue.pop_front() {
       self.initialize_render();
-      self.process_not_instanced_model_render_call();
+      self.process_not_instanced_model_render_call(model_not_instanced_render_call);
       self.submit_render();
     }
   }
@@ -875,56 +905,62 @@ impl RenderEngine {
     &mut self,
     mesh_id: u64,
     texture_id: u64,
-    instance_data: &Vec<InstanceMatrixRGBA>,
+    instance_data: &[InstanceMatrixRGBA],
   ) {
-    // Do 4 very basic checks before attempting to render.
-    if self.output.is_none() {
-      panic!("RenderEngine: attempted to render with no output!");
-    }
+    let command_encoder = match self.command_encoder.as_mut() {
+      Some(encoder) => encoder,
+      None => panic!(
+        "RenderEngine: Tried to process instanced Mesh render call without a command encoder."
+      ),
+    };
 
-    if self.command_encoder.is_none() {
-      panic!("RenderEngine: attempted render with no command encoder!");
-    }
+    let texture_view = match self.texture_view.as_ref() {
+      Some(view) => view,
+      None => {
+        panic!("RenderEngine: Attempted to instanced Mesh render call without texture view.")
+      }
+    };
 
-    if self.texture_view.is_none() {
-      panic!("RenderEngine: attempted to render with no texture view!");
-    }
+    let depth_buffer = match self.depth_buffer.as_ref() {
+      Some(buffer) => buffer,
+      None => {
+        panic!("RenderEngine: Attempted to instanced Mesh render call without depth buffer.")
+      }
+    };
 
-    if self.depth_buffer.is_none() {
-      panic!("RenderEngine: attempted to render with no depth buffer!");
-    }
+    let command_encoder = match self.command_encoder.as_mut() {
+      Some(encoder) => encoder,
+      None => panic!(
+        "RenderEngine: Tried to process instanced Mesh render call without a command encoder."
+      ),
+    };
 
     // Begin a wgpu render pass
-    let mut render_pass =
-      self
-        .command_encoder
-        .as_mut()
-        .unwrap()
-        .begin_render_pass(&wgpu::RenderPassDescriptor {
-          // The label of this render pass.
-          label: Some("minetest_instanced_mesh_render_pass"),
+    let mut render_pass = command_encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+      // The label of this render pass.
+      label: Some("minetest_instanced_mesh_render_pass"),
 
-          // color attachments is a array of pipeline render pass color attachments.
-          color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-            view: self.texture_view.as_ref().unwrap(),
-            resolve_target: None,
-            ops: wgpu::Operations {
-              load: wgpu::LoadOp::Load,
-              store: wgpu::StoreOp::Store,
-            },
-          })],
+      // color attachments is a array of pipeline render pass color attachments.
+      color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+        view: texture_view,
+        resolve_target: None,
+        ops: wgpu::Operations {
+          load: wgpu::LoadOp::Load,
+          store: wgpu::StoreOp::Store,
+        },
+      })],
 
-          depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
-            view: self.depth_buffer.as_ref().unwrap().get_view(),
-            depth_ops: Some(wgpu::Operations {
-              load: wgpu::LoadOp::Load,
-              store: wgpu::StoreOp::Store,
-            }),
-            stencil_ops: None,
-          }),
-          occlusion_query_set: None,
-          timestamp_writes: None,
-        });
+      depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+        view: depth_buffer.get_view(),
+        depth_ops: Some(wgpu::Operations {
+          load: wgpu::LoadOp::Load,
+          store: wgpu::StoreOp::Store,
+        }),
+        stencil_ops: None,
+      }),
+      occlusion_query_set: None,
+      timestamp_writes: None,
+    });
 
     render_pass.set_pipeline(&self.render_pipeline);
 
@@ -960,7 +996,13 @@ impl RenderEngine {
               .build_mesh_projection_matrix(&self.device, &self.queue);
 
             render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
-            render_pass.set_vertex_buffer(1, self.instance_buffer.as_ref().unwrap().slice(..));
+
+            let instance_buffer = match self.instance_buffer.as_ref() {
+              Some(buffer) => buffer,
+              None => panic!("RenderEngine: Attempted to render Mesh with no instance buffer."),
+            };
+
+            render_pass.set_vertex_buffer(1, instance_buffer.slice(..));
 
             render_pass.set_index_buffer(
               mesh.get_wgpu_index_buffer().slice(..),
@@ -1028,56 +1070,55 @@ impl RenderEngine {
     &mut self,
     model_id: u64,
     texture_ids: &[u64],
-    instance_data: &Vec<InstanceMatrixRGBA>,
+    instance_data: &[InstanceMatrixRGBA],
   ) {
-    // Do 4 very basic checks before attempting to render.
-    if self.output.is_none() {
-      panic!("RenderEngine: attempted to render with no output!");
-    }
+    let command_encoder = match self.command_encoder.as_mut() {
+      Some(encoder) => encoder,
+      None => panic!(
+        "RenderEngine: Tried to process instanced Model render call without a command encoder."
+      ),
+    };
 
-    if self.command_encoder.is_none() {
-      panic!("RenderEngine: attempted render with no command encoder!");
-    }
+    let texture_view = match self.texture_view.as_ref() {
+      Some(view) => view,
+      None => {
+        panic!("RenderEngine: Attempted to instanced Model render call without texture view.")
+      }
+    };
 
-    if self.texture_view.is_none() {
-      panic!("RenderEngine: attempted to render with no texture view!");
-    }
-
-    if self.depth_buffer.is_none() {
-      panic!("RenderEngine: attempted to render with no depth buffer!");
-    }
+    let depth_buffer = match self.depth_buffer.as_ref() {
+      Some(buffer) => buffer,
+      None => {
+        panic!("RenderEngine: Attempted to instanced Model render call without depth buffer.")
+      }
+    };
 
     // Begin a wgpu render pass
-    let mut render_pass =
-      self
-        .command_encoder
-        .as_mut()
-        .unwrap()
-        .begin_render_pass(&wgpu::RenderPassDescriptor {
-          // The label of this render pass.
-          label: Some("minetest_instanced_model_render_pass"),
+    let mut render_pass = command_encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+      // The label of this render pass.
+      label: Some("minetest_instanced_model_render_pass"),
 
-          // color attachments is a array of pipeline render pass color attachments.
-          color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-            view: self.texture_view.as_ref().unwrap(),
-            resolve_target: None,
-            ops: wgpu::Operations {
-              load: wgpu::LoadOp::Load,
-              store: wgpu::StoreOp::Store,
-            },
-          })],
+      // color attachments is a array of pipeline render pass color attachments.
+      color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+        view: texture_view,
+        resolve_target: None,
+        ops: wgpu::Operations {
+          load: wgpu::LoadOp::Load,
+          store: wgpu::StoreOp::Store,
+        },
+      })],
 
-          depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
-            view: self.depth_buffer.as_ref().unwrap().get_view(),
-            depth_ops: Some(wgpu::Operations {
-              load: wgpu::LoadOp::Load,
-              store: wgpu::StoreOp::Store,
-            }),
-            stencil_ops: None,
-          }),
-          occlusion_query_set: None,
-          timestamp_writes: None,
-        });
+      depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+        view: depth_buffer.get_view(),
+        depth_ops: Some(wgpu::Operations {
+          load: wgpu::LoadOp::Load,
+          store: wgpu::StoreOp::Store,
+        }),
+        stencil_ops: None,
+      }),
+      occlusion_query_set: None,
+      timestamp_writes: None,
+    });
 
     render_pass.set_pipeline(&self.render_pipeline);
 
@@ -1100,7 +1141,7 @@ impl RenderEngine {
         let textures_length = texture_ids.len();
 
         if meshes_length != textures_length {
-          error!("RenderEngine: Attempted not instanced render on model [{}] with unmatched texture to model buffers.
+          error!("RenderEngine: Attempted not instanced render on Model [{}] with unmatched texture to Model buffers.
           Required: [{}]
           Received: [{}]", model.name, meshes_length, textures_length);
 
@@ -1130,7 +1171,13 @@ impl RenderEngine {
                 .build_mesh_projection_matrix(&self.device, &self.queue);
 
               render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
-              render_pass.set_vertex_buffer(1, self.instance_buffer.as_ref().unwrap().slice(..));
+
+              let instance_buffer = match self.instance_buffer.as_ref() {
+                Some(buffer) => buffer,
+                None => panic!("RenderEngine: Attempted to render Model with no instance buffer."),
+              };
+
+              render_pass.set_vertex_buffer(1, instance_buffer.slice(..));
 
               render_pass.set_index_buffer(
                 mesh.get_wgpu_index_buffer().slice(..),
@@ -1195,13 +1242,16 @@ impl RenderEngine {
   fn submit_render(&mut self) {
     // Let's swap the command encoder out into a local variable.
     // It has now become flushed into None.
-    let mut final_encoder: Option<CommandEncoder> = None;
+    let mut final_encoder_option: Option<CommandEncoder> = None;
 
-    swap(&mut final_encoder, &mut self.command_encoder);
+    swap(&mut final_encoder_option, &mut self.command_encoder);
 
-    self
-      .queue
-      .submit(iter::once(final_encoder.unwrap().finish()));
+    let final_encoder = match final_encoder_option {
+      Some(encoder) => encoder,
+      None => panic!("RenderEngine: Tried to submit render with no command encoder."),
+    };
+
+    self.queue.submit(iter::once(final_encoder.finish()));
   }
 
   ///
@@ -1214,11 +1264,16 @@ impl RenderEngine {
   pub fn show_and_destroy_frame_buffer(&mut self) {
     // Next we simply swap the surface out into a local variable. We've just flushed the surface out into None.
 
-    let mut final_output: Option<SurfaceTexture> = None;
+    let mut final_output_option: Option<SurfaceTexture> = None;
 
-    swap(&mut final_output, &mut self.output);
+    swap(&mut final_output_option, &mut self.output);
 
-    final_output.unwrap().present();
+    let final_output = match final_output_option {
+      Some(output) => output,
+      None => panic!("RenderEngine: Attempted to show a framebuffer that doesn't exist."),
+    };
+
+    final_output.present();
 
     // Destroy the depth buffer.
     self.depth_buffer = None;
