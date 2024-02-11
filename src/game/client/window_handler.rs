@@ -377,10 +377,13 @@ impl WindowHandler {
     mouse: &mut MouseController,
     keyboard: &mut KeyboardController,
   ) {
-    let mut event_pump = self
-      .sdl_context
-      .event_pump()
-      .expect("minetest: SDL2 context has randomly dissappeared!");
+    let mut event_pump = match self.sdl_context.event_pump() {
+      Ok(event_pump) => event_pump,
+      Err(e) => panic!(
+        "WindowHandler: SDL2 context has randomly dissappeared! {}",
+        e
+      ),
+    };
 
     // poll_iter is going to keep calling poll_event until there are no more events. It's easy mode. :)
     for event in event_pump.poll_iter() {
