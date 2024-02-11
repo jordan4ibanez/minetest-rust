@@ -54,7 +54,7 @@ impl ClientConnection {
       Ok((end_point, local_address)) => {
         // UDP is connectionless, but it's still good to know it's working.
         println!(
-          "minetest: established connection to server at id [{}], local address [{}]",
+          "ClientConnection: established connection to server at id [{}], local address [{}]",
           end_point, local_address
         );
         (end_point, local_address)
@@ -139,19 +139,19 @@ impl ClientConnection {
       let receieved_string = match String::from_utf8(raw_message) {
         Ok(new_string) => new_string,
         Err(_) => {
-          println!("minetest: message buffer attack detected, bailing on deserialization!");
+          println!("ClientConnection: message buffer attack detected, bailing on deserialization!");
           "".to_string()
         }
       };
 
       match receieved_string.as_str() {
-        "hi" => println!("minetest: The server says hi."),
+        "hi" => println!("ClientConnection: The server says hi."),
         "MINETEST_HAND_SHAKE_CONFIRMED" => {
           // Received handshake with the server.
           if !self.connected {
             self.connected = true;
             self.handshake_timeout = 0.0;
-            println!("minetest: ClientConnection received handshake from ServerConnection.");
+            println!("ClientConnection: ClientConnection received handshake from ServerConnection.");
           }
 
           // ! Do not enable this unless you want the server to
@@ -159,7 +159,7 @@ impl ClientConnection {
           // self.send_data(end_point, "MINETEST_SHUT_DOWN_REQUEST");
         }
         "MINETEST_PING_CONFIRMATION" => {
-          println!("minetest: ClientConnection ping received from ServerConnection.");
+          println!("ClientConnection: ClientConnection ping received from ServerConnection.");
           self.ping_timeout = 0.0;
           self.ping_waiting_receive = false;
           self.ping_resend_delta = 0.0;
@@ -181,7 +181,7 @@ impl ClientConnection {
       // 3 second timeout.
       // todo: make this not a panic.
       if self.handshake_timeout >= 3.0 {
-        panic!("minetest: ClientConnection attempt to connect to server timed out.")
+        panic!("ClientConnection: ClientConnection attempt to connect to server timed out.")
       }
     }
   }
@@ -199,7 +199,7 @@ impl ClientConnection {
         // 3 second timeout.
         // todo: make this not a panic.
         if self.ping_timeout >= 3.0 {
-          panic!("minetest: ClientConnection connection to server timed out.")
+          panic!("ClientConnection: ClientConnection connection to server timed out.")
         }
       } else {
         // Wait 3 seconds before pinging the server again.
