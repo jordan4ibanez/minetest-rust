@@ -129,8 +129,12 @@ impl Game {
     // Automatically elegantly stops the game when CTRL+C is hit or user terminates the process.
 
     let run_clone = new_game.should_close.clone();
-    let _ = ctrlc::set_handler(move || {
-      *run_clone.deref().write().unwrap() = true;
+    let _ = ctrlc::set_handler(move || match run_clone.deref().write() {
+      Ok(mut rw_lock) => {
+        *rw_lock = true;
+        println!("Minetest: Termination signal received. Exiting elegantly.");
+      }
+      Err(e) => panic!("Minetest: Failed to exit process elegantly. {}", e),
     });
 
     new_game
@@ -161,7 +165,7 @@ impl Game {
 
   ///
   /// Update the games' target FPS.
-  ///! Only has side effects if this is a client/singleplayer.
+  /// ! Only has side effects if this is a client/singleplayer.
   ///  
   pub fn set_frame_rate_target(&mut self, new_frames_per_second_goal: f64) {
     // This will silently kick the actual worker function on.
@@ -173,7 +177,7 @@ impl Game {
 
   ///
   /// Update the games' target TPS.
-  ///! Only has side effects if this is a server.
+  /// ! Only has side effects if this is a server.
   ///  
   pub fn set_tick_rate_target(&mut self, new_ticks_per_second_goal: f64) {
     // This will silently kick the actual worker function on.
@@ -189,7 +193,13 @@ impl Game {
   /// ! This shouldn't be used for anything but testing!
   ///
   pub fn shutdown_game(&mut self) {
-    *self.should_close.deref().write().unwrap() = true;
+    match self.should_close.deref().write() {
+      Ok(mut rw_lock) => {
+        *rw_lock = true;
+        println!("Minetest: Shutdown signal received.");
+      }
+      Err(e) => panic!("Minetest: Failed to shutdown. {}", e),
+    }
   }
 
   ///
@@ -260,8 +270,16 @@ impl Game {
   /// This is the actual entry point for the game.
   ///
   pub fn enter_main_loop(&mut self) {
-    while !*self.should_close.deref().read().unwrap() {
+    loop {
       self.main();
+      match self.should_close.deref().read() {
+        Ok(should_close) => {
+          if *should_close {
+            break;
+          }
+        }
+        Err(e) => panic!("Minetest: Failed to enter main loop. {}", e),
+      }
     }
   }
 }
