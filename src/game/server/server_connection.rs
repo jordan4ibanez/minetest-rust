@@ -28,11 +28,16 @@ pub struct ServerConnection {
 
 impl ServerConnection {
   pub fn new(address: String, port: i32) -> Self {
-    let socket_address = Self::get_socket(&address, port)
-      .to_socket_addrs()
-      .unwrap()
-      .next()
-      .unwrap();
+    let socket_address = match Self::get_socket(&address, port).to_socket_addrs() {
+      Ok(mut iter) => match iter.next() {
+        Some(socket_address) => socket_address,
+        None => panic!("ServerConnection: Failed to get socket address. None available."),
+      },
+      Err(e) => panic!(
+        "ServerConnection: Failed to apply address and port into socket address. {}",
+        e
+      ),
+    };
     let transport_protocol = Transport::Udp;
 
     let (handler, listener) = node::split::<()>();
