@@ -67,7 +67,7 @@ impl LuaEngine {
   pub fn run_code(&self, raw_code: String) {
     match self.lua.load(raw_code).exec() {
       Ok(_) => (),
-      Err(err) => panic!("minetest: A fatal error has occurred! {}", err),
+      Err(err) => panic!("LuaEngine: A fatal error has occurred! {}", err),
     }
   }
 
@@ -94,7 +94,7 @@ impl LuaEngine {
         // 1.) Lua file
         // 2.) Line/Offset
         Err(format!(
-          "minetest: encountered fatal mod error in {}: {}",
+          "LuaEngine: encountered fatal mod error in {}: {}",
           file_location, err
         ))
       }
@@ -117,9 +117,9 @@ impl LuaEngine {
     };
 
     match config.read(game_raw_config_string) {
-      Ok(_) => println!("minetest: parsed [{}] game config.", game_name),
+      Ok(_) => println!("LuaEngine: parsed [{}] game config.", game_name),
       Err(e) => panic!(
-        "minetest: error parsing [{}] game config! {} ",
+        "LuaEngine: error parsing [{}] game config! {} ",
         game_name, e
       ),
     }
@@ -155,14 +155,14 @@ impl LuaEngine {
       mod_path.push_str("/main.lua");
 
       println!(
-        "--------------------\nminetest: Server attempting to load mod file [{}]",
+        "--------------------\nLuaEngine: Server attempting to load mod file [{}]",
         &mod_path
       );
 
       // This simply panics for now, but in the future we can push errors to the GUI.
       match self.run_file(&mod_path) {
         Ok(_) => println!(
-          "minetest: Server loaded mod file [{}]\n--------------------",
+          "LuaEngine: Server loaded mod file [{}]\n--------------------",
           &mod_path
         ),
         Err(e) => panic!("{}", e),
@@ -181,7 +181,7 @@ impl LuaEngine {
     // All required information should be sent by the Server to the Client.
     // Then it should be passed into the LuaEngine as needed.
     if !self.server_vm {
-      panic!("minetest: tried to load game lua files on a client LuaEngine!")
+      panic!("LuaEngine: tried to load game lua files on a client LuaEngine!")
     }
 
     // Todo: Maybe this can be a compile time const?
