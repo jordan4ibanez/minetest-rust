@@ -67,7 +67,7 @@ impl ClientConnection {
 
     // Can possibly be used as a handshake
     // ! Note: this literally is the handshake right now
-    // self.send_data(self.end_point.unwrap(), "MINETEST_HAND_SHAKE");
+    // self.send_data(self.end_point.un no >:(  wrap(), "MINETEST_HAND_SHAKE");
 
     ClientConnection {
       address,
