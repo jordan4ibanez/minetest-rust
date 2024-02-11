@@ -80,7 +80,7 @@ impl Server {
       println!("looping");
       if let Some(shutdown_requester) = self.connection.shutdown_requests.pop() {
         println!(
-          "minetest: shutdown requested by [{}]",
+          "Server: shutdown requested by [{}]",
           shutdown_requester.addr()
         );
         self.shutdown_approved = true

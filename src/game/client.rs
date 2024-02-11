@@ -86,7 +86,7 @@ impl Client {
 
     new_client.reset_lua_vm();
 
-    println!("minetest: player name is: {}", &new_client.client_name);
+    println!("Client: player name is: {}", &new_client.client_name);
 
     new_client
   }
