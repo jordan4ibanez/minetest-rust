@@ -85,7 +85,10 @@ fn game_has_conf_file(games_dir: &str, game_name: &str) -> bool {
 /// Get the raw files inside of a game's dir.
 ///
 fn get_game_mods_dir_raw_files(games_dir: &str, game_name: &str) -> ReadDir {
-  read_dir(get_game_mod_path(games_dir, game_name)).unwrap()
+  match read_dir(get_game_mod_path(games_dir, game_name)) {
+    Ok(data) => data,
+    Err(e) => panic!("LuaHelpers: Failed to read raw directory files. {}", e),
+  }
 }
 
 ///
@@ -98,8 +101,22 @@ fn game_has_mods(games_dir: &str, game_name: &str) -> bool {
   for folder_result in folders {
     // We could chain these unwraps to tell the user they don't have access.
     // Use a match if this is decided upon.
-    if folder_result.unwrap().file_type().unwrap().is_dir() {
-      folder_counter += 1;
+    match folder_result {
+      Ok(folder) => match folder.file_type() {
+        Ok(file_type) => {
+          if file_type.is_dir() {
+            folder_counter += 1;
+          }
+        }
+        Err(e) => panic!(
+          "LuaHelpers: Failed to get file type for folder [{:?}]. {}",
+          folder, e
+        ),
+      },
+      Err(e) => println!(
+        "LuaHelpers: Failed to get Directory Entry for file in game [{}]. File name {}",
+        game_name, e
+      ),
     }
   }
 
@@ -152,33 +169,37 @@ pub fn get_game_mod_folders(games_dir: &str, game_name: &str) -> Vec<ModDirector
 
   let raw_files: ReadDir = get_game_mods_dir_raw_files(games_dir, game_name);
 
+  // Let's get the ModDirectory with extreme safety.
   for directory_result in raw_files {
-    // We could chain these unwraps to tell the user they don't have access.
-    // Use a match if this is decided upon.
-    if directory_result
-      .as_ref()
-      .unwrap()
-      .file_type()
-      .unwrap()
-      .is_dir()
-    {
-      let mod_name = directory_result
-        .as_ref()
-        .unwrap()
-        .file_name()
-        .to_str()
-        .unwrap()
-        .to_string();
+    match directory_result {
+      Ok(directory) => match directory.file_type() {
+        Ok(file_type) => {
+          if file_type.is_dir() {
+            let mod_name = match directory.file_name().to_str() {
+              Some(file_name_str) => file_name_str.to_string(),
+              None => panic!("LuaHelpers: Failed to get file name for [{:?}].", file_type),
+            };
 
-      let mod_path = directory_result
-        .as_ref()
-        .unwrap()
-        .path()
-        .to_str()
-        .unwrap()
-        .to_string();
+            let mod_path = match directory.path().to_str() {
+              Some(mod_path_str) => mod_path_str.to_string(),
+              None => panic!(
+                "LuaHelpers: Failed to get directory &str for [{:?}].",
+                file_type
+              ),
+            };
 
-      container.push(ModDirectory { mod_name, mod_path });
+            container.push(ModDirectory { mod_name, mod_path })
+          }
+        }
+        Err(e) => panic!(
+          "LuaHelpers: Failed to get file type for folder [{:?}]. {}",
+          directory, e
+        ),
+      },
+      Err(e) => panic!(
+        "LuaHelpers: Failed to get directory entry in game [{}]. {}",
+        game_name, e
+      ),
     }
   }
 
