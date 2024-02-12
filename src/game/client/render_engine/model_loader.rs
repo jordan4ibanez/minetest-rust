@@ -1,3 +1,4 @@
+mod gltf_loader;
 mod obj_loader;
 
 use crate::{
