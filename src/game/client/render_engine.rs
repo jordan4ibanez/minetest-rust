@@ -401,7 +401,7 @@ impl RenderEngine {
 
       // ? BEGIN DEBUGGING MODEL LOADER ?
 
-      // ! CHAIR
+      // ! CHAIR - OBJ
 
       let chair_model = match ModelLoader::load_model(
         "./prototype_models/chair.obj",
@@ -416,7 +416,7 @@ impl RenderEngine {
 
       new_render_engine.create_texture("./prototype_textures/chair.png");
 
-      // ! SNOWMAN
+      // ! SNOWMAN - OBJ
 
       let snowman = match ModelLoader::load_model(
         "./prototype_models/snowman.obj",
@@ -424,6 +424,17 @@ impl RenderEngine {
         &new_render_engine.queue,
       ) {
         Ok(snowman) => snowman,
+        Err(e) => panic!("RenderEngine: {}", e),
+      };
+
+      // ! MINETEST SAM - GLTF
+
+      let minetest_sam = match ModelLoader::load_model(
+        "./prototype_models/minetest_sam.gltf",
+        &new_render_engine.device,
+        &new_render_engine.queue,
+      ) {
+        Ok(sam) => sam,
         Err(e) => panic!("RenderEngine: {}", e),
       };
 
