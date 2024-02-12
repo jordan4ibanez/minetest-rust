@@ -22,17 +22,14 @@ impl GLTFLoader {
     };
 
     // If there are no scenes, give up.
-    if generic_scenes.is_empty() {
-      panic!(
+    let scene = match generic_scenes.first() {
+      Some(gotten_scene) => gotten_scene,
+      None => panic!(
         "GLTFLoader: {} is a blank model! Full path: {}",
         file_name, path
-      )
-    }
-
-    
+      ),
+    };
 
     // We only want scene 0.
-
-    
   }
 }
