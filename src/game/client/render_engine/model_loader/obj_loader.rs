@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use ahash::AHashMap;
-use tobj::{MTLLoadResult, Material};
+use tobj::MTLLoadResult;
 use wgpu::util::DeviceExt;
 
 use crate::{
@@ -11,15 +11,6 @@ use crate::{
     model::Model,
   },
 };
-
-///
-/// This struct simply holds the Obj model before we convert it into the
-/// internal generic format.
-///
-struct ObjModel {
-  pub meshes: Vec<Mesh>,
-  pub materials: Vec<Material>,
-}
 
 ///
 /// The OBJ file loader.
