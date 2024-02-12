@@ -36,5 +36,9 @@ impl GLTFLoader {
     };
 
     println!("{:#?}", gltf);
+
+    for mesh in gltf.meshes() {
+      for primitive in mesh.primitives() {}
+    }
   }
 }
