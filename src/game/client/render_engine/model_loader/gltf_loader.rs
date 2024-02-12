@@ -1,3 +1,5 @@
+use crate::game::client::render_engine::model::Model;
+
 ///
 /// The GLTF file loader.
 ///
@@ -5,4 +7,6 @@
 ///
 pub struct GLTFLoader {}
 
-impl GLTFLoader {}
+impl GLTFLoader {
+  pub fn load(path: &str, device: &wgpu::Device, queue: &wgpu::Queue) -> Model {}
+}

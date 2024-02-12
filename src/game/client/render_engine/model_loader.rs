@@ -3,7 +3,7 @@ mod obj_loader;
 
 use crate::{
   file_utilities::{file_extension_from_path, file_name_from_path},
-  game::client::render_engine::model_loader::obj_loader::ObjLoader,
+  game::client::render_engine::model_loader::{gltf_loader::GLTFLoader, obj_loader::ObjLoader},
 };
 
 use super::model::Model;
@@ -37,7 +37,7 @@ impl ModelLoader {
     match extension {
       "gltf" => {
         println!("ModelLoader: this is a GLTF model file.");
-        Err("ModelLoader: GLTF not implemented.".to_string())
+        Ok(GLTFLoader::load(path, device, queue))
       }
       "obj" => {
         println!("ModelLoader: this is an OBJ model file.");
