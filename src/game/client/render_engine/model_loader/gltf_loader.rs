@@ -16,13 +16,23 @@ impl GLTFLoader {
       Err(e) => panic!("GLTFLoader: {}", e),
     };
 
-    let scenes = match easy_gltf::load(path) {
+    let generic_scenes = match easy_gltf::load(path) {
       Ok(data) => data,
       Err(e) => panic!("GLTFLoader: {}", e),
     };
 
-    if scenes.is_empty() {
-      panic!("GLTFLoader: {} is a blank model!", file_name)
+    // If there are no scenes, give up.
+    if generic_scenes.is_empty() {
+      panic!(
+        "GLTFLoader: {} is a blank model! Full path: {}",
+        file_name, path
+      )
     }
+
+    
+
+    // We only want scene 0.
+
+    
   }
 }
