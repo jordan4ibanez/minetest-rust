@@ -37,7 +37,8 @@ impl ModelLoader {
     match extension {
       "gltf" => {
         println!("ModelLoader: this is a GLTF model file.");
-        Ok(GLTFLoader::load(path, device, queue))
+        GLTFLoader::load(path, device, queue);
+        Err("oops".to_owned())
       }
       "obj" => {
         println!("ModelLoader: this is an OBJ model file.");
