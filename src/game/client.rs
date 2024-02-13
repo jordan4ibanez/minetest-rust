@@ -245,6 +245,9 @@ impl Client {
     let snowman_model = self.render_engine.get_model_id("snowman.obj");
     let snowman_textures = vec![self.render_engine.get_texture_id("snowman.png"); 5];
 
+    let minetest_sam_model = self.render_engine.get_model_id("minetest_sam.gltf");
+    let minetest_sam_textures = vec![self.render_engine.get_texture_id("minetest_sam.png"); 1];
+
     // Not instanced.
     self.render_engine.render_mesh(
       debug_mesh,
@@ -267,6 +270,14 @@ impl Client {
       snowman_textures.clone(),
       Vec3A::new(-3.0, 0.0, 0.0),
       Vec3A::new(0.0, -self.spin_test as f32, 0.0),
+      Vec3A::new(1.0, 1.0, 1.0),
+    );
+
+    self.render_engine.render_model(
+      minetest_sam_model,
+      minetest_sam_textures,
+      Vec3A::new(-4.0, 0.0, 0.0),
+      Vec3A::new(0.0, 0.0, 0.0),
       Vec3A::new(1.0, 1.0, 1.0),
     );
 
