@@ -59,21 +59,21 @@ impl ObjLoader {
     // Next we load up the raw data.
     let mut meshes: Vec<Mesh> = vec![];
 
-    for (w, model) in raw_models.iter().enumerate() {
+    for (model_index, model) in raw_models.iter().enumerate() {
       // Push all vertex data into a vector.
       let mut vertices = vec![];
 
-      for i in 0..model.mesh.positions.len() / 3 {
+      for index in 0..model.mesh.positions.len() / 3 {
         let new_vertex = Vertex {
           position: [
-            model.mesh.positions[i * 3],
-            model.mesh.positions[i * 3 + 1],
-            model.mesh.positions[i * 3 + 2],
+            model.mesh.positions[index * 3],
+            model.mesh.positions[index * 3 + 1],
+            model.mesh.positions[index * 3 + 2],
           ],
           texture_coordinates: [
-            model.mesh.texcoords[i * 2],
+            model.mesh.texcoords[index * 2],
             // This flips the texture coordinates right side up.
-            1.0 - model.mesh.texcoords[i * 2 + 1],
+            1.0 - model.mesh.texcoords[index * 2 + 1],
           ],
 
           color: [1.0, 1.0, 1.0],
@@ -102,7 +102,7 @@ impl ObjLoader {
         vertex_buffer,
         index_buffer,
         model.mesh.indices.len() as u32,
-        w as u32,
+        model_index as u32,
       );
 
       meshes.push(new_mesh);
