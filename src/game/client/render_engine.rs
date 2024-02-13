@@ -442,6 +442,8 @@ impl RenderEngine {
 
       new_render_engine.store_model(&snowman.name.clone(), snowman);
 
+      new_render_engine.create_texture("./prototype_textures/minetest_sam.png");
+
       // ? END DEBUGGING MODEL LOADER ?
     }
     // ! END TEMPORARY MESH DEBUGGING !
