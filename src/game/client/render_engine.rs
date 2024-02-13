@@ -456,7 +456,7 @@ impl RenderEngine {
       // ! SNOWMAN - GLTF
 
       let snowman_gltf = match ModelLoader::load_model(
-        "./prototype_models/minetest_sam.gltf",
+        "./prototype_models/snowman.gltf",
         &new_render_engine.device,
         &new_render_engine.queue,
       ) {
