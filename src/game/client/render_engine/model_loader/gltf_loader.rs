@@ -45,6 +45,7 @@ impl GLTFLoader {
       // We have to transmute the
       let mut vertices: Vec<Vertex> = vec![];
       for vertex in model.vertices() {
+        // These containers are CGMath, converting into GLAM. This should never randomly blow up.
         let new_vertex = Vertex {
           position: vertex.position.into(),
           texture_coordinates: vertex.tex_coords.into(),
