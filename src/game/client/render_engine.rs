@@ -427,6 +427,8 @@ impl RenderEngine {
         Err(e) => panic!("RenderEngine: {}", e),
       };
 
+      new_render_engine.create_texture("./prototype_textures/snowman.png");
+
       // ! MINETEST SAM - GLTF
 
       let minetest_sam = match ModelLoader::load_model(
@@ -439,8 +441,6 @@ impl RenderEngine {
       };
 
       new_render_engine.store_model(&snowman.name.clone(), snowman);
-
-      new_render_engine.create_texture("./prototype_textures/snowman.png");
 
       // ? END DEBUGGING MODEL LOADER ?
     }
