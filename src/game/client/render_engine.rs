@@ -427,6 +427,8 @@ impl RenderEngine {
         Err(e) => panic!("RenderEngine: {}", e),
       };
 
+      new_render_engine.store_model(&snowman.name.clone(), snowman);
+
       new_render_engine.create_texture("./prototype_textures/snowman.png");
 
       // ! MINETEST SAM - GLTF
@@ -440,7 +442,7 @@ impl RenderEngine {
         Err(e) => panic!("RenderEngine: {}", e),
       };
 
-      new_render_engine.store_model(&snowman.name.clone(), snowman);
+      new_render_engine.store_model(&minetest_sam.name.clone(), minetest_sam);
 
       new_render_engine.create_texture("./prototype_textures/minetest_sam.png");
 
