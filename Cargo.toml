@@ -33,7 +33,6 @@ bytemuck = { version = "*", features = ["derive"] }
 clap = { version = "*", features = ["derive"] }
 configparser = "*"
 ctrlc = { version = "*", features = ["termination"] }
-easy-gltf = "*"
 env_logger = "*"
 glam = { version = "*", features = ["approx", "bytemuck", "rand", "serde"] }
 gltf = "*"
@@ -44,6 +43,7 @@ image = { version = "*", default-features = false, features = [
 ] }
 log = "*"
 message-io = "*"
+minetest-gltf = "*"
 mlua = { version = "*", features = ["luau-jit"] }
 pollster = "*"
 quote = "*"
