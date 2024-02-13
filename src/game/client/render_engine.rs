@@ -453,6 +453,19 @@ impl RenderEngine {
 
       new_render_engine.create_texture("./prototype_textures/minetest_sam.png");
 
+      // ! SNOWMAN - GLTF
+
+      let snowman_gltf = match ModelLoader::load_model(
+        "./prototype_models/minetest_sam.gltf",
+        &new_render_engine.device,
+        &new_render_engine.queue,
+      ) {
+        Ok(snowman_gltf) => snowman_gltf,
+        Err(e) => panic!("RenderEngine: {}", e),
+      };
+
+      new_render_engine.store_model(&snowman_gltf.name.clone(), snowman_gltf);
+
       // ? END DEBUGGING MODEL LOADER ?
     }
     // ! END TEMPORARY MESH DEBUGGING !
