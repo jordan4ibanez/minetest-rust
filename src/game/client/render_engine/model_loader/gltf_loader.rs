@@ -23,7 +23,7 @@ impl GLTFLoader {
       Err(e) => panic!("GLTFLoader: {}", e),
     };
 
-    let generic_scenes = match easy_gltf::load(path) {
+    let generic_scenes = match minetest_gltf::load(path, false) {
       Ok(data) => data,
       Err(e) => panic!("GLTFLoader: {}", e),
     };
