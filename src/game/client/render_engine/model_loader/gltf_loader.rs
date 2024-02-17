@@ -23,14 +23,14 @@ impl GLTFLoader {
       Err(e) => panic!("GLTFLoader: {}", e),
     };
 
-    let generic_scenes = match minetest_gltf::load(path, false) {
+    let mine_gltf = match minetest_gltf::load(path, false) {
       Ok(data) => data,
       Err(e) => panic!("GLTFLoader: {}", e),
     };
 
     // If there are no scenes, give up.
     // We only want scene 0.
-    let scene = match generic_scenes.first() {
+    let scene = match mine_gltf.scenes.first() {
       Some(gotten_scene) => gotten_scene,
       None => panic!(
         "GLTFLoader: {} is a blank model! Full path: {}",
