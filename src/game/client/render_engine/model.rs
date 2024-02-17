@@ -15,3 +15,9 @@ pub struct Model {
   // todo: You should have to completely regenerate a new model.
   pub lock: bool,
 }
+
+impl Model {
+  pub fn is_animated(&self) -> bool {
+    self.animations.is_some()
+  }
+}
