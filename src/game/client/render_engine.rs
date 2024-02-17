@@ -247,7 +247,7 @@ impl RenderEngine {
         strip_index_format: None,
         front_face: wgpu::FrontFace::Ccw,
         // Backface culling.
-        cull_mode: Some(wgpu::Face::Back),
+        cull_mode: None, //Some(wgpu::Face::Back),
         unclipped_depth: false,
         polygon_mode: wgpu::PolygonMode::Fill,
         conservative: false,
