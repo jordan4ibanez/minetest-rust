@@ -901,6 +901,14 @@ impl RenderEngine {
                 Some(vec_animations) => match vec_animations.first() {
                   Some(animation) => {
                     println!("{} is animated.", model.name);
+                    match animation.timestamps.get(1) {
+                      Some(time_stamp) => {
+                        println!("timestamp: {}", time_stamp);
+                        println!("animation name: {}", animation.name);
+                        let x = &animation.keyframes;
+                      }
+                      None => println!("{} is BROKEN!", model.name),
+                    };
                   }
                   None => println!("{} is broken.", model.name),
                 },
