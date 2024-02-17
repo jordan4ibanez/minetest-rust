@@ -43,7 +43,7 @@ image = { version = "*", default-features = false, features = [
 ] }
 log = "*"
 message-io = "*"
-minetest-gltf = "*"
+minetest-gltf = { version = "*", features = ["names"] }
 mlua = { version = "*", features = ["luau-jit"] }
 pollster = "*"
 quote = "*"
