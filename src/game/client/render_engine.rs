@@ -902,9 +902,9 @@ impl RenderEngine {
                   Some(animation) => {
                     println!("{} is animated.", model.name);
                   }
-                  None => (),
+                  None => println!("{} is broken.", model.name),
                 },
-                None => (),
+                None => println!("{} is not animated.", model.name),
               };
 
               render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
