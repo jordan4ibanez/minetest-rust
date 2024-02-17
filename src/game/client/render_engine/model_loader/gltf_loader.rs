@@ -94,10 +94,18 @@ impl GLTFLoader {
       file_name, number_of_texture_buffers
     );
 
+    let mut animations = None;
+
+    // Animation data
+    if !mine_gltf.animations.is_empty() {
+      animations = Some(mine_gltf.animations);
+    }
+
     Model {
       name: file_name.to_owned(),
       meshes,
       number_of_texture_buffers,
+      animations,
       lock: false,
     }
   }

@@ -10,7 +10,7 @@ pub struct Model {
   pub name: String,
   pub meshes: Vec<Mesh>,
   pub number_of_texture_buffers: u32,
-  pub animations: Option<AnimationClip>,
+  pub animations: Option<Vec<AnimationClip>>,
   // todo: use this to lockout the model from changing and be readonly.
   // todo: You should have to completely regenerate a new model.
   pub lock: bool,
