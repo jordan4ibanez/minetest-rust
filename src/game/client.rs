@@ -251,43 +251,51 @@ impl Client {
     let snowman_gltf_model = self.render_engine.get_model_id("snowman.gltf");
 
     // Not instanced.
-    self.render_engine.render_mesh(
-      debug_mesh,
-      debug_mesh_texture,
-      Vec3A::new(-1.0, 0.0, 0.0),
-      Vec3A::new(0.0, -self.spin_test as f32, 0.0),
-      Vec3A::new(1.0, 1.0, 1.0),
-    );
+    // self.render_engine.render_mesh(
+    //   debug_mesh,
+    //   debug_mesh_texture,
+    //   Vec3A::new(-1.0, 0.0, 0.0),
+    //   Vec3A::new(0.0, -self.spin_test as f32, 0.0),
+    //   Vec3A::new(1.0, 1.0, 1.0),
+    // );
+
+    // self.render_engine.render_model(
+    //   chair_model,
+    //   chair_textures,
+    //   Vec3A::new(-2.0, 0.0, 0.0),
+    //   Vec3A::new(0.0, -self.spin_test as f32, 0.0),
+    //   Vec3A::new(1.0, 1.0, 1.0),
+    // );
+
+    // self.render_engine.render_model(
+    //   snowman_model,
+    //   snowman_textures.clone(),
+    //   Vec3A::new(-3.0, 0.0, 0.0),
+    //   Vec3A::new(0.0, -self.spin_test as f32, 0.0),
+    //   Vec3A::new(1.0, 1.0, 1.0),
+    // );
+
+    // self.render_engine.render_model(
+    //   minetest_sam_model,
+    //   minetest_sam_textures,
+    //   Vec3A::new(-4.0, 0.0, 0.0),
+    //   Vec3A::new(0.0, 0.0, 0.0),
+    //   Vec3A::new(1.0, 1.0, 1.0),
+    // );
+
+    // self.render_engine.render_model(
+    //   snowman_gltf_model,
+    //   snowman_textures.clone(),
+    //   Vec3A::new(-4.0, 0.0, 0.0),
+    //   Vec3A::new(0.0, 0.0, 0.0),
+    //   Vec3A::new(1.0, 1.0, 1.0),
+    // );
 
     self.render_engine.render_model(
-      chair_model,
-      chair_textures,
-      Vec3A::new(-2.0, 0.0, 0.0),
-      Vec3A::new(0.0, -self.spin_test as f32, 0.0),
-      Vec3A::new(1.0, 1.0, 1.0),
-    );
-
-    self.render_engine.render_model(
-      snowman_model,
-      snowman_textures.clone(),
-      Vec3A::new(-3.0, 0.0, 0.0),
-      Vec3A::new(0.0, -self.spin_test as f32, 0.0),
-      Vec3A::new(1.0, 1.0, 1.0),
-    );
-
-    self.render_engine.render_model(
-      minetest_sam_model,
-      minetest_sam_textures,
-      Vec3A::new(-4.0, 0.0, 0.0),
+      self.render_engine.get_model_id("simple_skin.gltf"),
+      &[self.render_engine.get_texture_id("tf.png")],
       Vec3A::new(0.0, 0.0, 0.0),
-      Vec3A::new(1.0, 1.0, 1.0),
-    );
-
-    self.render_engine.render_model(
-      snowman_gltf_model,
-      snowman_textures.clone(),
-      Vec3A::new(-4.0, 0.0, 0.0),
-      Vec3A::new(0.0, 0.0, 0.0),
+      Vec3A::new(0.0, self.spin_test as f32, 0.0),
       Vec3A::new(1.0, 1.0, 1.0),
     );
 
@@ -297,53 +305,53 @@ impl Client {
 
     // ? Trollface hexagon thing.
 
-    let mut instancing_tf = Vec::with_capacity(TESTING_LIMIT * TESTING_LIMIT);
+    // let mut instancing_tf = Vec::with_capacity(TESTING_LIMIT * TESTING_LIMIT);
 
-    for x in 0..TESTING_LIMIT {
-      for z in 0..TESTING_LIMIT {
-        instancing_tf.push(InstanceMatrixRGBA::new(
-          vec3a(x as f32, z as f32, 0.0),
-          vec3a(0.0, self.spin_test as f32, 0.0),
-          vec3a(1.0, 1.0, 1.0),
-          vec4(1.0, 1.0, 1.0, 1.0),
-        ));
-      }
-    }
+    // for x in 0..TESTING_LIMIT {
+    //   for z in 0..TESTING_LIMIT {
+    //     instancing_tf.push(InstanceMatrixRGBA::new(
+    //       vec3a(x as f32, z as f32, 0.0),
+    //       vec3a(0.0, self.spin_test as f32, 0.0),
+    //       vec3a(1.0, 1.0, 1.0),
+    //       vec4(1.0, 1.0, 1.0, 1.0),
+    //     ));
+    //   }
+    // }
 
-    self
-      .render_engine
-      .render_mesh_instanced(debug_mesh, debug_mesh_texture, &instancing_tf);
+    // self
+    //   .render_engine
+    //   .render_mesh_instanced(debug_mesh, debug_mesh_texture, &instancing_tf);
 
-    // ? Snowman.
+    // // ? Snowman.
 
-    let mut instancing_tf = Vec::with_capacity(TESTING_LIMIT * TESTING_LIMIT);
+    // let mut instancing_tf = Vec::with_capacity(TESTING_LIMIT * TESTING_LIMIT);
 
-    let mut color = self.color_fun;
-    let mut i = 0.0;
-    for x in 0..TESTING_LIMIT {
-      for z in 0..TESTING_LIMIT {
-        color += 0.13;
-        if color > 1.0 {
-          color = 0.0;
-        }
-        instancing_tf.push(InstanceMatrixRGBA::new(
-          vec3a(x as f32, 0.0, z as f32),
-          vec3a(0.0, self.spin_test as f32 + i, 0.0),
-          vec3a(1.0, 1.0, 1.0),
-          vec4(color as f32, color as f32, 1.0, 1.0),
-        ));
-        i += 0.05;
-      }
-    }
+    // let mut color = self.color_fun;
+    // let mut i = 0.0;
+    // for x in 0..TESTING_LIMIT {
+    //   for z in 0..TESTING_LIMIT {
+    //     color += 0.13;
+    //     if color > 1.0 {
+    //       color = 0.0;
+    //     }
+    //     instancing_tf.push(InstanceMatrixRGBA::new(
+    //       vec3a(x as f32, 0.0, z as f32),
+    //       vec3a(0.0, self.spin_test as f32 + i, 0.0),
+    //       vec3a(1.0, 1.0, 1.0),
+    //       vec4(color as f32, color as f32, 1.0, 1.0),
+    //     ));
+    //     i += 0.05;
+    //   }
+    // }
 
-    self.color_fun += 0.05;
-    if self.color_fun >= 1.0 {
-      self.color_fun = 0.0;
-    }
+    // self.color_fun += 0.05;
+    // if self.color_fun >= 1.0 {
+    //   self.color_fun = 0.0;
+    // }
 
-    self
-      .render_engine
-      .render_model_instanced(snowman_model, &snowman_textures, &instancing_tf);
+    // self
+    //   .render_engine
+    //   .render_model_instanced(snowman_model, &snowman_textures, &instancing_tf);
 
     self.render_engine.process_instanced_mesh_render_calls();
     self.render_engine.process_instanced_model_render_calls();
