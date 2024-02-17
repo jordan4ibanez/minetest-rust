@@ -897,6 +897,16 @@ impl RenderEngine {
 
               // Now we're going to bind the pipeline to the Mesh and draw it.
 
+              match &model.animations {
+                Some(vec_animations) => match vec_animations.first() {
+                  Some(animation) => {
+                    println!("{} is animated.", model.name);
+                  }
+                  None => (),
+                },
+                None => (),
+              };
+
               render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
 
               let instance_buffer = match self.instance_buffer.as_ref() {
