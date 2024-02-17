@@ -293,7 +293,7 @@ impl Client {
 
     self.render_engine.render_model(
       self.render_engine.get_model_id("simple_skin.gltf"),
-      &[self.render_engine.get_texture_id("tf.png")],
+      vec![self.render_engine.get_texture_id("tf.png")],
       Vec3A::new(0.0, 0.0, 0.0),
       Vec3A::new(0.0, self.spin_test as f32, 0.0),
       Vec3A::new(1.0, 1.0, 1.0),
