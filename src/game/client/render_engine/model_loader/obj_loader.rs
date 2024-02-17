@@ -120,6 +120,7 @@ impl ObjLoader {
       name: file_name.to_owned(),
       meshes,
       number_of_texture_buffers,
+      animations: None,
       lock: false,
     }
   }
