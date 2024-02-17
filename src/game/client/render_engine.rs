@@ -466,6 +466,19 @@ impl RenderEngine {
 
       new_render_engine.store_model(&snowman_gltf.name.clone(), snowman_gltf);
 
+      // ! SIMPLE_SKIN - GLTF
+
+      let simple_skin = match ModelLoader::load_model(
+        "./prototype_models/simple_skin.gltf",
+        &new_render_engine.device,
+        &new_render_engine.queue,
+      ) {
+        Ok(simple) => simple,
+        Err(e) => panic!("RenderEngine: {}", e),
+      };
+
+      new_render_engine.store_model(&simple_skin.name.clone(), simple_skin);
+
       // ? END DEBUGGING MODEL LOADER ?
     }
     // ! END TEMPORARY MESH DEBUGGING !
