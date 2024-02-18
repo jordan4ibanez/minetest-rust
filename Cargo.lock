@@ -56,9 +56,9 @@ dependencies = [
 
 [[package]]
 name = "anstream"
-version = "0.6.11"
+version = "0.6.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e2e1ebcb11de5c03c67de28a7df593d32191b44939c482e97702baaaa6ab6a5"
+checksum = "96b09b5178381e0874812a9b157f7fe84982617e48f71f4e3235482775e5b540"
 dependencies = [
  "anstyle",
  "anstyle-parse",
@@ -1064,9 +1064,9 @@ checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 
 [[package]]
 name = "luau0-src"
-version = "0.8.1+luau611"
+version = "0.8.2+luau613"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "32e9900dbff55d80afdd8c6b775e1ff657587aef6894cc8680a60449504c1279"
+checksum = "2d74d2347737b6e34c97bbadf878f22b9337a9a3459d0c1effb94f401787333d"
 dependencies = [
  "cc",
 ]
@@ -1133,9 +1133,9 @@ dependencies = [
 
 [[package]]
 name = "minetest-gltf"
-version = "1.2.1"
+version = "1.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c55c85494d53466cbe43988904b76f7932bde13bfcdd5d57390afe7365c4a3c2"
+checksum = "61c1fcadf31493cadcac0c3b0e31d27105452e7f40aa7023f4384d66fcdc6f3d"
 dependencies = [
  "base64 0.21.7",
  "env_logger",
@@ -1418,9 +1418,9 @@ dependencies = [
 
 [[package]]
 name = "profiling"
-version = "1.0.14"
+version = "1.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f0f7f43585c34e4fdd7497d746bc32e14458cf11c69341cc0587b1d825dde42"
+checksum = "43d84d1d7a6ac92673717f9f6d1518374ef257669c24ebc5ac25d5033828be58"
 
 [[package]]
 name = "qoi"
