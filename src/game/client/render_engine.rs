@@ -897,23 +897,31 @@ impl RenderEngine {
 
               // Now we're going to bind the pipeline to the Mesh and draw it.
 
-              match &model.animations {
-                Some(vec_animations) => match vec_animations.first() {
-                  Some(animation) => {
-                    println!("{} is animated.", model.name);
-                    match animation.timestamps.get(1) {
-                      Some(time_stamp) => {
-                        println!("timestamp: {}", time_stamp);
-                        println!("animation name: {}", animation.name);
-                        let x = &animation.keyframes;
-                      }
-                      None => println!("{} is BROKEN!", model.name),
-                    };
-                  }
-                  None => println!("{} is broken.", model.name),
-                },
-                None => println!("{} is not animated.", model.name),
-              };
+              // match &model.animations {
+              //   Some(vec_animations) => match vec_animations.first() {
+              //     Some(animation) => {
+              //       println!("{} is animated.", model.name);
+
+              //       match animation.timestamps.get(1) {
+              //         Some(time_stamp) => {
+              //           println!("timestamp: {}", time_stamp);
+              //           println!("animation name: {}", animation.name);
+              //           match &animation.keyframes {
+              //             Keyframes::Translation(_) => todo!(),
+              //             Keyframes::Rotation(_) => todo!(),
+              //             Keyframes::Scale(_) => todo!(),
+              //             Keyframes::Weights(_) => todo!(),
+              //             Keyframes::Other => todo!(),
+              //           }
+              //         }
+
+              //         None => println!("{} is BROKEN!", model.name),
+              //       };
+              //     }
+              //     None => println!("{} is broken.", model.name),
+              //   },
+              //   None => println!("{} is not animated.", model.name),
+              // };
 
               render_pass.set_vertex_buffer(0, mesh.get_wgpu_vertex_buffer().slice(..));
 
