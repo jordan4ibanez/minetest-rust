@@ -23,17 +23,17 @@ impl GLTFLoader {
       Err(e) => panic!("GLTFLoader: {}", e),
     };
 
-    let mine_gltf = match minetest_gltf::load(path, false) {
+    let mine_gltf = match minetest_gltf::load(path) {
       Ok(data) => data,
       Err(e) => panic!("GLTFLoader: {}", e),
     };
 
     // If there are no scenes, give up.
     // We only want scene 0.
-    let scene = match mine_gltf.scenes.first() {
-      Some(gotten_scene) => gotten_scene,
+    let model = match mine_gltf.model {
+      Some(model) => model,
       None => panic!(
-        "GLTFLoader: {} is a blank model! Full path: {}",
+        "GLTFLoader: {} has no model! Full path: {}",
         file_name, path
       ),
     };
@@ -41,10 +41,10 @@ impl GLTFLoader {
     // Next we load up the raw data.
     let mut meshes: Vec<Mesh> = vec![];
 
-    for (model_index, model) in scene.models.iter().enumerate() {
+    for (prim_index, primitive) in model.primitives.iter().enumerate() {
       // We have to transmute the
       let mut vertices: Vec<Vertex> = vec![];
-      for vertex in model.vertices() {
+      for vertex in primitive.vertices() {
         // These containers are CGMath, converting into GLAM. This should never randomly blow up.
         let new_vertex = Vertex {
           position: vertex.position.into(),
@@ -63,7 +63,7 @@ impl GLTFLoader {
       });
 
       // The GLTF Model might be a bit messed up.
-      let indices = match model.indices() {
+      let indices = match primitive.indices() {
         Some(indices) => indices,
         None => panic!("GLTFLoader: Model [{}] has no indices!", file_name),
       };
@@ -80,7 +80,7 @@ impl GLTFLoader {
         vertex_buffer,
         index_buffer,
         indices.len() as u32,
-        model_index as u32,
+        prim_index as u32,
       );
 
       meshes.push(new_mesh);
@@ -97,15 +97,15 @@ impl GLTFLoader {
     let mut animations = None;
 
     // Animation data
-    if !mine_gltf.animations.is_empty() {
-      animations = Some(mine_gltf.animations);
+    if !mine_gltf.bone_animations.is_empty() {
+      animations = Some(mine_gltf.bone_animations);
     }
 
     Model {
       name: file_name.to_owned(),
       meshes,
       number_of_texture_buffers,
-      animations,
+      animations: None, //animations,
       lock: false,
     }
   }
