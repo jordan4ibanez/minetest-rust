@@ -240,13 +240,13 @@ impl Client {
     let debug_mesh_texture = self.render_engine.get_texture_id("tf.png");
 
     let chair_model = self.render_engine.get_model_id("chair.obj");
-    let chair_textures = vec![self.render_engine.get_texture_id("chair.png")];
+    // let chair_textures = vec![self.render_engine.get_texture_id("chair.png")];
 
     let snowman_model = self.render_engine.get_model_id("snowman.obj");
-    let snowman_textures = vec![self.render_engine.get_texture_id("snowman.png"); 5];
+    // let snowman_textures = vec![self.render_engine.get_texture_id("snowman.png"); 5];
 
     let minetest_sam_model = self.render_engine.get_model_id("minetest_sam.gltf");
-    let minetest_sam_textures = vec![self.render_engine.get_texture_id("minetest_sam.png"); 1];
+    // let minetest_sam_textures = vec![self.render_engine.get_texture_id("minetest_sam.png"); 1];
 
     let snowman_gltf_model = self.render_engine.get_model_id("snowman.gltf");
 
