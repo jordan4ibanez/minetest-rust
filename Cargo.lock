@@ -2237,9 +2237,9 @@ dependencies = [
 
 [[package]]
 name = "wgpu_sdl_linker"
-version = "1.2.0"
+version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45e927d6afb9fdb940b757b74eda9bb79f7ce62d37f624f2042394e78504d67c"
+checksum = "315c67e31503bc4001d5b9e72ab358a091cde07be49f8153a683db4af5cbd9d0"
 dependencies = [
  "sdl2",
  "wgpu",
