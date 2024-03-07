@@ -154,7 +154,7 @@ impl RenderEngine {
         limits: wgpu::Limits::default(),
         label: Some("minetest_gpu"),
         // * this was: wgpu::Features::default()
-        features: wgpu::Features::POLYGON_MODE_LINE | wgpu::Features::DEPTH_CLIP_CONTROL,
+        features: /*wgpu::Features::POLYGON_MODE_LINE | */ wgpu::Features::DEPTH_CLIP_CONTROL,
       },
       None,
     )) {
