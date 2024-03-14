@@ -23,14 +23,14 @@ impl GLTFLoader {
       Err(e) => panic!("GLTFLoader: {}", e),
     };
 
-    let mine_gltf = match minetest_gltf::load(path) {
+    let minetest_gltf = match minetest_gltf::load(path) {
       Ok(data) => data,
       Err(e) => panic!("GLTFLoader: {}", e),
     };
 
     // If there are no scenes, give up.
     // We only want scene 0.
-    let model = match mine_gltf.model {
+    let model = match minetest_gltf.model {
       Some(model) => model,
       None => panic!(
         "GLTFLoader: {} has no model! Full path: {}",
@@ -97,8 +97,8 @@ impl GLTFLoader {
     let mut animations = None;
 
     // Animation data
-    if !mine_gltf.bone_animations.is_empty() {
-      animations = Some(mine_gltf.bone_animations);
+    if !minetest_gltf.bone_animations.is_empty() {
+      animations = Some(minetest_gltf.bone_animations);
     }
 
     Model {
