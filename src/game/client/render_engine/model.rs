@@ -1,3 +1,4 @@
+use ahash::AHashMap;
 use minetest_gltf::animation::BoneAnimationChannel;
 
 use super::mesh::Mesh;
@@ -10,7 +11,7 @@ pub struct Model {
   pub name: String,
   pub meshes: Vec<Mesh>,
   pub number_of_texture_buffers: u32,
-  pub animations: Option<Vec<BoneAnimationChannel>>,
+  pub animations: Option<AHashMap<i32, BoneAnimationChannel>>,
   // todo: use this to lockout the model from changing and be readonly.
   // todo: You should have to completely regenerate a new model.
   pub lock: bool,

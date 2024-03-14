@@ -30,7 +30,7 @@ impl GLTFLoader {
 
     // If there are no scenes, give up.
     // We only want scene 0.
-    let model = match minetest_gltf.model {
+    let model = match &minetest_gltf.model {
       Some(model) => model,
       None => panic!(
         "GLTFLoader: {} has no model! Full path: {}",
@@ -97,15 +97,15 @@ impl GLTFLoader {
     let mut animations = None;
 
     // Animation data
-    if !minetest_gltf.bone_animations.is_empty() {
-      animations = Some(minetest_gltf.bone_animations);
+    if minetest_gltf.is_animated() {
+      animations = minetest_gltf.bone_animations;
     }
 
     Model {
       name: file_name.to_owned(),
       meshes,
       number_of_texture_buffers,
-      animations: None, //animations,
+      animations,
       lock: false,
     }
   }
