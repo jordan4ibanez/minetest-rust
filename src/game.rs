@@ -16,6 +16,28 @@ use crate::command_line::CommandLineInterface;
 
 use self::{client::Client, delta_reporter::DeltaReporter, server::Server};
 
+// TODO get better name
+enum ServerClient {
+  Server(Server),
+  Client(Client),
+}
+impl ServerClient {
+  fn is_client(&self) -> bool {
+    matches!(self, ServerClient::Client(_))
+  }
+  fn is_server(&self) -> bool {
+    matches!(self, ServerClient::Server(_))
+  }
+}
+
+#[derive(PartialEq, Eq)]
+enum VSyncMode {
+  Off,
+  On,
+  Double,
+  Triple,
+}
+
 ///
 /// The master container for the game.
 ///
@@ -41,11 +63,8 @@ pub struct Game {
   goal_frames_per_second: f64,
   goal_ticks_per_second: f64,
 
-  server: Option<Server>,
-  client: Option<Client>,
-
-  is_server: bool,
-  is_client: bool,
+  // TODO also rename this
+  serverclient: ServerClient,
 
   interval: Interval,
   fps_reporter: RateReporter,
@@ -55,11 +74,11 @@ pub struct Game {
   current_fps: f64,
 
   // vsync can be:
-  // off    - (0)
-  // on     - (1)
-  // double - (2)
-  // triple - (3)
-  vsync_mode: i8,
+  // off
+  // on
+  // double
+  // triple
+  vsync_mode: VSyncMode,
 }
 
 impl Game {
@@ -87,21 +106,20 @@ impl Game {
     //todo: make this happen!
     println!("we need a minetest.conf parser for vsync!");
 
-    let mut new_game = Game {
+    let new_game = Game {
       should_close: Arc::new(RwLock::new(false)),
 
       goal_frames_per_second,
       goal_ticks_per_second,
 
-      client: None,
-      server: None,
-
       // Simply reverse these then we can plop in a server when
       // the player enters singleplayer.
-      is_client: !cli.server,
-
+      // We could parse the player's name instead from a file, or a first time ask. This is mutable after all.
       // If this is a server we don't do any client things.
-      is_server: cli.server,
+      serverclient: match cli.server {
+        true => ServerClient::Server(Server::new(cli.address, cli.port, cli.game)),
+        false => ServerClient::Client(Client::new(cli.client_name, cli.address.clone(), cli.port)),
+      },
 
       interval,
       fps_reporter,
@@ -111,19 +129,7 @@ impl Game {
       current_fps: 0.0,
 
       //todo: fix this when the minetest.conf parser is implemented
-      vsync_mode: 0,
-    };
-
-    // We could parse the player's name instead from a file, or a first time ask. This is mutable after all.
-    new_game.client = match cli.server {
-      false => Some(Client::new(cli.client_name, cli.address.clone(), cli.port)),
-      true => None,
-    };
-
-    // Can auto deploy server and treat this struct like a simplified dispatcher.
-    new_game.server = match cli.server {
-      true => Some(Server::new(cli.address, cli.port, cli.game)),
-      false => None,
+      vsync_mode: VSyncMode::Off,
     };
 
     // Automatically elegantly stops the game when CTRL+C is hit or user terminates the process.
@@ -146,9 +152,9 @@ impl Game {
   /// A client, server, or singleplayer.
   ///
   fn update_target_framerate_goal(&mut self) {
-    let new_goal = match self.is_client {
-      true => self.goal_frames_per_second,
-      false => self.goal_ticks_per_second,
+    let new_goal = match self.serverclient {
+      ServerClient::Client(_) => self.goal_frames_per_second,
+      ServerClient::Server(_) => self.goal_ticks_per_second,
     };
 
     self
@@ -215,28 +221,19 @@ impl Game {
 
     //* Begin server/client on_tick()
 
-    if self.is_server {
-      match &mut self.server {
-        Some(server) => {
-          server.on_tick(self.delta);
+    match &mut self.serverclient {
+      ServerClient::Server(server) => {
+        server.on_tick(self.delta);
 
-          if server.shutdown_is_approved() {
-            self.shutdown_game()
-          }
+        if server.shutdown_is_approved() {
+          self.shutdown_game()
         }
-        None => panic!("minetest: attempted to run a server that does not exist."),
       }
-    }
-
-    if self.is_client {
-      match &mut self.client {
-        Some(client) => {
-          client.on_tick(self.delta);
-          if client.should_quit() {
-            self.shutdown_game();
-          }
+      ServerClient::Client(client) => {
+        client.on_tick(self.delta);
+        if client.should_quit() {
+          self.shutdown_game();
         }
-        None => panic!("minetest: attempted to run a client that does not exist."),
       }
     }
 
@@ -248,12 +245,12 @@ impl Game {
 
     if let Some(fps) = self.fps_reporter.increment_and_report() {
       self.current_fps = fps;
-      let time_measurement = match self.is_client {
+      let time_measurement = match self.serverclient.is_client() {
         true => "FPS",
         false => "TPS",
       };
       // println!("Debug {}: {}", time_measurement, self.current_fps)
-      if let Some(client) = &mut self.client {
+      if let ServerClient::Client(client) = &mut self.serverclient {
         let mut new_title = "minetest | ".to_string();
         new_title.push_str(format!("{:.1}", fps).as_str());
         new_title.push_str(" FPS");
@@ -261,7 +258,7 @@ impl Game {
       }
     }
 
-    if self.vsync_mode == 0 || self.is_server {
+    if self.vsync_mode == VSyncMode::Off || self.serverclient.is_server() {
       self.interval.tick();
     }
   }

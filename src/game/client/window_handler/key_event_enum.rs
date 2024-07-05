@@ -16,16 +16,10 @@ pub enum KeyEvent {
 
 impl KeyEvent {
   pub fn is_up(&self) -> bool {
-    match self {
-      KeyEvent::PressingDown => false,
-      KeyEvent::LiftedOff => true,
-    }
+    matches!(self, KeyEvent::LiftedOff)
   }
 
   pub fn is_down(&self) -> bool {
-    match self {
-      KeyEvent::PressingDown => true,
-      KeyEvent::LiftedOff => false,
-    }
+    matches!(self, KeyEvent::PressingDown)
   }
 }

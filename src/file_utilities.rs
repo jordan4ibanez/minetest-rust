@@ -9,7 +9,7 @@ use std::{
 /// Simply check if a directory exists.
 ///
 pub fn dir_exists(path: &str) -> bool {
-  Path::new(path).exists()
+  Path::new(path).is_dir()
 }
 
 ///
@@ -18,7 +18,7 @@ pub fn dir_exists(path: &str) -> bool {
 /// a file.
 ///
 pub fn file_exists(path: &str) -> bool {
-  Path::new(path).exists()
+  Path::new(path).is_file()
 }
 
 ///
